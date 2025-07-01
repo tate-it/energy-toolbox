@@ -15,17 +15,55 @@ The **SII XML Offer Generator** is a web-based wizard that streamlines the creat
 
 1. **As an internal marketer**, I can complete a simple wizard without reading the SII spec so that I can quickly prepare a new commercial offer.
 2. **As an internal marketer**, I can download a SII-compliant XML file for each offer created so that I can submit it to the regulator with confidence.
+3. **As an internal marketer**, I can share my work-in-progress offer via URL so that colleagues can review or continue editing.
+4. **As an internal marketer**, I can refresh the page without losing my progress so that I can work without fear of data loss.
 
 ## 4. Functional Requirements
 
 ### 4.1 General Requirements
 
 1. **Step-by-Step Wizard** – The system SHALL guide the user through all required SII sections using a stepper UI component (see Technical Considerations).
-2. **Inline Validation** – Each field SHALL validate length, datatype, enumerated values, and conditional logic. Errors MUST display next to the offending field.
+2. **Inline Validation** – Each field SHALL validate length, datatype, enumerated values, and conditional logic using Zod schemas. Errors MUST display next to the offending field and revalidate on mount/changes.
 3. **XML Preview** – The system SHALL render a live, read-only XML preview that updates on each form change.
 4. **Download XML** – The system SHALL allow the user to download the generated XML file using the naming convention `<PIVA_UTENTE>_<AZIONE>_<DESCRIZIONE>.XML`.
-5. **Client-Side Execution & Persistence** – All logic (form state, validation, XML generation) SHALL run fully in the browser with **no backend storage**. Wizard state MUST persist across page refreshes and shareable URLs by encoding state in the location bar using the **NuQS** library (type-safe URL query-string storage).
-6. **Accessibility** – The wizard SHOULD support keyboard navigation and screen-reader labels.
+5. **Client-Side Execution & URL State** – All logic (form state, validation, XML generation) SHALL run fully in the browser. Wizard state MUST persist entirely in the URL using **NuQS** with JSON serialization per step. Each step's data SHALL be stored as a separate URL parameter (e.g., `?s1={...}&s2={...}`).
+6. **Abbreviated Field Names** – To optimize URL length, the system SHALL use abbreviated field names in URL parameters and remap them to full names internally using NuQS key mapping.
+7. **Performance Optimization** – The system SHALL implement:
+   - Debounced input changes before URL updates
+   - Batch multiple field updates into single URL updates
+   - Use `shallow: false` updates only when necessary
+   - Save state to URL only before navigating to next step
+8. **State Management** – The system SHALL:
+   - Only include fields that differ from defaults using `clearOnDefault: true`
+   - Provide both "Clear All" and "Reset to Defaults" options
+   - Allow sharing URLs that restore the exact wizard state
+9. **Accessibility** – The wizard SHOULD support keyboard navigation and screen-reader labels.
+
+### 4.2 URL State Structure
+
+The system SHALL organize state in the URL using the following pattern:
+- `?s1={step1Data}&s2={step2Data}&...&s18={step18Data}`
+
+Each step parameter SHALL contain a JSON object with abbreviated field names. Example field name mappings:
+- PIVA_UTENTE → piva
+- COD_OFFERTA → cod
+- TIPO_MERCATO → tm
+- OFFERTA_SINGOLA → os
+- TIPO_CLIENTE → tc
+- DOMESTICO_RESIDENTE → dr
+- TIPO_OFFERTA → to
+- TIPOLOGIA_ATT_CONTR → tac
+- NOME_OFFERTA → nome
+- DESCRIZIONE → desc
+- DURATA → dur
+- GARANZIE → gar
+
+### 4.3 Validation Architecture
+
+1. **Zod Schemas** – Each step SHALL have a corresponding Zod schema that validates all fields according to SII requirements.
+2. **Real-time Validation** – Fields SHALL validate on blur and display errors inline.
+3. **Step Validation** – Before proceeding to the next step, the current step MUST pass validation.
+4. **No URL Error State** – Validation errors SHALL NOT be stored in the URL; they SHALL be recalculated on mount and field changes.
 
 ### 4.2 Detailed Field Requirements
 
@@ -345,11 +383,31 @@ Optional section, can occur multiple times.
 
 ## 7. Technical Considerations
 
-* **Framework**: Next.js 15y App Router, leveraging Server & Client Components best practices.
+* **Framework**: Next.js 15 App Router, leveraging Server & Client Components best practices.
 * **UI Components**: Leverage existing components from `@/components/ui` folder (form, input, select, radio-group, checkbox, button, card, alert, dialog, tabs, etc.). Limit creation of new custom components unless strictly necessary for specific SII requirements.
-* **Stepper Management**: Utilize the **Stepperize** library to orchestrate multi-step navigation, validation gating, and progress display.
+* **Stepper Management**: Utilize the **Stepperize** library to orchestrate multi-step navigation, validation gating, and progress display. Step navigation state SHALL be managed by Stepperize independently from URL state.
+* **State Management**: 
+  - **NuQS** for all application state with JSON serialization using `parseAsJson` with Zod validation
+  - One URL parameter per wizard step (s1, s2, ..., s18)
+  - Custom hooks wrapping `useQueryState` for each step with:
+    - Abbreviated field name mappings
+    - Default values
+    - Zod schema validation
+    - Type-safe interfaces
+  - Performance optimizations:
+    - Debounced updates for text inputs
+    - Batch updates for related fields
+    - State persistence to URL on step navigation
+* **Validation**: 
+  - **Zod** schemas for each step matching SII requirements
+  - Validation on field blur and before step navigation
+  - Error messages in Italian
+  - No validation state in URL (recalculate on mount)
 * **XML Generation**: Implement a pure TypeScript utility that maps form state to DOM objects and serializes to UTF-8 XML. Use the provided `xml-schema.xsd` for validation (via an in-browser XSD validator such as `xsd-schema-validator` compiled to WASM).
-* **State Management**: React Context & hooks for wizard state, with NuQS managing URL-synced persistence. No backend API.
+* **Type Safety**: 
+  - Strict TypeScript interfaces for all URL parameters
+  - Zod schema inference for form data types
+  - Mapped types for abbreviated → full field names
 * **Testing**: Unit tests for validation rules; integration test that generates a sample offer and asserts XSD validity.
 
 ## 8. Success Metrics
@@ -420,3 +478,38 @@ flowchart TD
     style CheckElec fill:#f9f,stroke:#333,stroke-width:2px
     style CheckBands fill:#f9f,stroke:#333,stroke-width:2px
 ```
+
+## 10. Implementation Example
+
+Example of step hook implementation:
+
+```typescript
+// hooks/steps/useStep1.ts
+import { parseAsJson } from 'nuqs'
+import { z } from 'zod'
+
+const step1Schema = z.object({
+  piva: z.string().max(16).regex(/^[A-Z0-9]+$/),
+  cod: z.string().max(32).regex(/^[A-Z0-9]+$/)
+})
+
+export function useStep1() {
+  const [data, setData] = useQueryState('s1', 
+    parseAsJson(step1Schema.parse)
+      .withDefault({ piva: '', cod: '' })
+      .withOptions({ clearOnDefault: true })
+  )
+  
+  return {
+    data,
+    setData,
+    validate: () => step1Schema.safeParse(data)
+  }
+}
+```
+
+## 11. Open Questions
+
+1. Should we implement URL compression (e.g., lz-string) if users create very complex offers that exceed URL length limits?
+2. Should the XML preview auto-update with every keystroke or only on step completion?
+3. Should we implement an import feature to load data from previously generated XML files?
