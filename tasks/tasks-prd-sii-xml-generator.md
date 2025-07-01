@@ -35,7 +35,7 @@
   - [x] 1.5 Update `app/page.tsx` with Italian text and link to SII wizard
   - [x] 1.6 Create `lib/sii/field-mappings.ts` with abbreviated field name mappings for all 18 steps
   - [x] 1.7 Implement URL state persistence helper functions for batching updates
-  - [ ] 1.8 Set up TypeScript configuration for Zod type inference
+  - [x] 1.8 Set up TypeScript configuration for Zod type inference
 
 - [ ] 2.0 Implement Zod validation schemas and field mappings
   - [ ] 2.1 Create `lib/sii/constants.ts` with all SII enumerations and allowed values
