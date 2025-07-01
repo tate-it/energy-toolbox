@@ -21,7 +21,7 @@
 ## Tasks
 
 - [ ] 1.0 Set up project infrastructure and core wizard architecture
-  - [ ] 1.1 Install required dependencies (Stepperize, NuQS, xsd-schema-validator WASM, xml-js or similar XML library)
+  - [x] 1.1 Install required dependencies (Stepperize, NuQS, xsd-schema-validator WASM, xml-js or similar XML library)
   - [ ] 1.2 Create the main wizard page at `app/sii-wizard/page.tsx` with basic layout and structure
   - [ ] 1.3 Implement `wizard-provider.tsx` with React Context for centralized wizard state management
   - [ ] 1.4 Build `wizard-stepper.tsx` component using Stepperize library with progress indicator and navigation
