@@ -341,6 +341,7 @@ Optional section, can occur multiple times.
 * Adopt a **clean, minimal wizard layout** with clearly labeled steps and breadcrumb progress.
 * Use standard Next.js / React components with Tailwind or simple CSS modules—avoid heavy custom styling.
 * Keep field groupings consistent with SII document chapter order to aid familiarity.
+* **Localization**: All user interface text, labels, error messages, help text, and instructions MUST be in Italian language to match the target audience and SII documentation.
 
 ## 7. Technical Considerations
 
