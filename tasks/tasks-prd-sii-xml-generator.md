@@ -1,6 +1,8 @@
 ## Relevant Files
 
 - `app/sii-wizard/page.tsx` - Main wizard page component that orchestrates the entire multi-step flow
+- `app/page.tsx` - Home page with link to SII wizard (updated)
+- `app/layout.tsx` - Root layout with Italian metadata (updated)
 - `app/sii-wizard/page.test.tsx` - Unit tests for the wizard page component
 - `components/sii-wizard/wizard-provider.tsx` - React Context provider for wizard state management
 - `components/sii-wizard/wizard-stepper.tsx` - Stepper navigation component using Stepperize library
@@ -22,7 +24,7 @@
 
 - [ ] 1.0 Set up project infrastructure and core wizard architecture
   - [x] 1.1 Install required dependencies (Stepperize, NuQS, xsd-schema-validator WASM, xml-js or similar XML library)
-  - [ ] 1.2 Create the main wizard page at `app/sii-wizard/page.tsx` with basic layout and structure
+  - [x] 1.2 Create the main wizard page at `app/sii-wizard/page.tsx` with basic layout and structure
   - [ ] 1.3 Implement `wizard-provider.tsx` with React Context for centralized wizard state management
   - [ ] 1.4 Build `wizard-stepper.tsx` component using Stepperize library with progress indicator and navigation
   - [ ] 1.5 Configure NuQS for URL-based state persistence and implement shareable URL functionality
