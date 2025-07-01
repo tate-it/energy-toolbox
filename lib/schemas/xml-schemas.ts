@@ -9,14 +9,14 @@ import { z } from 'zod'
 export type XMLElement = {
   name: string
   attributes?: Record<string, string> | undefined
-  content?: string | any[] | undefined
+  content?: string | unknown[] | undefined
   children?: XMLElement[] | undefined
 }
 
 export const XMLElementSchema: z.ZodType<XMLElement> = z.object({
   name: z.string().min(1, 'Nome elemento XML richiesto'),
   attributes: z.record(z.string()).optional(),
-  content: z.union([z.string(), z.array(z.any())]).optional(),
+  content: z.union([z.string(), z.array(z.unknown())]).optional(),
   children: z.array(z.lazy(() => XMLElementSchema)).optional()
 }) as z.ZodType<XMLElement>
 

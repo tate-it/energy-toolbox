@@ -7,10 +7,7 @@
 
 import { z } from 'zod'
 import type {
-  Step1Data, Step2Data, Step3Data, Step4Data, Step5Data, Step6Data,
-  Step7Data, Step8Data, Step9Data, Step10Data, Step11Data, Step12Data,
-  Step13Data, Step14Data, Step15Data, Step16Data, Step17Data, Step18Data,
-  SIIWizardData, PartialSIIWizardData
+  PartialSIIWizardData
 } from './types'
 
 // =====================================================
@@ -257,14 +254,14 @@ export function createEnhancedStep10Schema(wizardData: PartialSIIWizardData) {
 /**
  * Validate multiple steps with cross-step dependencies
  */
-export function validateWizardSteps(
+export async function validateWizardSteps(
   data: PartialSIIWizardData,
   stepsToValidate: number[]
-): {
+): Promise<{
   success: boolean
   stepResults: Record<number, { success: boolean; errors?: Record<string, string> }>
   crossStepErrors: string[]
-} {
+}> {
   const stepResults: Record<number, { success: boolean; errors?: Record<string, string> }> = {}
   const crossStepErrors: string[] = []
 
@@ -290,8 +287,8 @@ export function validateWizardSteps(
           break
         default:
           // Use regular schema import for other steps
-          const { [`Step${stepNumber}Schema`]: regularSchema } = require(`./schemas/step${stepNumber}`)
-          schema = regularSchema
+          const schemaModule = await import(`./schemas/step${stepNumber}`)
+          schema = schemaModule[`Step${stepNumber}Schema`]
       }
 
       const result = schema.safeParse(stepData)
@@ -308,7 +305,7 @@ export function validateWizardSteps(
         }
         stepResults[stepNumber] = { success: false, errors }
       }
-    } catch (error) {
+    } catch {
       stepResults[stepNumber] = { 
         success: false, 
         errors: { general: 'Errore di validazione schema' }

@@ -124,7 +124,7 @@ export function isStep11Complete(data: Partial<Step11Data>): boolean {
  */
 export function getStep11FieldError(
   fieldName: keyof Step11Data,
-  value: any,
+  value: unknown,
   contextData?: Partial<Step11Data>
 ): string | null {
   const testData = { ...Step11Defaults, ...contextData, [fieldName]: value }
@@ -293,7 +293,7 @@ export function getTimeBandTypesGrouped(): {
   const peakOffPeak: Array<{ value: TipologiaFasce; label: string; description: string; bandCount: number }> = []
   const biHourly: Array<{ value: TipologiaFasce; label: string; description: string; bandCount: number }> = []
   
-  Object.entries(TIPOLOGIA_FASCE).forEach(([key, value]) => {
+  Object.entries(TIPOLOGIA_FASCE).forEach(([, value]) => {
     const type = value as TipologiaFasce
     const category = getTimeBandCategory(type)
     const complexity = getTimeBandComplexity(type)

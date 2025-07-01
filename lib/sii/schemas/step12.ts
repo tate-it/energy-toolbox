@@ -10,8 +10,6 @@ import { z } from 'zod';
 import { 
   TIPOLOGIA_FASCE, 
   TIPOLOGIA_FASCE_LABELS,
-  FASCIA_COMPONENTE,
-  FASCIA_COMPONENTE_LABELS,
   type TipologiaFasce as TipologiaFasceType 
 } from '../constants';
 
@@ -130,7 +128,7 @@ export const Step12Schema = z.object({
   timeFields.forEach(timeField => {
     if (timeField) {
       const timeRanges = timeField.split(',');
-      timeRanges.forEach((range, index) => {
+      timeRanges.forEach((range) => {
         const trimmedRange = range.trim();
         const [start, end] = trimmedRange.split('-');
         if (start && end) {
@@ -202,8 +200,6 @@ export function getTimeBandComplexity(configurazione: TipologiaFasceType): 'semp
  * Get required time bands for configuration
  */
 export function getRequiredTimeBands(configurazione: TipologiaFasceType): string[] {
-  const bands: string[] = [];
-  
   switch (configurazione) {
     case TIPOLOGIA_FASCE.MONORARIO:
       return ['F1'];
@@ -393,7 +389,6 @@ export function validateTimeBandConfiguration(data: Step12Data): {
   const warnings: string[] = [];
 
   // Check if required fields are present
-  const requiredBands = getRequiredTimeBands(data.CONFIGURAZIONE_FASCE);
   const complexity = getTimeBandComplexity(data.CONFIGURAZIONE_FASCE);
 
   if (complexity === 'complesso') {
@@ -420,7 +415,7 @@ export function validateTimeBandConfiguration(data: Step12Data): {
 /**
  * Convert to XML-compatible format
  */
-export function formatForXML(data: Step12Data): Record<string, any> {
+export function formatForXML(data: Step12Data): Record<string, unknown> {
   return {
     TipologiaFasce: data.CONFIGURAZIONE_FASCE,
     FasciaF1: data.FASCIA_F1 || '',

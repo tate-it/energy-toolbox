@@ -78,7 +78,7 @@ export type PartialSIIWizardData = {
 }
 
 // Export step validation results
-export interface StepValidationResult<T = any> {
+export interface StepValidationResult<T = unknown> {
   success: boolean
   data?: T
   errors?: Record<string, string>
@@ -224,7 +224,7 @@ export const WIZARD_STEPS_METADATA: Record<number, StepMetadata> = {
 export type StepNumber = keyof typeof WIZARD_STEPS_METADATA
 
 // Export form validation state types
-export interface FormValidationState<T = Record<string, any>> {
+export interface FormValidationState<T = Record<string, unknown>> {
   data: T
   errors: Record<string, string>
   touched: Record<string, boolean>
@@ -282,7 +282,7 @@ export interface URLStateOptions {
 
 export interface StepURLState {
   stepNumber: StepNumber
-  data: Record<string, any>
+  data: Record<string, unknown>
   isComplete: boolean
   lastModified: string
 }

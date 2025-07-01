@@ -4,7 +4,7 @@
  */
 
 import { z } from 'zod'
-import { RequiredStringSchema, OptionalStringSchema, NumericCodeSchema } from './base'
+import { RequiredStringSchema, OptionalStringSchema } from './base'
 
 /**
  * Tipo Mercato enum schema

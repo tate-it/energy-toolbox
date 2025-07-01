@@ -13,10 +13,7 @@ import {
   MACROAREA_COMPONENTE,
   MACROAREA_COMPONENTE_LABELS,
   UNITA_MISURA,
-  UNITA_MISURA_LABELS,
-  type TipologiaComponente,
-  type MacroareaComponente,
-  type UnitaMisura 
+  UNITA_MISURA_LABELS
 } from '../constants';
 
 // =====================================================
@@ -465,8 +462,8 @@ export function validateComponentConfiguration(data: Step14Data): {
 /**
  * Convert to XML-compatible format
  */
-export function formatForXML(data: Step14Data): Record<string, any> {
-  const xmlData: Record<string, any> = {
+export function formatForXML(data: Step14Data): Record<string, unknown> {
+  const xmlData: Record<string, unknown> = {
     TipologiaComponente: data.TIPOLOGIA_COMPONENTE,
     MacroareaComponente: data.MACROAREA_COMPONENTE,
     Valore: data.VALORE.toFixed(2),

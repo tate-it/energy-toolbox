@@ -161,7 +161,7 @@ export function isStep9Complete(data: Partial<Step9Data>): boolean {
  */
 export function getStep9FieldError(
   fieldName: keyof Step9Data,
-  value: any,
+  value: unknown,
   contextData?: Partial<Step9Data>
 ): string | null {
   // For conditional fields, we need context
@@ -213,7 +213,7 @@ export function getAvailablePaymentMethods(): Array<{
   label: string
   description: string
 }> {
-  return Object.entries(MODALITA_PAGAMENTO).map(([key, value]) => ({
+  return Object.entries(MODALITA_PAGAMENTO).map(([, value]) => ({
     value: value as ModalitaPagamento,
     label: MODALITA_PAGAMENTO_LABELS[value as ModalitaPagamento],
     description: getPaymentMethodDescription(value as ModalitaPagamento)

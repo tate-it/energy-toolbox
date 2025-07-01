@@ -3,7 +3,7 @@
  * Delays function execution until after a specified delay has passed since the last invocation
  */
 
-export type DebouncedFunction<T extends (...args: any[]) => any> = {
+export type DebouncedFunction<T extends (...args: unknown[]) => unknown> = {
   (...args: Parameters<T>): void;
   cancel: () => void;
   flush: () => void;
@@ -15,7 +15,7 @@ export type DebouncedFunction<T extends (...args: any[]) => any> = {
  * @param delay The delay in milliseconds
  * @returns A debounced version of the function with cancel and flush methods
  */
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   delay: number
 ): DebouncedFunction<T> {

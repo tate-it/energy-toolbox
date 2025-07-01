@@ -25,7 +25,7 @@ export default function Home() {
           <CardContent>
             <Button asChild className="w-full sm:w-auto">
               <Link href="/sii-wizard">
-                Inizia la creazione dell'offerta
+                Inizia la creazione dell&apos;offerta
               </Link>
             </Button>
           </CardContent>

@@ -126,7 +126,7 @@ export const Step3Descriptions = {
  * Returns Italian labels for all activation methods
  */
 export function getActivationMethodLabels(): Array<{ value: string; label: string }> {
-  return Object.entries(MODALITA_ATTIVAZIONE).map(([key, value]) => ({
+  return Object.entries(MODALITA_ATTIVAZIONE).map(([, value]) => ({
     value,
     label: MODALITA_ATTIVAZIONE_LABELS[value as keyof typeof MODALITA_ATTIVAZIONE_LABELS] || value
   }))
@@ -177,7 +177,7 @@ export function isStep3Complete(data: Partial<Step3Data>): boolean {
  */
 export function getStep3FieldError(
   fieldName: keyof Step3Data,
-  value: any,
+  value: unknown,
   allData?: Partial<Step3Data>
 ): string | null {
   // For fields that depend on other fields, validate the whole object
@@ -248,7 +248,7 @@ export function hasActivationMethodDuplicates(modalita: string[]): boolean {
  */
 export type Step3ValidationState = {
   [K in keyof Step3Data]: {
-    value: any
+    value: unknown
     error: string | null
     isValid: boolean
   }

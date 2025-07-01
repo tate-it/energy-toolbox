@@ -11,16 +11,11 @@ import {
   TIPOLOGIA_SCONTO,
   TIPOLOGIA_SCONTO_LABELS,
   VALIDITA_SCONTO,
-  VALIDITA_SCONTO_LABELS,
   IVA_SCONTO,
-  IVA_SCONTO_LABELS,
   CONDIZIONE_APPLICAZIONE_SCONTO,
   CONDIZIONE_APPLICAZIONE_SCONTO_LABELS,
   UNITA_MISURA,
-  UNITA_MISURA_LABELS,
-  type TipologiaSconto,
-  type ValiditaSconto,
-  type CondizioneApplicazioneSconto 
+  UNITA_MISURA_LABELS
 } from '../constants';
 
 // =====================================================
@@ -236,7 +231,7 @@ export const Step17Schema = z.object({
 
   // Calculate total discount impact
   let totalAnnualDiscount = 0;
-  data.SCONTI.forEach((sconto, index) => {
+  data.SCONTI.forEach((sconto) => {
     if (sconto.UNITA_MISURA === UNITA_MISURA.EURO_ANNO) {
       totalAnnualDiscount += sconto.VALORE_SCONTO;
     } else if (sconto.UNITA_MISURA === UNITA_MISURA.PERCENTUALE) {
@@ -544,8 +539,8 @@ export function formatDiscountsForDisplay(data: Step17Data): string {
 /**
  * Convert to XML-compatible format
  */
-export function formatForXML(data: Step17Data): Record<string, any> {
-  const xmlData: Record<string, any> = {
+export function formatForXML(data: Step17Data): Record<string, unknown> {
+  const xmlData: Record<string, unknown> = {
     Sconti: data.SCONTI.map(sconto => ({
       TipoSconto: sconto.TIPO_SCONTO,
       ValoreSconto: sconto.VALORE_SCONTO.toFixed(2),

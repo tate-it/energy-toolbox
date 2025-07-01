@@ -11,8 +11,7 @@ import {
   TIPO_DISPACCIAMENTO, 
   TIPO_DISPACCIAMENTO_LABELS,
   UNITA_MISURA,
-  UNITA_MISURA_LABELS,
-  type TipoDispacciamento 
+  UNITA_MISURA_LABELS
 } from '../constants';
 
 // =====================================================
@@ -520,8 +519,8 @@ export function validateDispatchingConfiguration(data: Step13Data): {
 /**
  * Convert to XML-compatible format
  */
-export function formatForXML(data: Step13Data): Record<string, any> {
-  const xmlData: Record<string, any> = {
+export function formatForXML(data: Step13Data): Record<string, unknown> {
+  const xmlData: Record<string, unknown> = {
     TipoDisp: data.TIPO_DISPACCIAMENTO,
     ModalitaCalcolo: data.MODALITA_CALCOLO,
     InclusoPrezzo: data.INCLUSO_PREZZO ? 'SI' : 'NO'

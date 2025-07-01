@@ -281,10 +281,10 @@ export function expandField<T extends StepId>(
 // Utility for transforming objects with full field names to abbreviated ones
 export function abbreviateFieldsObject<T extends StepId>(
   stepId: T,
-  obj: Record<string, any>
-): Record<string, any> {
+  obj: Record<string, unknown>
+): Record<string, unknown> {
   const mappings = ALL_FIELD_MAPPINGS[stepId];
-  const result: Record<string, any> = {};
+  const result: Record<string, unknown> = {};
   
   for (const [fullField, value] of Object.entries(obj)) {
     const abbreviatedField = mappings[fullField as keyof typeof mappings];
@@ -302,10 +302,10 @@ export function abbreviateFieldsObject<T extends StepId>(
 // Utility for transforming objects with abbreviated field names back to full ones
 export function expandFieldsObject<T extends StepId>(
   stepId: T,
-  obj: Record<string, any>
-): Record<string, any> {
+  obj: Record<string, unknown>
+): Record<string, unknown> {
   const reverseMappings = ALL_REVERSE_MAPPINGS[stepId];
-  const result: Record<string, any> = {};
+  const result: Record<string, unknown> = {};
   
   for (const [abbreviatedField, value] of Object.entries(obj)) {
     const fullField = reverseMappings[abbreviatedField];

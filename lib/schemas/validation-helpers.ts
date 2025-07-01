@@ -72,8 +72,8 @@ export function validatePartial<T extends z.ZodRawShape>(
  * Combines multiple validation results
  * Enhanced with noFallthroughCasesInSwitch for exhaustive checking
  */
-export function combineValidationResults<T extends Record<string, any>>(
-  results: Record<keyof T, ValidationResult<any>>
+export function combineValidationResults<T extends Record<string, unknown>>(
+  results: Record<keyof T, ValidationResult<unknown>>
 ): ValidationResult<T> {
   const combinedData: Partial<T> = {}
   const combinedErrors: string[] = []
@@ -82,7 +82,7 @@ export function combineValidationResults<T extends Record<string, any>>(
   
   for (const [key, result] of Object.entries(results)) {
     if (result.success && result.data !== undefined) {
-      (combinedData as any)[key] = result.data
+      (combinedData as Record<string, unknown>)[key] = result.data
     } else {
       hasErrors = true
       
@@ -127,7 +127,7 @@ export function createValidator<T>(schema: z.ZodSchema<T>) {
     
     validatePartial: (data: Partial<unknown>): ValidationResult<Partial<T>> => {
       // Use the schema.partial() method if available, otherwise validate normally
-      const partialSchema = 'partial' in schema ? (schema as any).partial() : schema
+      const partialSchema = 'partial' in schema ? (schema as { partial(): z.ZodSchema<Partial<T>> }).partial() : schema
       return validateWithSchema(partialSchema, data)
     },
     

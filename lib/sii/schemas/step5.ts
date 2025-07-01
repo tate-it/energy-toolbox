@@ -26,8 +26,7 @@ import {
   FASCE_ORARIE,
   IDX_PREZZO_ENERGIA,
   type PrezzoRiferimentoType,
-  type FasceOrarieType,
-  type IndicizzazioneType
+  type FasceOrarieType
 } from '../constants'
 
 /**
@@ -295,7 +294,7 @@ export function isStep5Complete(data: Partial<Step5Data>): boolean {
  */
 export function getStep5FieldError(
   fieldName: keyof Step5Data,
-  value: any,
+  value: unknown,
   contextData?: Partial<Step5Data>
 ): string | null {
   // For conditional fields, we need context

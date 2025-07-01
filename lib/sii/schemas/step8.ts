@@ -285,7 +285,7 @@ export function isStep8Complete(data: Partial<Step8Data>): boolean {
  */
 export function getStep8FieldError(
   fieldName: keyof Step8Data,
-  value: any,
+  value: unknown,
   contextData?: Partial<Step8Data>
 ): string | null {
   // For conditional fields, we need context

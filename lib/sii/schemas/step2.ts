@@ -290,7 +290,7 @@ export function isStep2Complete(data: Partial<Step2Data>): boolean {
  */
 export function getStep2FieldError(
   fieldName: keyof Step2Data,
-  value: any,
+  value: unknown,
   allData?: Partial<Step2Data>
 ): string | null {
   // For fields that depend on other fields, validate the whole object
@@ -361,7 +361,7 @@ export function getDurationDisplayText(duration: number): string {
  */
 export type Step2ValidationState = {
   [K in keyof Step2Data]: {
-    value: any
+    value: unknown
     error: string | null
     isValid: boolean
   }

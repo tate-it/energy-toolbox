@@ -127,7 +127,7 @@ export function isStep10Complete(data: Partial<Step10Data>): boolean {
  */
 export function getStep10FieldError(
   fieldName: keyof Step10Data,
-  value: any,
+  value: unknown,
   contextData?: Partial<Step10Data>
 ): string | null {
   const testData = { ...Step10Defaults, ...contextData, [fieldName]: value }
@@ -165,7 +165,7 @@ export function getComponentLabel(code: ComponenteRegolato): string {
  * Helper for market type validation
  */
 export function isElectricityComponent(code: ComponenteRegolato): boolean {
-  return Object.values(COMPONENTI_REGOLATE_ELETTRICITA).includes(code as any)
+  return Object.values(COMPONENTI_REGOLATE_ELETTRICITA).includes(code as ComponenteRegolato)
 }
 
 /**
@@ -173,7 +173,7 @@ export function isElectricityComponent(code: ComponenteRegolato): boolean {
  * Helper for market type validation
  */
 export function isGasComponent(code: ComponenteRegolato): boolean {
-  return Object.values(COMPONENTI_REGOLATE_GAS).includes(code as any)
+  return Object.values(COMPONENTI_REGOLATE_GAS).includes(code as ComponenteRegolato)
 }
 
 /**
@@ -186,7 +186,7 @@ export function getAvailableComponentsForMarket(marketType?: TipoMercato): Array
   description: string
   category: 'electricity' | 'gas'
 }> {
-  const allComponents = Object.entries(COMPONENTI_REGOLATE).map(([key, value]) => ({
+  const allComponents = Object.entries(COMPONENTI_REGOLATE).map(([, value]) => ({
     value: value as ComponenteRegolato,
     label: COMPONENTI_REGOLATE_LABELS[value as ComponenteRegolato],
     description: getComponentDescription(value as ComponenteRegolato),
@@ -411,7 +411,7 @@ export function getComponentsGroupedByMarket(): {
   const electricity: Array<{ value: ComponenteRegolato; label: string; description: string }> = []
   const gas: Array<{ value: ComponenteRegolato; label: string; description: string }> = []
   
-  Object.entries(COMPONENTI_REGOLATE).forEach(([key, value]) => {
+  Object.entries(COMPONENTI_REGOLATE).forEach(([, value]) => {
     const code = value as ComponenteRegolato
     const item = {
       value: code,

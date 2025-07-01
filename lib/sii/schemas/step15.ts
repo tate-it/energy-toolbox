@@ -10,9 +10,7 @@ import { z } from 'zod';
 import { 
   TIPOLOGIA_CONDIZIONE,
   TIPOLOGIA_CONDIZIONE_LABELS,
-  LIMITANTE,
-  LIMITANTE_LABELS,
-  type TipologiaCondizione 
+  LIMITANTE
 } from '../constants';
 
 // =====================================================
@@ -548,8 +546,8 @@ export function formatContractualConditionsForDisplay(data: Step15Data): string 
 /**
  * Convert to XML-compatible format
  */
-export function formatForXML(data: Step15Data): Record<string, any> {
-  const xmlData: Record<string, any> = {
+export function formatForXML(data: Step15Data): Record<string, unknown> {
+  const xmlData: Record<string, unknown> = {
     CondizioniGenerali: data.CONDIZIONI_GENERALI
   };
 

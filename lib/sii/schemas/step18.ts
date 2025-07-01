@@ -10,10 +10,7 @@ import { z } from 'zod';
 import { 
   MACROAREA_SERVIZI,
   MACROAREA_SERVIZI_LABELS,
-  UNITA_MISURA,
-  UNITA_MISURA_LABELS,
-  type MacroareaServizi,
-  type UnitaMisura 
+  UNITA_MISURA
 } from '../constants';
 
 // =====================================================
@@ -605,7 +602,6 @@ export function formatServicesForDisplay(data: Step18Data): string {
   }
 
   const mandatoryCount = servizi.filter(s => s.OBBLIGATORIO).length;
-  const optionalCount = servizi.length - mandatoryCount;
 
   let display = `${servizi.length} servizi`;
   if (mandatoryCount > 0) {
@@ -626,8 +622,8 @@ export function formatServicesForDisplay(data: Step18Data): string {
 /**
  * Convert to XML-compatible format
  */
-export function formatForXML(data: Step18Data): Record<string, any> {
-  const xmlData: Record<string, any> = {};
+export function formatForXML(data: Step18Data): Record<string, unknown> {
+  const xmlData: Record<string, unknown> = {};
 
   if (data.SERVIZI && data.SERVIZI.length > 0) {
     xmlData.Servizi = data.SERVIZI.map(servizio => ({

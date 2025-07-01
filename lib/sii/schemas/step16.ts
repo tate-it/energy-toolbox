@@ -523,8 +523,8 @@ export function formatGeographicCoverageForDisplay(data: Step16Data): string {
 /**
  * Convert to XML-compatible format
  */
-export function formatForXML(data: Step16Data): Record<string, any> {
-  const xmlData: Record<string, any> = {
+export function formatForXML(data: Step16Data): Record<string, unknown> {
+  const xmlData: Record<string, unknown> = {
     ZoneGeografiche: data.ZONE_GEOGRAFICHE.join(';'),
     TipoCopertura: data.TIPO_COPERTURA
   };

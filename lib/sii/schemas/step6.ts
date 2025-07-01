@@ -267,7 +267,7 @@ export function isStep6Complete(data: Partial<Step6Data>): boolean {
  */
 export function getStep6FieldError(
   fieldName: keyof Step6Data,
-  value: any,
+  value: unknown,
   contextData?: Partial<Step6Data>
 ): string | null {
   // For cross-field validation, we need context

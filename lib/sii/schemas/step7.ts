@@ -287,7 +287,7 @@ export function isStep7Complete(data: Partial<Step7Data>): boolean {
  */
 export function getStep7FieldError(
   fieldName: keyof Step7Data,
-  value: any,
+  value: unknown,
   contextData?: Partial<Step7Data>
 ): string | null {
   // For conditional fields, we need context
