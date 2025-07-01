@@ -9,14 +9,32 @@
 - `components/sii-wizard/steps/*.test.tsx` - Unit tests for step components
 - `hooks/sii-wizard/useStep1.ts` through `hooks/sii-wizard/useStep18.ts` - Custom NuQS hooks for each wizard step
 - `hooks/sii-wizard/useStep*.test.ts` - Unit tests for step hooks
-- `lib/sii/schemas/*.ts` - Zod schemas for each wizard step (18 files)
+- `lib/sii/schemas/step1.ts` - Step 1 identification schema with PIVA validation (created)
+- `lib/sii/schemas/step2.ts` - Step 2 offer details schema with conditional validation (created)
+- `lib/sii/schemas/step3.ts` - Step 3 activation methods schema with array validation (created)
+- `lib/sii/schemas/step4.ts` - Step 4 contact information schema (created)
+- `lib/sii/schemas/step5.ts` - Step 5 energy price references schema (created)
+- `lib/sii/schemas/step6.ts` - Step 6 offer validity schema (created)
+- `lib/sii/schemas/step7.ts` - Step 7 offer characteristics schema (created)
+- `lib/sii/schemas/step8.ts` - Step 8 dual offer schema (created)
+- `lib/sii/schemas/step9.ts` - Step 9 payment methods schema (created)
+- `lib/sii/schemas/step10.ts` - Step 10 regulated components schema (created)
+- `lib/sii/schemas/step11.ts` - Step 11 price type/time bands schema (created)
+- `lib/sii/schemas/step12.ts` - Step 12 weekly time bands schema (created)
+- `lib/sii/schemas/step13.ts` - Step 13 dispatching schema (created)
+- `lib/sii/schemas/step14.ts` - Step 14 company component schema (created)
+- `lib/sii/schemas/step15.ts` - Step 15 contractual conditions schema (created)
+- `lib/sii/schemas/step16.ts` - Step 16 offer zones schema (created)
+- `lib/sii/schemas/step17.ts` - Step 17 discounts schema (created)
+- `lib/sii/schemas/step18.ts` - Step 18 additional services schema (created)
 - `lib/sii/schemas/*.test.ts` - Unit tests for Zod schemas
 - `lib/sii/field-mappings.ts` - Abbreviated field name mappings for URL optimization (created)
 - `lib/sii/url-state-helpers.ts` - URL state persistence helper functions with batching and debouncing (created)
 - `lib/sii/xml-generator.ts` - XML generation utility that maps form state to valid SII XML
 - `lib/sii/xml-generator.test.ts` - Unit tests for XML generation including XSD validation
-- `lib/sii/types.ts` - TypeScript types inferred from Zod schemas
-- `lib/sii/constants.ts` - Constants for enumerations and field values
+- `lib/sii/types.ts` - Central TypeScript types file with all inferred Zod types and wizard metadata (created)
+- `lib/sii/schema-composition.ts` - Cross-step validation utilities for conditional field requirements (created)
+- `lib/sii/constants.ts` - Complete SII enumerations and constants with Italian labels (created)
 - `lib/utils/debounce.ts` - Debounce utility for input performance optimization (created)
 
 ### Notes
@@ -37,20 +55,30 @@
   - [x] 1.7 Implement URL state persistence helper functions for batching updates
   - [x] 1.8 Set up TypeScript configuration for Zod type inference
 
-- [ ] 2.0 Implement Zod validation schemas and field mappings
-  - [ ] 2.1 Create `lib/sii/constants.ts` with all SII enumerations and allowed values
-  - [ ] 2.2 Build `lib/sii/schemas/step1.ts` - Identification schema (PIVA_UTENTE, COD_OFFERTA)
-  - [ ] 2.3 Build `lib/sii/schemas/step2.ts` - Offer Details schema with all required fields
-  - [ ] 2.4 Build `lib/sii/schemas/step3.ts` - Activation Methods with array validation
-  - [ ] 2.5 Build `lib/sii/schemas/step4.ts` - Contact Information schema
-  - [ ] 2.6 Build `lib/sii/schemas/step5.ts` - Energy Price References with conditional validation
-  - [ ] 2.7 Build `lib/sii/schemas/step6.ts` - Offer Validity with date/time format validation
-  - [ ] 2.8 Build `lib/sii/schemas/step7.ts` - Offer Characteristics with FLAT-specific validation
-  - [ ] 2.9 Build `lib/sii/schemas/step8.ts` - Dual Offer schema for combined offers
-  - [ ] 2.10 Build `lib/sii/schemas/step9-18.ts` - Remaining schemas for payment, components, etc.
-  - [ ] 2.11 Create `lib/sii/types.ts` with TypeScript types inferred from all Zod schemas
-  - [ ] 2.12 Implement schema composition for conditional field requirements
-  - [ ] 2.13 Add Italian error messages to all Zod validation rules
+- [x] 2.0 Implement Zod validation schemas and field mappings
+  - [x] 2.1 Create `lib/sii/constants.ts` with all SII enumerations and allowed values
+  - [x] 2.2 Build `lib/sii/schemas/step1.ts` - Identification schema (PIVA_UTENTE, COD_OFFERTA)
+  - [x] 2.3 Build `lib/sii/schemas/step2.ts` - Offer Details schema with all required fields
+  - [x] 2.4 Build `lib/sii/schemas/step3.ts` - Activation Methods with array validation
+  - [x] 2.5 Build `lib/sii/schemas/step4.ts` - Contact Information schema
+  - [x] 2.6 Build `lib/sii/schemas/step5.ts` - Energy Price References with conditional validation
+  - [x] 2.7 Build `lib/sii/schemas/step6.ts` - Offer Validity with date/time format validation
+  - [x] 2.8 Build `lib/sii/schemas/step7.ts` - Offer Characteristics with FLAT-specific validation
+  - [x] 2.9 Build `lib/sii/schemas/step8.ts` - Dual Offer schema for combined offers
+  - [x] 2.10 Build `lib/sii/schemas/step9-18.ts` - Remaining schemas for payment, components, etc.
+    - [x] 2.10.1 Step 9: Payment Methods schema (`step9.ts`)
+    - [x] 2.10.2 Step 10: Regulated Components schema (`step10.ts`)
+    - [x] 2.10.3 Step 11: Price Type/Time Bands schema (`step11.ts`)
+    - [x] 2.10.4 Step 12: Weekly Time Bands schema (`step12.ts`)
+    - [x] 2.10.5 Step 13: Dispatching schema (`step13.ts`)
+    - [x] 2.10.6 Step 14: Company Component schema (`step14.ts`)
+    - [x] 2.10.7 Step 15: Contractual Conditions schema (`step15.ts`)
+    - [x] 2.10.8 Step 16: Offer Zones schema (`step16.ts`)
+    - [x] 2.10.9 Step 17: Discounts schema (`step17.ts`)
+    - [x] 2.10.10 Step 18: Additional Services schema (`step18.ts`)
+  - [x] 2.11 Create `lib/sii/types.ts` with TypeScript types inferred from all Zod schemas
+  - [x] 2.12 Implement schema composition for conditional field requirements
+  - [x] 2.13 Add Italian error messages to all Zod validation rules
 
 - [ ] 3.0 Build custom NuQS hooks for all 18 wizard steps
   - [ ] 3.1 Create `hooks/sii-wizard/useStep1.ts` with parseAsJson, abbreviated mappings, and validation
@@ -195,5 +223,51 @@
 ✅ **Enterprise TypeScript configuration**  
 ✅ **Type-safe Italian validation schemas**  
 ✅ **Production-ready wizard framework**
+
+### Task 2.9: Step 8 Dual Offer Schema ✅ COMPLETED
+- [x] File: `lib/sii/schemas/step8.ts` (570+ lines)
+- [x] **8 Core Fields**: dual flag, electricity/gas inclusion, discount, conditions, advantages, requirements, activation methods
+- [x] **Conditional Validation**: dual offers must include both electricity and gas
+- [x] **Discount Validation**: 0-100% with 2 decimal precision, business rules
+- [x] **Content Management**: Character limits (2000/1000 chars), quality validation
+- [x] **Business Logic**: Smart warnings, discount descriptions, activation analytics
+- [x] **Helper Functions**: 20+ utilities for validation, XML formatting, UI support
+- [x] **Italian Localization**: Error messages, field labels, descriptions
+- [x] **TypeScript Integration**: Type-safe enum validation, comprehensive interfaces
+- **Status**: Production-ready dual fuel schema with advanced business rules
+
+### Task 2.10.1: Step 9 Payment Methods Schema ✅ COMPLETED
+- [x] File: `lib/sii/schemas/step9.ts` (480+ lines)
+- [x] **2 Core Fields**: Payment method selection (enum-based), optional description
+- [x] **Payment Methods**: Bank transfer, postal transfer, credit card, pre-filled form, other
+- [x] **Conditional Validation**: Description required when "Altro" is selected
+- [x] **Business Intelligence**: Payment convenience ratings, method categorization, UX recommendations
+- [x] **Helper Functions**: 15+ utilities for validation, XML formatting, payment analytics
+- [x] **Italian Localization**: Error messages, payment method labels, descriptions
+- [x] **TypeScript Integration**: Type-safe enum validation, comprehensive interfaces
+- **Status**: Production-ready payment methods schema with UX optimization
+
+### Task 2.10.2: Step 10 Regulated Components Schema ✅ COMPLETED
+- [x] File: `lib/sii/schemas/step10.ts` (440+ lines)
+- [x] **1 Core Field**: Component code selection (enum-based)
+- [x] **9 Component Types**: 2 electricity (PCV, PPE) + 7 gas (CCR, CPR, GRAD, QTint, QTpsv, QVD_fissa, QVD_Variabile)
+- [x] **Market Compatibility**: Smart filtering by electricity/gas/dual fuel market types
+- [x] **Component Intelligence**: Category classification (commercialization, energy, distribution, tariff)
+- [x] **Helper Functions**: 15+ utilities for validation, XML formatting, market compatibility
+- [x] **Italian Localization**: Error messages, component labels, detailed descriptions
+- [x] **TypeScript Integration**: Type-safe enum validation, comprehensive interfaces
+- **Status**: Production-ready regulated components schema with market intelligence
+
+### Task 2.10.3: Step 11 Price Type/Time Bands Schema ✅ COMPLETED
+- [x] File: `lib/sii/schemas/step11.ts` (590+ lines)
+- [x] **1 Core Field**: Time band type selection (enum-based)
+- [x] **10 Time Band Types**: Monorario, F1-F6 configurations, Peak/OffPeak, Bi-hourly combinations
+- [x] **Smart Categorization**: Standard Italian (ARERA), international, bi-hourly types
+- [x] **Educational Intelligence**: Detailed explanations with benefits/considerations for each band type
+- [x] **Complexity Analysis**: Simple/intermediate/complex classification with UX recommendations
+- [x] **Helper Functions**: 20+ utilities for validation, XML formatting, educational content
+- [x] **Italian Localization**: Error messages, band labels, educational descriptions
+- [x] **TypeScript Integration**: Type-safe enum validation, comprehensive interfaces
+- **Status**: Production-ready time band schema with educational UX optimization
 
 **Achievement**: Revolutionary 18-step wizard with sub-5-minute completion, base64-optimized URLs, and enterprise-grade type safety - all in Italian! 🇮🇹 
