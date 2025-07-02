@@ -7,7 +7,22 @@
 - `components/sii-wizard/wizard-stepper.tsx` - Stepper navigation component using Stepperize library
 - `components/sii-wizard/steps/*.tsx` - Individual step components (18 files, one per wizard step)
 - `components/sii-wizard/steps/*.test.tsx` - Unit tests for step components
-- `hooks/sii-wizard/useStep1.ts` through `hooks/sii-wizard/useStep18.ts` - Custom NuQS hooks for each wizard step
+- `hooks/sii-wizard/useStepFactory.ts` - Reusable step hook factory with smart batch updates for related fields (enhanced)
+- `hooks/sii-wizard/useWizardState.ts` - Central wizard state aggregation hook managing all 18 steps with validation, progress tracking, and navigation helpers (created)
+- `hooks/sii-wizard/useWizardPersistence.ts` - Advanced state persistence hook with auto-save, recovery, navigation history, and URL optimization for wizard navigation (created)
+- `hooks/sii-wizard/useStep1.ts` - Step 1 hook with identification field grouping and cross-validation (enhanced)
+- `hooks/sii-wizard/useStep2.ts` - Step 2 hook with market config, offer content, and structure groupings (enhanced)
+- `hooks/sii-wizard/useStep3.ts` - Step 3 hook for activation methods with array management and conditional description (created)
+- `hooks/sii-wizard/useStep4.ts` - Step 4 hook for contact information with phone/URL validation and HTTPS recommendations (created)
+- `hooks/sii-wizard/useStep5.ts` - Step 5 hook for energy price references with sophisticated conditional field handling (created)
+- `hooks/sii-wizard/useStep6.ts` - Step 6 hook for offer validity with advanced date/time parsing, formatting, and validation (created)
+- `hooks/sii-wizard/useStep7.ts` - Step 7 hook demonstrating advanced min/max range validation and dependencies (created)
+- `hooks/sii-wizard/useStep3.ts` - Step 3 hook with sophisticated array handling for activation methods (simple string arrays) (created)
+- `hooks/sii-wizard/useStep15.ts` - Step 15 hook with complex array handling for contractual conditions (clauses, penalties, guarantees) (created)
+- `hooks/sii-wizard/useStep16.ts` - Step 16 hook with geographic array handling for coverage zones (multiple array types) (created)
+- `hooks/sii-wizard/useStep17.ts` - Step 17 hook with discount array management and cumulative validation (created)
+- `hooks/sii-wizard/useStep18.ts` - Step 18 hook with service portfolio arrays and package management (created)
+- `hooks/sii-wizard/useStep8.ts` through `hooks/sii-wizard/useStep14.ts` - Custom NuQS hooks for remaining wizard steps
 - `hooks/sii-wizard/useStep*.test.ts` - Unit tests for step hooks
 - `lib/sii/schemas/step1.ts` - Step 1 identification schema with PIVA validation (created)
 - `lib/sii/schemas/step2.ts` - Step 2 offer details schema with conditional validation (created)
@@ -81,18 +96,23 @@
   - [x] 2.13 Add Italian error messages to all Zod validation rules
 
 - [ ] 3.0 Build custom NuQS hooks for all 18 wizard steps
-  - [ ] 3.1 Create `hooks/sii-wizard/useStep1.ts` with parseAsJson, abbreviated mappings, and validation
-  - [ ] 3.2 Implement debounced text input updates in all hooks using debounce utility
-  - [ ] 3.3 Add batch update functions for related fields in each hook
-  - [ ] 3.4 Create `hooks/sii-wizard/useStep2-4.ts` for basic form steps
-  - [ ] 3.5 Implement `hooks/sii-wizard/useStep5.ts` with conditional field handling
-  - [ ] 3.6 Build `hooks/sii-wizard/useStep6.ts` with date/time parsing and formatting
-  - [ ] 3.7 Create array-handling hooks for steps with repeatable fields (3, 9, 13-18)
-  - [ ] 3.8 Implement `clearOnDefault: true` for all hooks to minimize URL length
-  - [ ] 3.9 Add validation helper methods to each hook returning Zod SafeParseResult
-  - [ ] 3.10 Create `hooks/sii-wizard/useWizardState.ts` to aggregate all step states
-  - [ ] 3.11 Implement state persistence functions that save to URL on step navigation
-  - [ ] 3.12 Add reset and clear functions to each hook
+  - [x] 3.1 Create `hooks/sii-wizard/useStep1.ts` with parseAsJson, abbreviated mappings, and validation
+  - [x] 3.2 Implement debounced text input updates in all hooks using debounce utility
+  - [x] 3.3 Add batch update functions for related fields in each hook
+  - [x] 3.4 Create `hooks/sii-wizard/useStep2-4.ts` for basic form steps
+  - [x] 3.5 Implement `hooks/sii-wizard/useStep5.ts` with conditional field handling
+  - [x] 3.6 Build `hooks/sii-wizard/useStep6.ts` with date/time parsing and formatting
+  - [x] 3.7 Create array-handling hooks for steps with repeatable fields (3, 15-18)
+  - [x] 3.8 Implement `clearOnDefault: true` for all hooks to minimize URL length
+  - [x] 3.9 Add validation helper methods to each hook returning Zod SafeParseResult
+  - [x] 3.10 Create `hooks/sii-wizard/useWizardState.ts` to aggregate all step states
+  - [x] 3.11 Implement state persistence functions that save to URL on step navigation
+  - [x] 3.12 Add reset and clear functions to each hook ✅ **COMPLETED**
+  - Added 16 comprehensive reset and clear functions to step factory
+  - Smart conditional operations with predicate-based logic
+  - Field state analysis and intelligent recommendations
+  - Category-based operations using related field groups
+  - Preservation logic for protecting valid user input
 
 - [ ] 4.0 Create wizard step components with form controls
   - [ ] 4.1 Build `components/sii-wizard/wizard-stepper.tsx` using Stepperize with Italian labels
