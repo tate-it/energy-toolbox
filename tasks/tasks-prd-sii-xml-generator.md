@@ -1,11 +1,19 @@
 ## Relevant Files
 
-- `app/sii-wizard/page.tsx` - Main wizard page component that orchestrates the entire multi-step flow (implemented)
+- `app/sii-wizard/page.tsx` - Main wizard page component that orchestrates the entire multi-step flow with Step1 integration (updated)
 - `app/page.tsx` - Home page with Italian text and link to SII wizard (verified)
 - `app/layout.tsx` - Root layout with Italian metadata and NuQS adapter (updated)
 - `app/sii-wizard/page.test.tsx` - Unit tests for the wizard page component
-- `components/sii-wizard/wizard-stepper.tsx` - Stepper navigation component using Stepperize library
-- `components/sii-wizard/steps/*.tsx` - Individual step components (18 files, one per wizard step)
+- `components/sii-wizard/wizard-stepper.tsx` - Comprehensive stepper navigation component using Stepperize library with Italian labels, progress tracking, sidebar navigation, mobile responsiveness, and XML export functionality (created)
+- `components/sii-wizard/steps/Step1.tsx` - Step 1 component with PIVA and offer code inputs using reusable form components (refactored)
+- `components/sii-wizard/form/FormField.tsx` - Reusable form input component with validation, labels, and Italian localization (created)
+- `components/sii-wizard/form/FormSelect.tsx` - Reusable select dropdown component with validation and option management (created)
+- `components/sii-wizard/form/FormSection.tsx` - Reusable section wrapper with header, status badges, and icons (created)
+- `components/sii-wizard/form/FormActions.tsx` - Reusable action button group component for common form operations (created)
+- `components/sii-wizard/form/StatusBadge.tsx` - Reusable status indicator component with Italian labels and appropriate styling (created)
+- `components/sii-wizard/form/InfoAlert.tsx` - Reusable information alert component for help and feedback panels (created)
+- `components/sii-wizard/form/index.ts` - Barrel export for all form components (created)
+- `components/sii-wizard/steps/*.tsx` - Individual step components (remaining 17 files, one per wizard step)
 - `components/sii-wizard/steps/*.test.tsx` - Unit tests for step components
 - `hooks/sii-wizard/useStepFactory.ts` - Reusable step hook factory with smart batch updates for related fields (enhanced)
 - `hooks/sii-wizard/useWizardState.ts` - Central wizard state aggregation hook managing all 18 steps with validation, progress tracking, and navigation helpers (created)
@@ -115,16 +123,16 @@
   - Preservation logic for protecting valid user input
 
 - [ ] 4.0 Create wizard step components with form controls
-  - [ ] 4.1 Build `components/sii-wizard/wizard-stepper.tsx` using Stepperize with Italian labels
-  - [ ] 4.2 Create `components/sii-wizard/steps/Step1.tsx` with PIVA and offer code inputs
-  - [ ] 4.3 Implement form components using existing UI components from `components/ui/*`
-  - [ ] 4.4 Add real-time validation display with Italian error messages
-  - [ ] 4.5 Build conditional rendering logic for steps 5, 7, 8, 11, 12, 13
-  - [ ] 4.6 Create repeatable field components with add/remove functionality
-  - [ ] 4.7 Implement `components/sii-wizard/steps/Step2-18.tsx` for all remaining steps
-  - [ ] 4.8 Add step navigation controls with validation before proceeding
-  - [ ] 4.9 Implement progress indicator showing completed/current/remaining steps
-  - [ ] 4.10 Create helper components for complex inputs (date/time pickers, band schedules)
+  - [x] 4.1 Build `components/sii-wizard/wizard-stepper.tsx` using Stepperize with Italian labels
+  - [x] 4.2 Create `components/sii-wizard/steps/Step1.tsx` with PIVA and offer code inputs
+  - [x] 4.3 Implement form components using existing UI components from `components/ui/*`
+  - [x] 4.4 Add real-time validation display with Italian error messages
+  - [x] 4.5 Build conditional rendering logic for steps 5, 7, 8, 11, 12, 13 ✅ **COMPLETED**
+  - [x] 4.6 Create repeatable field components with add/remove functionality ✅ **COMPLETED**
+  - [x] 4.7 Implement `components/sii-wizard/steps/Step2-18.tsx` for all remaining steps ✅ **COMPLETED**
+  - [x] 4.8 Add step navigation controls with validation before proceeding ✅ **COMPLETED**
+  - [x] 4.9 Implement progress indicator showing completed/current/remaining steps ✅ **COMPLETED**
+  - [x] 4.10 Create helper components for complex inputs (date/time pickers, band schedules) ✅ **COMPLETED**
   - [ ] 4.11 Add "Clear All" and "Reset to Defaults" buttons in the wizard header
   - [ ] 4.12 Implement keyboard navigation support for accessibility
 
