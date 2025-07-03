@@ -201,11 +201,59 @@ export default function SIIWizardPage() {
       }
     }, [stepper])
 
+    // Funzione per cancellare tutti i dati
+    const handleClearAll = useCallback(() => {
+      // Reset all steps to initial empty state
+      const clearedStates: Record<string, StepValidationState> = {}
+      Object.keys(stepStates).forEach(stepId => {
+        clearedStates[stepId] = {
+          completed: false,
+          hasErrors: false,
+          validationErrors: [],
+          canProceed: true
+        }
+      })
+      setStepStates(clearedStates)
+      
+      // Navigate to first step
+      stepper.goTo('anagrafica-ditta')
+      
+      console.log('Tutti i dati del wizard sono stati cancellati')
+    }, [stepper])
+
+    // Funzione per ripristinare valori predefiniti
+    const handleResetToDefaults = useCallback(() => {
+      // Set all steps to completed with default values
+      const defaultStates: Record<string, StepValidationState> = {}
+      
+      // List of required steps for easier management
+      const requiredSteps = [
+        'anagrafica-ditta', 'dettaglio-offerta', 'modalita-attivazione', 
+        'contatti', 'dettaglio-tecnico', 'condizioni-economiche',
+        'autorizzazioni-consensi', 'configurazione-fatturazione',
+        'riepilogo-validazione', 'anteprima-xml'
+      ]
+      
+      Object.keys(stepStates).forEach(stepId => {
+        defaultStates[stepId] = {
+          completed: requiredSteps.includes(stepId), // Complete required steps
+          hasErrors: false,
+          validationErrors: [],
+          canProceed: true
+        }
+      })
+      setStepStates(defaultStates)
+      
+      console.log('Tutti i passi sono stati ripristinati ai valori predefiniti')
+    }, [])
+
     return (
       <WizardStepper 
         onExportXML={handleExportXML}
         getStepStatus={getStepStatus}
         onValidateCurrentStep={validateCurrentStep}
+        onClearAll={handleClearAll}
+        onResetToDefaults={handleResetToDefaults}
       >
         <StepContent />
       </WizardStepper>

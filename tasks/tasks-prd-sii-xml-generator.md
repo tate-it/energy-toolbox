@@ -122,7 +122,7 @@
   - Category-based operations using related field groups
   - Preservation logic for protecting valid user input
 
-- [ ] 4.0 Create wizard step components with form controls
+- [x] 4.0 Create wizard step components with form controls
   - [x] 4.1 Build `components/sii-wizard/wizard-stepper.tsx` using Stepperize with Italian labels
   - [x] 4.2 Create `components/sii-wizard/steps/Step1.tsx` with PIVA and offer code inputs
   - [x] 4.3 Implement form components using existing UI components from `components/ui/*`
@@ -133,8 +133,8 @@
   - [x] 4.8 Add step navigation controls with validation before proceeding ✅ **COMPLETED**
   - [x] 4.9 Implement progress indicator showing completed/current/remaining steps ✅ **COMPLETED**
   - [x] 4.10 Create helper components for complex inputs (date/time pickers, band schedules) ✅ **COMPLETED**
-  - [ ] 4.11 Add "Clear All" and "Reset to Defaults" buttons in the wizard header
-  - [ ] 4.12 Implement keyboard navigation support for accessibility
+  - [x] 4.11 Add "Clear All" and "Reset to Defaults" buttons in the wizard header ✅ **COMPLETED**
+  - [x] 4.12 Implement keyboard navigation support for accessibility ✅ **COMPLETED**
 
 - [ ] 5.0 Implement XML generation and preview functionality
   - [ ] 5.1 Create `lib/sii/xml-generator.ts` with functions to map state to XML structure
