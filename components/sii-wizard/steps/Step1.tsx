@@ -29,7 +29,7 @@ export function Step1() {
   useEffect(() => {
     const validation = step1.validate()
     if (!validation.success) {
-      setValidationState(validation.errors)
+      setValidationState((validation as { errors: Record<string, string> }).errors)
     } else {
       setValidationState(prev => Object.keys(prev).length > 0 ? {} : prev)
     }
@@ -59,7 +59,7 @@ export function Step1() {
   }
 
   // Check if we have any data for clear action
-  const hasData = piva || cod
+  const hasData = Boolean(piva) || Boolean(cod)
 
   return (
     <div className="space-y-6">
@@ -75,7 +75,7 @@ export function Step1() {
         <FormField
           id="piva"
           label={Step1Labels.piva}
-          value={piva}
+          value={piva ?? ''}
           placeholder="Es. 12345678901"
           description={Step1Descriptions.piva}
           error={validationState.piva}
@@ -88,7 +88,7 @@ export function Step1() {
         <FormField
           id="cod"
           label={Step1Labels.cod}
-          value={cod}
+          value={cod ?? ''}
           placeholder="Es. OFFERTA2024001"
           description={Step1Descriptions.cod}
           error={validationState.cod}

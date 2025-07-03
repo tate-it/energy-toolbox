@@ -58,6 +58,8 @@ const initialStepStates: Record<string, StepValidationState> = {
 function StepContent() {
   const stepper = useStepper()
   const currentStep = wizardSteps.find(s => s.id === stepper.current.id)
+  // Explicitly type current as a step object
+  const current = wizardSteps.find(s => s.id === stepper.current.id) ?? { id: '', label: '' }
   
   // Render appropriate step component based on current step
   switch (stepper.current.id) {
@@ -128,7 +130,7 @@ function StepContent() {
           </CardHeader>
           <div className="p-4 bg-muted/50 rounded-lg text-center text-muted-foreground">
             <p>Componente step in arrivo...</p>
-            <p className="text-sm mt-2">Step ID: {stepper.current.id}</p>
+            <p className="text-sm mt-2">Step ID: {current.id}</p>
             <div className="text-xs mt-4 text-muted-foreground">
               Step disponibili: anagrafica-ditta, dettaglio-offerta, modalita-attivazione, contatti, dettaglio-tecnico, dettagli-anagrafici, condizioni-economiche, documenti-allegati, autorizzazioni-consensi, configurazione-fatturazione, parametri-tecnici, condizioni-particolari, utenze-multiple, configurazione-notifiche, riepilogo-validazione, anteprima-xml, sconti, servizi-aggiuntivi
             </div>

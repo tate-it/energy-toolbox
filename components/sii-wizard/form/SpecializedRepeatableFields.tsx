@@ -333,7 +333,7 @@ export function Discounts({
         { value: 'euro_anno', label: '€/anno' },
         { value: 'euro_kwh', label: '€/kWh' }
       ],
-      showWhen: (item) => item.tipo && item.tipo !== 'percentuale'
+      showWhen: (item) => Boolean(item.tipo) && item.tipo !== 'percentuale'
     },
     {
       key: 'durata',
@@ -558,7 +558,7 @@ export function AdditionalServices({
       max: '1000',
       step: '0.01',
       suffix: '€',
-      showWhen: (item) => item.costo_tipo && !['gratuito', 'incluso', 'su_richiesta'].includes(item.costo_tipo)
+      showWhen: (item) => Boolean(item.costo_tipo) && !['gratuito', 'incluso', 'su_richiesta'].includes(item.costo_tipo)
     },
     {
       key: 'disponibilita',
@@ -682,21 +682,3 @@ export function AdditionalServices({
     />
   )
 }
-
-// =====================================================
-// COMPOSITE COMPONENT EXPORTS
-// =====================================================
-
-export {
-  ActivationMethods,
-  Contacts,
-  Discounts,
-  AdditionalServices
-}
-
-export type {
-  ActivationMethodsProps,
-  ContactsProps,
-  DiscountsProps,
-  AdditionalServicesProps
-} 

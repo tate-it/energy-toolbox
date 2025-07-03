@@ -158,8 +158,9 @@ export function RepeatableFieldGroup({
         <InfoAlert
           type={validationType}
           title="Stato Validazione Gruppo"
-          message={validationMessage}
-        />
+        >
+          {validationMessage}
+        </InfoAlert>
       )
     }
     
@@ -169,8 +170,9 @@ export function RepeatableFieldGroup({
         <InfoAlert
           type="error"
           title="Errori di Validazione"
-          message={`${totalInvalidItems} ${totalInvalidItems === 1 ? 'elemento ha' : 'elementi hanno'} errori di validazione in ${sections.filter(s => (s.invalidItemCount || 0) > 0).length} ${sections.filter(s => (s.invalidItemCount || 0) > 0).length === 1 ? 'sezione' : 'sezioni'}.`}
-        />
+        >
+          {`${totalInvalidItems} ${totalInvalidItems === 1 ? 'elemento ha' : 'elementi hanno'} errori di validazione in ${sections.filter(s => (s.invalidItemCount || 0) > 0).length} ${sections.filter(s => (s.invalidItemCount || 0) > 0).length === 1 ? 'sezione' : 'sezioni'}.`}
+        </InfoAlert>
       )
     }
     
@@ -179,8 +181,9 @@ export function RepeatableFieldGroup({
         <InfoAlert
           type="success"
           title="Validazione Completata"
-          message={`Tutti i ${totalValidItems} ${totalValidItems === 1 ? 'elemento è valido' : 'elementi sono validi'} in ${completedSections} ${completedSections === 1 ? 'sezione' : 'sezioni'}.`}
-        />
+        >
+          {`Tutti i ${totalValidItems} ${totalValidItems === 1 ? 'elemento è valido' : 'elementi sono validi'} in ${completedSections} ${completedSections === 1 ? 'sezione' : 'sezioni'}.`}
+        </InfoAlert>
       )
     }
     

@@ -3,7 +3,6 @@
 import React from 'react'
 import { 
   FormSection, 
-  StatusBadge, 
   InfoAlert
 } from '../form'
 
@@ -59,7 +58,6 @@ export default function Step10() {
         title="Configurazione Fatturazione"
         description="Impostazioni fatturazione elettronica e modalità di pagamento"
         icon="💳"
-        status={<StatusBadge status="incompleto" />}
       />
       
       <InfoAlert

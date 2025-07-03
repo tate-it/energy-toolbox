@@ -312,14 +312,13 @@ export function RepeatableField({
         <InfoAlert
           type="error"
           title="Errori di validazione"
-          message={
-            <ul className="list-disc list-inside space-y-1">
-              {arrayErrors.map((error, index) => (
-                <li key={index}>{error}</li>
-              ))}
-            </ul>
-          }
-        />
+        >
+          <ul className="list-disc list-inside space-y-1">
+            {arrayErrors.map((error, index) => (
+              <li key={index}>{error}</li>
+            ))}
+          </ul>
+        </InfoAlert>
       )}
       
       {/* Items list */}

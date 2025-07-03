@@ -71,7 +71,7 @@ const steps = [
   { id: 'anteprima-xml', label: 'Anteprima XML e Invio', description: 'Generazione XML e invio al SII', required: true },
   { id: 'sconti', label: 'Sconti', description: 'Sconti e promozioni disponibili', required: false },
   { id: 'servizi-aggiuntivi', label: 'Servizi Aggiuntivi', description: 'Servizi opzionali e aggiuntivi', required: false },
-]
+] as const
 
 interface StepStatus {
   completed: boolean
@@ -759,7 +759,7 @@ function StepNavigationList({ getStepStatus }: { getStepStatus?: (stepId: string
     setFocusedIndex(currentStepIndex)
   }, [currentStepIndex])
   
-  const handleStepClick = (stepId: string, targetIndex: number) => {
+  const handleStepClick = useCallback((stepId: typeof steps[number]['id'], targetIndex: number) => {
     // Allow navigation to previous steps or completed steps
     if (targetIndex <= currentStepIndex) {
       stepper.goTo(stepId)
@@ -783,7 +783,7 @@ function StepNavigationList({ getStepStatus }: { getStepStatus?: (stepId: string
     if (canNavigateToStep()) {
       stepper.goTo(stepId)
     }
-  }
+  }, [currentStepIndex, stepper, getStepStatus])
   
   // Keyboard navigation handler
   const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
@@ -838,7 +838,7 @@ function StepNavigationList({ getStepStatus }: { getStepStatus?: (stepId: string
         stepRefs.current[currentStepIndex]?.focus()
         break
     }
-  }, [focusedIndex, currentStepIndex, stepper, handleStepClick])
+  }, [focusedIndex, currentStepIndex, handleStepClick])
   
   return (
     <div className="hidden lg:block">
@@ -901,7 +901,7 @@ function StepNavigationList({ getStepStatus }: { getStepStatus?: (stepId: string
           return (
             <button
               key={step.id}
-              ref={el => stepRefs.current[index] = el}
+              ref={el => { stepRefs.current[index] = el }}
               onClick={() => canAccess ? handleStepClick(step.id, index) : undefined}
               disabled={!canAccess}
               tabIndex={isFocused ? 0 : -1}

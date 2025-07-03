@@ -412,14 +412,13 @@ export function RepeatableObjectField({
         <InfoAlert
           type="error"
           title="Errori di validazione"
-          message={
-            <ul className="list-disc list-inside space-y-1">
-              {arrayErrors.map((error, index) => (
-                <li key={index}>{error}</li>
-              ))}
-            </ul>
-          }
-        />
+        >
+          <ul className="list-disc list-inside space-y-1">
+            {arrayErrors.map((error, index) => (
+              <li key={index}>{error}</li>
+            ))}
+          </ul>
+        </InfoAlert>
       )}
       
       {/* Items list */}
@@ -550,6 +549,7 @@ export function RepeatableObjectField({
                               <div key={field.key} className={field.type === 'textarea' ? 'md:col-span-2' : ''}>
                                 {field.type === 'select' ? (
                                   <FormSelect
+                                    id={`object-field-${item.id}-${field.key}`}
                                     label={field.label}
                                     value={item.data[field.key] || ''}
                                     onChange={(value) => updateItem(item.id, field.key, value)}
@@ -670,6 +670,7 @@ export function RepeatableObjectField({
                             <div key={field.key} className={field.type === 'textarea' ? 'md:col-span-2' : ''}>
                               {field.type === 'select' ? (
                                 <FormSelect
+                                  id={`object-field-${item.id}-${field.key}`}
                                   label={field.label}
                                   value={item.data[field.key] || ''}
                                   onChange={(value) => updateItem(item.id, field.key, value)}
