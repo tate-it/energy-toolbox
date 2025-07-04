@@ -4,8 +4,8 @@
 - `app/xml-generator/layout.tsx` - Layout wrapper for the XML generator feature
 - `components/xml-generator/StepperForm.tsx` - Main multi-step form component using Stepperize hooks
 - `components/xml-generator/StepperForm.test.tsx` - Unit tests for the stepper form
-- `components/xml-generator/steps/BasicInfoStep.tsx` - Basic information form step (PIVA, Offer Code)
-- `components/xml-generator/steps/BasicInfoStep.test.tsx` - Unit tests for basic info step
+- `components/xml-generator/steps/BasicInfoStep.tsx` - Basic information form step (PIVA, Offer Code) - COMPLETED
+- `components/xml-generator/steps/BasicInfoStep.test.tsx` - Unit tests for basic info step - COMPLETED
 - `components/xml-generator/steps/OfferDetailsStep.tsx` - Offer details form step
 - `components/xml-generator/steps/OfferDetailsStep.test.tsx` - Unit tests for offer details
 - `components/xml-generator/steps/ActivationContactsStep.tsx` - Activation methods and contacts step
@@ -24,7 +24,7 @@
 - `lib/xml-generator/schemas/index.test.ts` - Unit tests for schema validation
 - `lib/xml-generator/schemas/conditional-logic.ts` - Conditional validation logic implementation
 - `lib/xml-generator/schemas/conditional-logic.test.ts` - Unit tests for conditional logic
-- `lib/xml-generator/types.ts` - TypeScript type definitions for the entire form
+- `lib/xml-generator/types.ts` - TypeScript type definitions for the entire form (Complete SII XML structure types with all interfaces, enums, and utility types)
 - `lib/xml-generator/xml-builder.ts` - XML generation logic from form data
 - `lib/xml-generator/xml-builder.test.ts` - Unit tests for XML generation
 - `lib/xml-generator/xml-validator.ts` - XML validation against XSD schema
@@ -57,8 +57,8 @@
   - [x] 1.4 Define Stepperize stepper configuration using defineStepper with all 8 form steps
   - [x] 1.5 Create constants file with all SII specification enums, codes, and options
 - [ ] 2.0 Implement Form Sections with State Management (always refer to documentation/adding-new-steps-guide.md)
-  - [ ] 2.1 Create TypeScript types matching the complete SII XML structure in lib/xml-generator/types.ts
-  - [ ] 2.2 Implement BasicInfoStep component with PIVA and COD_OFFERTA fields using Stepperize context
+  - [x] 2.1 Create TypeScript types matching the complete SII XML structure in lib/xml-generator/types.ts
+  - [x] 2.2 Implement BasicInfoStep component with PIVA and COD_OFFERTA fields using Stepperize context
   - [ ] 2.3 Implement OfferDetailsStep with market type, client type, offer type, and related fields
   - [ ] 2.4 Implement ActivationContactsStep with activation methods and contact information fields
   - [ ] 2.5 Implement PricingConfigStep with energy price references, time bands, and dispatching

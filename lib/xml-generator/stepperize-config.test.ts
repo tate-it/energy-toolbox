@@ -44,10 +44,10 @@ describe('xmlFormStepper', () => {
   it('should have correct first and last steps', () => {
     const firstStep = xmlFormStepper.steps[0]
     expect(firstStep.id).toBe('basic-info')
-    expect(firstStep.title).toBe('Basic Information')
+    expect(firstStep.title).toBe('Informazioni di Base')
     
     const lastStep = xmlFormStepper.steps[7]
     expect(lastStep.id).toBe('validity-review')
-    expect(lastStep.title).toBe('Validity & Review')
+    expect(lastStep.title).toBe('Validità e Revisione')
   })
 }) 

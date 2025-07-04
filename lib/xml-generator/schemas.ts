@@ -1,9 +1,15 @@
 import { z } from 'zod'
 
-// Basic Information Schema
+// Basic Information Schema - matching SII specification
 export const basicInfoSchema = z.object({
-  vatNumber: z.string().min(11, 'VAT number must be at least 11 characters'),
-  offerCode: z.string().min(1, 'Offer code is required'),
+  pivaUtente: z.string()
+    .min(11, 'La PIVA deve contenere almeno 11 caratteri')
+    .max(16, 'La PIVA non può superare i 16 caratteri')
+    .regex(/^[A-Z0-9]+$/, 'La PIVA deve contenere solo lettere maiuscole e numeri'),
+  codOfferta: z.string()
+    .min(1, 'Il codice offerta è obbligatorio')
+    .max(32, 'Il codice offerta non può superare i 32 caratteri')
+    .regex(/^[A-Z0-9]+$/, 'Il codice offerta deve contenere solo lettere maiuscole e numeri'),
 })
 
 // Offer Details Schema

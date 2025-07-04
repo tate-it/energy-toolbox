@@ -7,7 +7,7 @@ import { useQueryState, parseAsString } from 'nuqs'
 import { parseAsFormData } from '@/lib/xml-generator/nuqs-parsers'
 import { xmlFormStepper } from '@/lib/xml-generator/stepperize-config'
 import { 
-  BasicInfoComponent, 
+  BasicInfoStep,
   OfferDetailsComponent, 
   PlaceholderComponent 
 } from '@/components/xml-generator'
@@ -81,15 +81,15 @@ export default function XmlGeneratorPage() {
           className="space-y-6 p-6 border rounded-lg"
         >
           <div className="flex justify-between">
-            <h2 className="text-lg font-medium">SII XML Offer Generator</h2>
+            <h2 className="text-lg font-medium">Generatore XML Offerte SII</h2>
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">
-                Step {currentIndex + 1} of {steps.length}
+                Passo {currentIndex + 1} di {steps.length}
               </span>
             </div>
           </div>
           
-          <nav aria-label="Form Steps" className="group my-4">
+          <nav aria-label="Passi del Modulo" className="group my-4">
             <ol
               className="flex items-center justify-between gap-2"
             >
@@ -140,14 +140,14 @@ export default function XmlGeneratorPage() {
           
           <div className="space-y-4">
             {stepper.switch({
-              'basic-info': () => <BasicInfoComponent />,
+              'basic-info': () => <BasicInfoStep />,
               'offer-details': () => <OfferDetailsComponent />,
-              'activation-contacts': () => <PlaceholderComponent title="Activation & Contacts" />,
-              'pricing-config': () => <PlaceholderComponent title="Pricing Configuration" />,
-              'company-components': () => <PlaceholderComponent title="Company Components" />,
-              'payment-conditions': () => <PlaceholderComponent title="Payment & Conditions" />,
-              'additional-features': () => <PlaceholderComponent title="Additional Features" />,
-              'validity-review': () => <PlaceholderComponent title="Validity & Review" />,
+              'activation-contacts': () => <PlaceholderComponent title="Attivazione e Contatti" />,
+              'pricing-config': () => <PlaceholderComponent title="Configurazione Prezzi" />,
+              'company-components': () => <PlaceholderComponent title="Componenti Impresa" />,
+              'payment-conditions': () => <PlaceholderComponent title="Pagamenti e Condizioni" />,
+              'additional-features': () => <PlaceholderComponent title="Funzionalità Aggiuntive" />,
+              'validity-review': () => <PlaceholderComponent title="Validità e Revisione" />,
             })}
             
             {!stepper.isLast ? (
@@ -164,10 +164,10 @@ export default function XmlGeneratorPage() {
                   }}
                   disabled={stepper.isFirst}
                 >
-                  Back
+                  Indietro
                 </Button>
                 <Button type="submit">
-                  {stepper.isLast ? 'Generate XML' : 'Next'}
+                  {stepper.isLast ? 'Genera XML' : 'Avanti'}
                 </Button>
               </div>
             ) : (
@@ -181,9 +181,9 @@ export default function XmlGeneratorPage() {
                     form.reset()
                   }}
                 >
-                  Reset
+                  Azzera
                 </Button>
-                <Button type="submit">Generate XML</Button>
+                <Button type="submit">Genera XML</Button>
               </div>
             )}
           </div>
@@ -191,14 +191,14 @@ export default function XmlGeneratorPage() {
       </Form>
       
       {/* Debug Information */}
-      <div className="mt-8 p-4 bg-muted rounded-lg">
-        <h3 className="text-sm font-medium mb-2">Debug Info</h3>
-        <div className="text-xs font-mono space-y-1">
-          <div>Current Step: {stepper.current.id}</div>
-          <div>URL Step: {urlStep}</div>
-          <div>Form Data: {JSON.stringify(formData, null, 2)}</div>
+              <div className="mt-8 p-4 bg-muted rounded-lg">
+          <h3 className="text-sm font-medium mb-2">Info Debug</h3>
+          <div className="text-xs font-mono space-y-1">
+            <div>Passo Corrente: {stepper.current.id}</div>
+            <div>Passo URL: {urlStep}</div>
+            <div>Dati Modulo: {JSON.stringify(formData, null, 2)}</div>
+          </div>
         </div>
-      </div>
     </div>
   )
 }
