@@ -57,7 +57,7 @@
   - [x] 1.4 Define Stepperize stepper configuration using defineStepper with all 8 form steps
   - [x] 1.5 Create use-stepper-with-url hook combining Stepperize's useStepper with NuQS for URL persistence
   - [x] 1.6 Create constants file with all SII specification enums, codes, and options
-- [ ] 2.0 Implement Form Sections with State Management
+- [ ] 2.0 Implement Form Sections with State Management (always refer to documentation/adding-new-steps-guide.md)
   - [ ] 2.1 Create TypeScript types matching the complete SII XML structure in lib/xml-generator/types.ts
   - [ ] 2.2 Implement BasicInfoStep component with PIVA and COD_OFFERTA fields using Stepperize context
   - [ ] 2.3 Implement OfferDetailsStep with market type, client type, offer type, and related fields
