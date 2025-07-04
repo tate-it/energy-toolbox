@@ -2,7 +2,7 @@
 
 - `app/xml-generator/page.tsx` - Main page component hosting the multi-step form
 - `app/xml-generator/layout.tsx` - Layout wrapper for the XML generator feature
-- `components/xml-generator/StepperForm.tsx` - Main multi-step form component using Stepperize
+- `components/xml-generator/StepperForm.tsx` - Main multi-step form component using Stepperize hooks
 - `components/xml-generator/StepperForm.test.tsx` - Unit tests for the stepper form
 - `components/xml-generator/steps/BasicInfoStep.tsx` - Basic information form step (PIVA, Offer Code)
 - `components/xml-generator/steps/BasicInfoStep.test.tsx` - Unit tests for basic info step
@@ -30,12 +30,14 @@
 - `lib/xml-generator/xml-validator.ts` - XML validation against XSD schema
 - `lib/xml-generator/xml-validator.test.ts` - Unit tests for XML validation
 - `lib/xml-generator/constants.ts` - Constants for form options, enums, and codes
-- `hooks/use-form-state.ts` - Custom hook for managing form state with NuQS
-- `hooks/use-form-state.test.ts` - Unit tests for form state hook
+- `lib/xml-generator/stepperize-config.ts` - Stepperize stepper definition and configuration
+- `hooks/use-stepper-with-url.ts` - Custom hook integrating Stepperize with NuQS for URL persistence
+- `hooks/use-stepper-with-url.test.ts` - Unit tests for URL-integrated stepper hook
 - `hooks/use-conditional-fields.ts` - Custom hook for conditional field visibility
 - `hooks/use-conditional-fields.test.ts` - Unit tests for conditional fields hook
 - `components/ui/form-field-with-help.tsx` - Enhanced form field with help text and tooltips
 - `components/ui/form-field-with-help.test.tsx` - Unit tests for enhanced form field
+- `components/ui/stepper-progress.tsx` - Custom stepper progress indicator using Stepperize state
 - `vitest.config.ts` - Vitest configuration for testing
 - `package.json` - Updated with all required dependencies
 
@@ -47,15 +49,15 @@
 ## Tasks
 
 - [ ] 1.0 Set Up Project Foundation and Multi-Step Form Infrastructure
-  - [ ] 1.1 Install and configure required dependencies (nuqs, stepperize, react-hook-form, zod, @hookform/resolvers, fast-xml-parser)
+  - [ ] 1.1 Install and configure required dependencies (nuqs, @stepperize/react, react-hook-form, zod, @hookform/resolvers, fast-xml-parser)
   - [ ] 1.2 Create the XML generator route structure under app/xml-generator with proper layout
   - [ ] 1.3 Set up Vitest testing infrastructure with React Testing Library and proper TypeScript support
-  - [ ] 1.4 Create base StepperForm component with Stepperize integration and progress indicator
-  - [ ] 1.5 Implement use-form-state hook for NuQS URL state persistence with proper TypeScript types
+  - [ ] 1.4 Define Stepperize stepper configuration using defineStepper with all 8 form steps
+  - [ ] 1.5 Create use-stepper-with-url hook combining Stepperize's useStepper with NuQS for URL persistence
   - [ ] 1.6 Create constants file with all SII specification enums, codes, and options
 - [ ] 2.0 Implement Form Sections with State Management
   - [ ] 2.1 Create TypeScript types matching the complete SII XML structure in lib/xml-generator/types.ts
-  - [ ] 2.2 Implement BasicInfoStep component with PIVA and COD_OFFERTA fields with validation
+  - [ ] 2.2 Implement BasicInfoStep component with PIVA and COD_OFFERTA fields using Stepperize context
   - [ ] 2.3 Implement OfferDetailsStep with market type, client type, offer type, and related fields
   - [ ] 2.4 Implement ActivationContactsStep with activation methods and contact information fields
   - [ ] 2.5 Implement PricingConfigStep with energy price references, time bands, and dispatching
@@ -63,7 +65,7 @@
   - [ ] 2.7 Implement PaymentConditionsStep with payment methods and contractual conditions
   - [ ] 2.8 Implement AdditionalFeaturesStep with discounts, zones, and additional products
   - [ ] 2.9 Implement ValidityReviewStep with date selection and final review summary
-  - [ ] 2.10 Connect all steps to StepperForm with proper navigation and state persistence
+  - [ ] 2.10 Create StepperForm component using Stepperize hooks for navigation and state management
 - [ ] 3.0 Build Validation System and Conditional Logic Engine
   - [ ] 3.1 Create comprehensive Zod schemas in lib/xml-generator/schemas/index.ts matching XSD requirements
   - [ ] 3.2 Implement use-conditional-fields hook for dynamic field visibility based on form values
@@ -72,8 +74,8 @@
   - [ ] 3.5 Create validation for "Other" option fields requiring description when value is 99
   - [ ] 3.6 Implement complex ComponenteImpresa pricing interval rules based on MACROAREA and UNITA_MISURA
   - [ ] 3.7 Build time band validation logic with FasceOrarieSettimanale conditional requirements
-  - [ ] 3.8 Create real-time validation feedback with clear error messages explaining conditional requirements
-  - [ ] 3.9 Implement form-level validation preventing progression with errors
+  - [ ] 3.8 Integrate React Hook Form with Stepperize for seamless validation on step transitions
+  - [ ] 3.9 Configure Stepperize to prevent navigation when current step has validation errors
   - [ ] 3.10 Add comprehensive unit tests for all validation scenarios and edge cases
 - [ ] 4.0 Create XML Generation and Export Functionality
   - [ ] 4.1 Implement XML builder in lib/xml-generator/xml-builder.ts using fast-xml-parser
@@ -87,8 +89,8 @@
 - [ ] 5.0 Add User Experience Enhancements and Comprehensive Testing
   - [ ] 5.1 Create FormFieldWithHelp component adding contextual help text and format examples
   - [ ] 5.2 Implement tooltips for complex fields explaining validation rules and requirements
-  - [ ] 5.3 Add visual validation indicators (green checkmarks, red errors, yellow warnings)
-  - [ ] 5.4 Implement keyboard navigation support (Tab for fields, Cmd/Ctrl+Arrows for steps)
+  - [ ] 5.3 Create custom stepper progress component using Stepperize's state for visual feedback
+  - [ ] 5.4 Implement keyboard navigation leveraging Stepperize's built-in accessibility features
   - [ ] 5.5 Add ARIA labels and screen reader announcements for accessibility compliance
   - [ ] 5.6 Create loading states and progress indicators during validation and XML generation
   - [ ] 5.7 Implement error recovery for corrupted URL state with graceful fallback
