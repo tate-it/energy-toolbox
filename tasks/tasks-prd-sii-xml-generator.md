@@ -29,8 +29,9 @@
 - `lib/xml-generator/xml-builder.test.ts` - Unit tests for XML generation
 - `lib/xml-generator/xml-validator.ts` - XML validation against XSD schema
 - `lib/xml-generator/xml-validator.test.ts` - Unit tests for XML validation
-- `lib/xml-generator/constants.ts` - Constants for form options, enums, and codes
-- `lib/xml-generator/stepperize-config.ts` - Stepperize stepper definition and configuration
+- `lib/xml-generator/constants.ts` - Constants for form options, enums, and codes (All SII specification enums, codes, and validation helpers)
+- `lib/xml-generator/stepperize-config.ts` - Stepperize stepper definition and configuration with usage example
+- `lib/xml-generator/stepperize-config.test.ts` - Unit tests for stepper configuration
 - `hooks/use-stepper-with-url.ts` - Custom hook integrating Stepperize with NuQS for URL persistence
 - `hooks/use-stepper-with-url.test.ts` - Unit tests for URL-integrated stepper hook
 - `hooks/use-conditional-fields.ts` - Custom hook for conditional field visibility
@@ -38,8 +39,9 @@
 - `components/ui/form-field-with-help.tsx` - Enhanced form field with help text and tooltips
 - `components/ui/form-field-with-help.test.tsx` - Unit tests for enhanced form field
 - `components/ui/stepper-progress.tsx` - Custom stepper progress indicator using Stepperize state
-- `vitest.config.ts` - Vitest configuration for testing
-- `package.json` - Updated with all required dependencies
+- `vitest.config.mjs` - Vitest configuration for testing
+- `vitest.setup.mjs` - Test setup file with jest-dom matchers and browser API mocks
+- `package.json` - Updated with all required dependencies and test scripts
 
 ### Notes
 
@@ -49,12 +51,12 @@
 ## Tasks
 
 - [ ] 1.0 Set Up Project Foundation and Multi-Step Form Infrastructure
-  - [ ] 1.1 Install and configure required dependencies (nuqs, @stepperize/react, react-hook-form, zod, @hookform/resolvers, fast-xml-parser)
-  - [ ] 1.2 Create the XML generator route structure under app/xml-generator with proper layout
-  - [ ] 1.3 Set up Vitest testing infrastructure with React Testing Library and proper TypeScript support
-  - [ ] 1.4 Define Stepperize stepper configuration using defineStepper with all 8 form steps
-  - [ ] 1.5 Create use-stepper-with-url hook combining Stepperize's useStepper with NuQS for URL persistence
-  - [ ] 1.6 Create constants file with all SII specification enums, codes, and options
+  - [x] 1.1 Install and configure required dependencies (nuqs, @stepperize/react, react-hook-form, zod, @hookform/resolvers, fast-xml-parser)
+  - [x] 1.2 Create the XML generator route structure under app/xml-generator with proper layout
+  - [x] 1.3 Set up Vitest testing infrastructure with React Testing Library and proper TypeScript support
+  - [x] 1.4 Define Stepperize stepper configuration using defineStepper with all 8 form steps
+  - [x] 1.5 Create use-stepper-with-url hook combining Stepperize's useStepper with NuQS for URL persistence
+  - [x] 1.6 Create constants file with all SII specification enums, codes, and options
 - [ ] 2.0 Implement Form Sections with State Management
   - [ ] 2.1 Create TypeScript types matching the complete SII XML structure in lib/xml-generator/types.ts
   - [ ] 2.2 Implement BasicInfoStep component with PIVA and COD_OFFERTA fields using Stepperize context
