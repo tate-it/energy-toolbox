@@ -13,14 +13,14 @@ describe('xmlFormStepper', () => {
 
   it('should have correct step IDs in order', () => {
     const expectedIds = [
-      'basic-info',
-      'offer-details',
-      'activation-contacts',
-      'pricing-config',
-      'company-components',
-      'payment-conditions',
-      'additional-features',
-      'validity-review'
+      'basicInfo',
+      'offerDetails',
+      'activationContacts',
+      'pricingConfig',
+      'companyComponents',
+      'paymentConditions',
+      'additionalFeatures',
+      'validityReview'
     ]
     
     const actualIds = xmlFormStepper.steps.map(step => step.id)
@@ -43,11 +43,11 @@ describe('xmlFormStepper', () => {
 
   it('should have correct first and last steps', () => {
     const firstStep = xmlFormStepper.steps[0]
-    expect(firstStep.id).toBe('basic-info')
+    expect(firstStep.id).toBe('basicInfo')
     expect(firstStep.title).toBe('Informazioni di Base')
     
     const lastStep = xmlFormStepper.steps[7]
-    expect(lastStep.id).toBe('validity-review')
+    expect(lastStep.id).toBe('validityReview')
     expect(lastStep.title).toBe('Validità e Revisione')
   })
 }) 
