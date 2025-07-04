@@ -1,0 +1,97 @@
+## Relevant Files
+
+- `app/xml-generator/page.tsx` - Main page component hosting the multi-step form
+- `app/xml-generator/layout.tsx` - Layout wrapper for the XML generator feature
+- `components/xml-generator/StepperForm.tsx` - Main multi-step form component using Stepperize
+- `components/xml-generator/StepperForm.test.tsx` - Unit tests for the stepper form
+- `components/xml-generator/steps/BasicInfoStep.tsx` - Basic information form step (PIVA, Offer Code)
+- `components/xml-generator/steps/BasicInfoStep.test.tsx` - Unit tests for basic info step
+- `components/xml-generator/steps/OfferDetailsStep.tsx` - Offer details form step
+- `components/xml-generator/steps/OfferDetailsStep.test.tsx` - Unit tests for offer details
+- `components/xml-generator/steps/ActivationContactsStep.tsx` - Activation methods and contacts step
+- `components/xml-generator/steps/ActivationContactsStep.test.tsx` - Unit tests for activation/contacts
+- `components/xml-generator/steps/PricingConfigStep.tsx` - Pricing configuration step
+- `components/xml-generator/steps/PricingConfigStep.test.tsx` - Unit tests for pricing config
+- `components/xml-generator/steps/CompanyComponentsStep.tsx` - Company components step
+- `components/xml-generator/steps/CompanyComponentsStep.test.tsx` - Unit tests for company components
+- `components/xml-generator/steps/PaymentConditionsStep.tsx` - Payment methods and conditions step
+- `components/xml-generator/steps/PaymentConditionsStep.test.tsx` - Unit tests for payment/conditions
+- `components/xml-generator/steps/AdditionalFeaturesStep.tsx` - Additional features step
+- `components/xml-generator/steps/AdditionalFeaturesStep.test.tsx` - Unit tests for additional features
+- `components/xml-generator/steps/ValidityReviewStep.tsx` - Final validity and review step
+- `components/xml-generator/steps/ValidityReviewStep.test.tsx` - Unit tests for validity/review
+- `lib/xml-generator/schemas/index.ts` - Main Zod schema definitions for all form fields
+- `lib/xml-generator/schemas/index.test.ts` - Unit tests for schema validation
+- `lib/xml-generator/schemas/conditional-logic.ts` - Conditional validation logic implementation
+- `lib/xml-generator/schemas/conditional-logic.test.ts` - Unit tests for conditional logic
+- `lib/xml-generator/types.ts` - TypeScript type definitions for the entire form
+- `lib/xml-generator/xml-builder.ts` - XML generation logic from form data
+- `lib/xml-generator/xml-builder.test.ts` - Unit tests for XML generation
+- `lib/xml-generator/xml-validator.ts` - XML validation against XSD schema
+- `lib/xml-generator/xml-validator.test.ts` - Unit tests for XML validation
+- `lib/xml-generator/constants.ts` - Constants for form options, enums, and codes
+- `hooks/use-form-state.ts` - Custom hook for managing form state with NuQS
+- `hooks/use-form-state.test.ts` - Unit tests for form state hook
+- `hooks/use-conditional-fields.ts` - Custom hook for conditional field visibility
+- `hooks/use-conditional-fields.test.ts` - Unit tests for conditional fields hook
+- `components/ui/form-field-with-help.tsx` - Enhanced form field with help text and tooltips
+- `components/ui/form-field-with-help.test.tsx` - Unit tests for enhanced form field
+- `vitest.config.ts` - Vitest configuration for testing
+- `package.json` - Updated with all required dependencies
+
+### Notes
+
+- Unit tests should typically be placed alongside the code files they are testing (e.g., `MyComponent.tsx` and `MyComponent.test.tsx` in the same directory).
+- Use `npx vitest` to run tests in watch mode, or `npx vitest run` for a single run. You can also specify a path to test specific files.
+
+## Tasks
+
+- [ ] 1.0 Set Up Project Foundation and Multi-Step Form Infrastructure
+  - [ ] 1.1 Install and configure required dependencies (nuqs, stepperize, react-hook-form, zod, @hookform/resolvers, fast-xml-parser)
+  - [ ] 1.2 Create the XML generator route structure under app/xml-generator with proper layout
+  - [ ] 1.3 Set up Vitest testing infrastructure with React Testing Library and proper TypeScript support
+  - [ ] 1.4 Create base StepperForm component with Stepperize integration and progress indicator
+  - [ ] 1.5 Implement use-form-state hook for NuQS URL state persistence with proper TypeScript types
+  - [ ] 1.6 Create constants file with all SII specification enums, codes, and options
+- [ ] 2.0 Implement Form Sections with State Management
+  - [ ] 2.1 Create TypeScript types matching the complete SII XML structure in lib/xml-generator/types.ts
+  - [ ] 2.2 Implement BasicInfoStep component with PIVA and COD_OFFERTA fields with validation
+  - [ ] 2.3 Implement OfferDetailsStep with market type, client type, offer type, and related fields
+  - [ ] 2.4 Implement ActivationContactsStep with activation methods and contact information fields
+  - [ ] 2.5 Implement PricingConfigStep with energy price references, time bands, and dispatching
+  - [ ] 2.6 Implement CompanyComponentsStep with dynamic component addition and price intervals
+  - [ ] 2.7 Implement PaymentConditionsStep with payment methods and contractual conditions
+  - [ ] 2.8 Implement AdditionalFeaturesStep with discounts, zones, and additional products
+  - [ ] 2.9 Implement ValidityReviewStep with date selection and final review summary
+  - [ ] 2.10 Connect all steps to StepperForm with proper navigation and state persistence
+- [ ] 3.0 Build Validation System and Conditional Logic Engine
+  - [ ] 3.1 Create comprehensive Zod schemas in lib/xml-generator/schemas/index.ts matching XSD requirements
+  - [ ] 3.2 Implement use-conditional-fields hook for dynamic field visibility based on form values
+  - [ ] 3.3 Build conditional validation logic for market type dependencies (electricity/gas/dual)
+  - [ ] 3.4 Implement offer type conditional rules (fixed/variable/flat) with dependent field validation
+  - [ ] 3.5 Create validation for "Other" option fields requiring description when value is 99
+  - [ ] 3.6 Implement complex ComponenteImpresa pricing interval rules based on MACROAREA and UNITA_MISURA
+  - [ ] 3.7 Build time band validation logic with FasceOrarieSettimanale conditional requirements
+  - [ ] 3.8 Create real-time validation feedback with clear error messages explaining conditional requirements
+  - [ ] 3.9 Implement form-level validation preventing progression with errors
+  - [ ] 3.10 Add comprehensive unit tests for all validation scenarios and edge cases
+- [ ] 4.0 Create XML Generation and Export Functionality
+  - [ ] 4.1 Implement XML builder in lib/xml-generator/xml-builder.ts using fast-xml-parser
+  - [ ] 4.2 Create XML structure matching the exact SII specification hierarchy and element ordering
+  - [ ] 4.3 Implement proper UTF-8 encoding and XML declaration formatting
+  - [ ] 4.4 Build file naming logic following <PIVA>_INSERIMENTO_<DESCRIPTION>.XML convention
+  - [ ] 4.5 Create XML validator using the provided XSD schema for pre-download validation
+  - [ ] 4.6 Implement XML preview functionality with syntax highlighting in ValidityReviewStep
+  - [ ] 4.7 Add download functionality with proper MIME type and filename handling
+  - [ ] 4.8 Create comprehensive test suite for XML generation covering all offer types
+- [ ] 5.0 Add User Experience Enhancements and Comprehensive Testing
+  - [ ] 5.1 Create FormFieldWithHelp component adding contextual help text and format examples
+  - [ ] 5.2 Implement tooltips for complex fields explaining validation rules and requirements
+  - [ ] 5.3 Add visual validation indicators (green checkmarks, red errors, yellow warnings)
+  - [ ] 5.4 Implement keyboard navigation support (Tab for fields, Cmd/Ctrl+Arrows for steps)
+  - [ ] 5.5 Add ARIA labels and screen reader announcements for accessibility compliance
+  - [ ] 5.6 Create loading states and progress indicators during validation and XML generation
+  - [ ] 5.7 Implement error recovery for corrupted URL state with graceful fallback
+  - [ ] 5.8 Add responsive design optimizations for tablet devices
+  - [ ] 5.9 Create end-to-end tests covering complete user workflows for each offer type
+  - [ ] 5.10 Perform accessibility audit and fix any WCAG 2.1 AA compliance issues 
