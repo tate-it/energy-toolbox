@@ -67,35 +67,23 @@
   - [ ] 2.7 Implement PaymentConditionsStep with payment methods and contractual conditions
   - [ ] 2.8 Implement AdditionalFeaturesStep with discounts, zones, and additional products
   - [ ] 2.9 Implement ValidityReviewStep with date selection and final review summary
-  - [ ] 2.10 Create StepperForm component using Stepperize hooks for navigation and state management
-- [ ] 3.0 Build Validation System and Conditional Logic Engine
-  - [ ] 3.1 Create comprehensive Zod schemas in lib/xml-generator/schemas/index.ts matching XSD requirements
-  - [ ] 3.2 Implement use-conditional-fields hook for dynamic field visibility based on form values
-  - [ ] 3.3 Build conditional validation logic for market type dependencies (electricity/gas/dual)
-  - [ ] 3.4 Implement offer type conditional rules (fixed/variable/flat) with dependent field validation
-  - [ ] 3.5 Create validation for "Other" option fields requiring description when value is 99
-  - [ ] 3.6 Implement complex ComponenteImpresa pricing interval rules based on MACROAREA and UNITA_MISURA
-  - [ ] 3.7 Build time band validation logic with FasceOrarieSettimanale conditional requirements
-  - [ ] 3.8 Integrate React Hook Form with Stepperize for seamless validation on step transitions
-  - [ ] 3.9 Configure Stepperize to prevent navigation when current step has validation errors
-  - [ ] 3.10 Add comprehensive unit tests for all validation scenarios and edge cases
-- [ ] 4.0 Create XML Generation and Export Functionality
-  - [ ] 4.1 Implement XML builder in lib/xml-generator/xml-builder.ts using fast-xml-parser
-  - [ ] 4.2 Create XML structure matching the exact SII specification hierarchy and element ordering
-  - [ ] 4.3 Implement proper UTF-8 encoding and XML declaration formatting
-  - [ ] 4.4 Build file naming logic following <PIVA>_INSERIMENTO_<DESCRIPTION>.XML convention
-  - [ ] 4.5 Create XML validator using the provided XSD schema for pre-download validation
-  - [ ] 4.6 Implement XML preview functionality with syntax highlighting in ValidityReviewStep
-  - [ ] 4.7 Add download functionality with proper MIME type and filename handling
-  - [ ] 4.8 Create comprehensive test suite for XML generation covering all offer types
-- [ ] 5.0 Add User Experience Enhancements and Comprehensive Testing
-  - [ ] 5.1 Create FormFieldWithHelp component adding contextual help text and format examples
-  - [ ] 5.2 Implement tooltips for complex fields explaining validation rules and requirements
-  - [ ] 5.3 Create custom stepper progress component using Stepperize's state for visual feedback
-  - [ ] 5.4 Implement keyboard navigation leveraging Stepperize's built-in accessibility features
-  - [ ] 5.5 Add ARIA labels and screen reader announcements for accessibility compliance
-  - [ ] 5.6 Create loading states and progress indicators during validation and XML generation
-  - [ ] 5.7 Implement error recovery for corrupted URL state with graceful fallback
-  - [ ] 5.8 Add responsive design optimizations for tablet devices
-  - [ ] 5.9 Create end-to-end tests covering complete user workflows for each offer type
-  - [ ] 5.10 Perform accessibility audit and fix any WCAG 2.1 AA compliance issues 
+- [ ] 3.0 Create XML Generation and Export Functionality
+  - [ ] 3.1 Implement XML builder in lib/xml-generator/xml-builder.ts using fast-xml-parser
+  - [ ] 3.2 Create XML structure matching the exact SII specification hierarchy and element ordering
+  - [ ] 3.3 Implement proper UTF-8 encoding and XML declaration formatting
+  - [ ] 3.4 Build file naming logic following <PIVA>_INSERIMENTO_<DESCRIPTION>.XML convention
+  - [ ] 3.5 Create XML validator using the provided XSD schema for pre-download validation
+  - [ ] 3.6 Implement XML preview functionality with syntax highlighting in ValidityReviewStep
+  - [ ] 3.7 Add download functionality with proper MIME type and filename handling
+  - [ ] 3.8 Create comprehensive test suite for XML generation covering all offer types
+- [ ] 4.0 Add User Experience Enhancements and Comprehensive Testing
+  - [ ] 4.1 Create FormFieldWithHelp component adding contextual help text and format examples
+  - [ ] 4.2 Implement tooltips for complex fields explaining validation rules and requirements
+  - [ ] 4.3 Create custom stepper progress component using Stepperize's state for visual feedback
+  - [ ] 4.4 Implement keyboard navigation leveraging Stepperize's built-in accessibility features
+  - [ ] 4.5 Add ARIA labels and screen reader announcements for accessibility compliance
+  - [ ] 4.6 Create loading states and progress indicators during validation and XML generation
+  - [ ] 4.7 Implement error recovery for corrupted URL state with graceful fallback
+  - [ ] 4.8 Add responsive design optimizations for tablet devices
+  - [ ] 4.9 Create end-to-end tests covering complete user workflows for each offer type
+  - [ ] 4.10 Perform accessibility audit and fix any WCAG 2.1 AA compliance issues 
