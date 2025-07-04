@@ -1,4 +1,4 @@
-import { defineStepper } from '@stepperize/react'
+import { defineStepper } from '@/components/stepper'
 import {
   basicInfoSchema,
   offerDetailsSchema,
@@ -9,78 +9,67 @@ import {
   additionalFeaturesSchema,
   validityReviewSchema,
 } from './schemas'
+import { BasicInfoStep } from '@/components/xml-generator/steps/BasicInfoStep'
+
+import { PlaceholderComponent } from '@/components/xml-generator'
 
 export const xmlFormStepper = defineStepper(
   {
-    id: 'basic-info',
+    id: 'basicInfo',
     title: 'Informazioni di Base',
     description: 'Partita IVA e Codice Offerta',
     schema: basicInfoSchema,
+    Component: BasicInfoStep,
   },
   {
-    id: 'offer-details',
+    id: 'offerDetails',
     title: 'Dettagli Offerta',
     description: 'Tipo mercato, tipo cliente e configurazione offerta',
     schema: offerDetailsSchema,
+    Component: PlaceholderComponent,
   },
   {
-    id: 'activation-contacts',
+    id: 'activationContacts',
     title: 'Attivazione e Contatti',
     description: 'Modalità di attivazione e informazioni di contatto',
     schema: activationContactsSchema,
+    Component: PlaceholderComponent,
   },
   {
-    id: 'pricing-config',
+    id: 'pricingConfig',
     title: 'Configurazione Prezzi',
     description: 'Prezzi energia, fasce orarie e dispacciamento',
     schema: pricingConfigSchema,
+    Component: PlaceholderComponent,
   },
   {
-    id: 'company-components',
+    id: 'companyComponents',
     title: 'Componenti Impresa',
     description: 'Definizione componenti con intervalli di prezzo',
     schema: companyComponentsSchema,
+    Component: PlaceholderComponent,
   },
   {
-    id: 'payment-conditions',
+    id: 'paymentConditions',
     title: 'Pagamenti e Condizioni',
     description: 'Metodi di pagamento e condizioni contrattuali',
     schema: paymentConditionsSchema,
+    Component: PlaceholderComponent,
   },
   {
-    id: 'additional-features',
+    id: 'additionalFeatures',
     title: 'Funzionalità Aggiuntive',
     description: 'Sconti, zone e servizi aggiuntivi',
     schema: additionalFeaturesSchema,
+    Component: PlaceholderComponent,
   },
   {
-    id: 'validity-review',
+    id: 'validityReview',
     title: 'Validità e Revisione',
     description: 'Date di validità offerta e revisione finale',
     schema: validityReviewSchema,
+    Component: PlaceholderComponent,
   }
 )
 
 export type XmlFormStep = typeof xmlFormStepper
-
-// Usage example with useStepperWithUrl hook:
-// import { useStepperWithUrl } from '@/hooks/use-stepper-with-url'
-// 
-// function MyComponent() {
-//   const stepper = useStepperWithUrl(xmlFormStepper, {
-//     queryKey: 'step',
-//     onStepChange: (stepId) => console.log('Step changed to:', stepId)
-//   })
-//   
-//   return (
-//     <div>
-//       <h2>{stepper.currentStep.title}</h2>
-//       <button onClick={() => stepper.prev()} disabled={stepper.isFirst}>
-//         Previous
-//       </button>
-//       <button onClick={() => stepper.next()} disabled={stepper.isLast}>
-//         Next
-//       </button>
-//     </div>
-//   )
-// } 

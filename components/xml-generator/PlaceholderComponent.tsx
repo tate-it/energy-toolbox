@@ -1,11 +1,8 @@
-interface PlaceholderComponentProps {
-  title: string
-}
 
-export function PlaceholderComponent({ title }: PlaceholderComponentProps) {
+export function PlaceholderComponent() {
   return (
     <div className="text-center py-8 text-muted-foreground">
-      {title} step is under construction...
+        step is under construction...
     </div>
   )
 } 
