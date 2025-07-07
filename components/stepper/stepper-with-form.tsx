@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useQueryStates, useQueryState, parseAsString } from "nuqs";
 import { parseAsFormData } from "@/lib/xml-generator/nuqs-parsers";
 import { xmlFormStepper } from "@/lib/xml-generator/stepperize-config";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const { useStepper } = xmlFormStepper;
 
@@ -21,7 +22,7 @@ const createFormStateSchema = () => {
   return schema;
 }
 
-export function StepperWithForm() {
+function StepperWithFormContent() {
   const methods = useStepper();
   
   // Use nuqs to manage form state for all steps
@@ -65,5 +66,40 @@ export function StepperWithForm() {
           validityReview: ({ Component }) => <Component />,
         })}
         </>
+  );
+}
+
+function StepperWithFormSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="space-y-4">
+        <Skeleton className="h-6 w-48" />
+        <Skeleton className="h-4 w-full max-w-md" />
+      </div>
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-20" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-20" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-24 w-full" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export function StepperWithForm() {
+  return (
+    <Suspense fallback={<StepperWithFormSkeleton />}>
+      <StepperWithFormContent />
+    </Suspense>
   );
 };
