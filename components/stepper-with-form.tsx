@@ -24,8 +24,6 @@ const createFormStateSchema = () => {
   return schema;
 };
 
-type StepId = 'basicInfo' | 'offerDetails' | 'activationContacts' | 'pricingConfig' | 'companyComponents' | 'paymentConditions' | 'additionalFeatures' | 'validityReview'
-
 export function StepperWithForm() {
   // Track current step in URL for better link sharing
   const [currentStep, setCurrentStep] = useQueryState(
@@ -33,14 +31,7 @@ export function StepperWithForm() {
     parseAsString.withDefault('basicInfo')
   );
 
-  return (
-    <Stepper.Provider 
-      labelOrientation="vertical"
-      initialStep={currentStep as StepId} // Use current step from URL
-    >
-      <FormStepperComponent currentStep={currentStep} setCurrentStep={setCurrentStep} />
-    </Stepper.Provider>
-  );
+  return <FormStepperComponent currentStep={currentStep} setCurrentStep={setCurrentStep} /> 
 }
 
 const FormStepperComponent = ({ 

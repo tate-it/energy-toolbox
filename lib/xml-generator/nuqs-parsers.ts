@@ -1,4 +1,5 @@
-import { createParser } from 'nuqs'
+import { createParser, createLoader, parseAsStringLiteral } from 'nuqs/server'
+import { steps } from './stepperize/config'
 
 // Simple base64 form data parser
 export const parseAsFormData = createParser({
@@ -19,3 +20,10 @@ export const parseAsFormData = createParser({
     }
   },
 }) 
+
+export const formSearchParams = {
+  currentStep: parseAsStringLiteral(steps).withDefault(steps[0]),
+  formData: parseAsFormData.withDefault({}),
+}
+
+export const loadSearchParams = createLoader(formSearchParams)

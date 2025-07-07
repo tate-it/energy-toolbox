@@ -1,15 +1,20 @@
+'use client'
+
 import { useFormContext } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import type { BasicInfoFormValues } from '@/lib/xml-generator/schemas'
+import { xmlFormStepper } from '@/lib/xml-generator/stepperize-config'
 
 export function BasicInfoStep() {
+  const { Stepper} = xmlFormStepper
   const {
     register,
     formState: { errors },
   } = useFormContext<BasicInfoFormValues>()
 
   return (
+    <Stepper.Panel>
     <Card className="w-full">
       <CardHeader>
         <CardTitle>Informazioni di Base</CardTitle>
@@ -84,5 +89,6 @@ export function BasicInfoStep() {
         </div>
       </CardContent>
     </Card>
+    </Stepper.Panel>
   )
 } 
