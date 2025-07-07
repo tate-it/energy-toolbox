@@ -3,30 +3,16 @@
 import { useEffect, Suspense } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useQueryStates, useQueryState, parseAsString } from "nuqs";
-import { parseAsFormData } from "@/lib/xml-generator/nuqs-parsers";
+import { useQueryState, parseAsString } from "nuqs";
 import { xmlFormStepper } from "@/lib/xml-generator/stepperize-config";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useFormStates } from "@/hooks/use-form-states";
 
-const { useStepper } = xmlFormStepper;
-
-// Create a schema for managing form state for all steps
-const createFormStateSchema = () => {
-  const schema: Record<string, typeof parseAsFormData> = {};
-  
-  // Add a query state for each step
-  xmlFormStepper.steps.forEach((step) => {
-    schema[step.id] = parseAsFormData.withDefault({});
-  });
-  
-  return schema;
-}
+const { useStepper } = xmlFormStepper
 
 function StepperWithFormContent() {
-  const methods = useStepper();
-  
-  // Use nuqs to manage form state for all steps
-  const [formStates] = useQueryStates(createFormStateSchema())
+  const methods = useStepper()
+  const [formStates] = useFormStates()
   const [currentStep, setCurrentStep] = useQueryState(
     'currentStep', 
     parseAsString.withDefault('basicInfo')

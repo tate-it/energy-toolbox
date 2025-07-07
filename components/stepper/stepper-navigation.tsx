@@ -2,15 +2,15 @@
 
 import { useFormContext } from "react-hook-form"
 import { xmlFormStepper } from "@/lib/xml-generator/stepperize-config"
-import { parseAsString, useQueryState, useQueryStates } from "nuqs"
-import { createFormStateSchema } from "@/providers/form-provider"
+import { parseAsString, useQueryState } from "nuqs"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Suspense } from "react"
+import { useFormStates } from "@/hooks/use-form-states"
 
 const { Stepper, useStepper } = xmlFormStepper
 
 function StepperNavigationContent() {
-    const [, setFormStates] = useQueryStates(createFormStateSchema())
+    const [, setFormStates] = useFormStates()
     const [, setCurrentStep] = useQueryState(
         'currentStep', 
         parseAsString.withDefault('basicInfo')
