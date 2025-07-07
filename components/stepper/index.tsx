@@ -1,17 +1,16 @@
-import { Slot } from "@radix-ui/react-slot";
-import * as Stepperize from "@stepperize/react";
-import { type VariantProps, cva } from "class-variance-authority";
-import * as React from "react";
-
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { Slot } from '@radix-ui/react-slot';
+import * as Stepperize from '@stepperize/react';
+import { cva, type VariantProps } from 'class-variance-authority';
+import * as React from 'react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 const StepperContext = React.createContext<StepperConfigProps | null>(null);
 
 const useStepperProvider = (): StepperConfigProps => {
   const context = React.useContext(StepperContext);
   if (!context) {
-    throw new Error("useStepper must be used within a StepperProvider.");
+    throw new Error('useStepper must be used within a StepperProvider.');
   }
   return context;
 };
@@ -25,7 +24,7 @@ const defineStepper = <const Steps extends Stepperize.Step[]>(
     children,
     className,
     ...props
-  }: Omit<React.ComponentProps<"div">, "children"> & {
+  }: Omit<React.ComponentProps<'div'>, 'children'> & {
     children:
       | React.ReactNode
       | ((props: { methods: Stepperize.Stepper<Steps> }) => React.ReactNode);
@@ -34,11 +33,11 @@ const defineStepper = <const Steps extends Stepperize.Step[]>(
 
     return (
       <div
+        className={cn('w-full', className)}
         date-component="stepper"
-        className={cn("w-full", className)}
         {...props}
       >
-        {typeof children === "function" ? children({ methods }) : children}
+        {typeof children === 'function' ? children({ methods }) : children}
       </div>
     );
   };
@@ -48,8 +47,8 @@ const defineStepper = <const Steps extends Stepperize.Step[]>(
     useStepper,
     Stepper: {
       Provider: ({
-        variant = "horizontal",
-        labelOrientation = "horizontal",
+        variant = 'horizontal',
+        labelOrientation = 'horizontal',
         tracking = false,
         children,
         className,
@@ -60,8 +59,8 @@ const defineStepper = <const Steps extends Stepperize.Step[]>(
             value={{ variant, labelOrientation, tracking }}
           >
             <Scoped
-              initialStep={props.initialStep}
               initialMetadata={props.initialMetadata}
+              initialStep={props.initialStep}
             >
               <StepperContainer className={className}>
                 {children}
@@ -72,20 +71,19 @@ const defineStepper = <const Steps extends Stepperize.Step[]>(
       },
       Navigation: ({
         children,
-        "aria-label": ariaLabel = "Stepper Navigation",
+        'aria-label': ariaLabel = 'Stepper Navigation',
         ...props
       }) => {
         const { variant } = useStepperProvider();
         return (
           <nav
-            date-component="stepper-navigation"
             aria-label={ariaLabel}
-            role="tablist"
+            date-component="stepper-navigation"
             {...props}
           >
             <ol
+              className={classForNavigationList({ variant })}
               date-component="stepper-navigation-list"
-              className={classForNavigationList({ variant: variant })}
             >
               {children}
             </ol>
@@ -109,26 +107,26 @@ const defineStepper = <const Steps extends Stepperize.Step[]>(
         const dataState = getStepState(currentIndex, stepIndex);
         const childMap = useStepChildren(children);
 
-        const title = childMap.get("title");
-        const description = childMap.get("description");
-        const panel = childMap.get("panel");
+        const title = childMap.get('title');
+        const description = childMap.get('description');
+        const panel = childMap.get('panel');
 
-        if (variant === "circle") {
+        if (variant === 'circle') {
           return (
             <li
-              date-component="stepper-step"
               className={cn(
-                "flex shrink-0 items-center gap-4 rounded-md transition-colors",
+                'flex shrink-0 items-center gap-4 rounded-md transition-colors',
                 className
               )}
+              date-component="stepper-step"
             >
               <CircleStepIndicator
                 currentStep={stepIndex + 1}
                 totalSteps={steps.length}
               />
               <div
-                date-component="stepper-step-content"
                 className="flex flex-col items-start gap-1"
+                date-component="stepper-step-content"
               >
                 {title}
                 {description}
@@ -140,33 +138,28 @@ const defineStepper = <const Steps extends Stepperize.Step[]>(
         return (
           <>
             <li
-              date-component="stepper-step"
               className={cn([
-                "group peer relative flex items-center gap-2",
-                "data-[variant=vertical]:flex-row",
-                "data-[label-orientation=vertical]:w-full",
-                "data-[label-orientation=vertical]:flex-col",
-                "data-[label-orientation=vertical]:justify-center",
+                'group peer relative flex items-center gap-2',
+                'data-[variant=vertical]:flex-row',
+                'data-[label-orientation=vertical]:w-full',
+                'data-[label-orientation=vertical]:flex-col',
+                'data-[label-orientation=vertical]:justify-center',
               ])}
-              data-variant={variant}
+              data-disabled={props.disabled}
               data-label-orientation={labelOrientation}
               data-state={dataState}
-              data-disabled={props.disabled}
+              data-variant={variant}
+              date-component="stepper-step"
             >
               <Button
-                id={`step-${step.id}`}
-                date-component="stepper-step-indicator"
-                type="button"
-                role="tab"
-                tabIndex={dataState !== "inactive" ? 0 : -1}
-                className="rounded-full"
-                variant={dataState !== "inactive" ? "default" : "secondary"}
-                size="icon"
                 aria-controls={`step-panel-${props.of}`}
-                aria-current={isActive ? "step" : undefined}
+                aria-current={isActive ? 'step' : undefined}
                 aria-posinset={stepIndex + 1}
-                aria-setsize={steps.length}
                 aria-selected={isActive}
+                aria-setsize={steps.length}
+                className="rounded-full"
+                date-component="stepper-step-indicator"
+                id={`step-${step.id}`}
                 onKeyDown={(e) =>
                   onStepKeyDown(
                     e,
@@ -174,46 +167,51 @@ const defineStepper = <const Steps extends Stepperize.Step[]>(
                     utils.getPrev(props.of)
                   )
                 }
+                role="tab"
+                size="icon"
+                tabIndex={dataState !== 'inactive' ? 0 : -1}
+                type="button"
+                variant={dataState !== 'inactive' ? 'default' : 'secondary'}
                 {...props}
               >
                 {icon ?? stepIndex + 1}
               </Button>
-              {variant === "horizontal" && labelOrientation === "vertical" && (
+              {variant === 'horizontal' && labelOrientation === 'vertical' && (
                 <StepperSeparator
-                  orientation="horizontal"
-                  labelOrientation={labelOrientation}
-                  isLast={isLast}
-                  state={dataState}
                   disabled={props.disabled}
+                  isLast={isLast}
+                  labelOrientation={labelOrientation}
+                  orientation="horizontal"
+                  state={dataState}
                 />
               )}
               <div
-                date-component="stepper-step-content"
                 className="flex flex-col items-start"
+                date-component="stepper-step-content"
               >
                 {title}
                 {description}
               </div>
             </li>
 
-            {variant === "horizontal" && labelOrientation === "horizontal" && (
+            {variant === 'horizontal' && labelOrientation === 'horizontal' && (
               <StepperSeparator
-                orientation="horizontal"
-                isLast={isLast}
-                state={dataState}
                 disabled={props.disabled}
+                isLast={isLast}
+                orientation="horizontal"
+                state={dataState}
               />
             )}
 
-            {variant === "vertical" && (
+            {variant === 'vertical' && (
               <div className="flex gap-4">
                 {!isLast && (
                   <div className="flex justify-center ps-[calc(var(--spacing)_*_4.5_-_1px)]">
                     <StepperSeparator
-                      orientation="vertical"
-                      isLast={isLast}
-                      state={dataState}
                       disabled={props.disabled}
+                      isLast={isLast}
+                      orientation="vertical"
+                      state={dataState}
                     />
                   </div>
                 )}
@@ -226,7 +224,7 @@ const defineStepper = <const Steps extends Stepperize.Step[]>(
       Title,
       Description,
       Panel: ({ children, asChild, ...props }) => {
-        const Comp = asChild ? Slot : "div";
+        const Comp = asChild ? Slot : 'div';
         const { tracking } = useStepperProvider();
 
         return (
@@ -240,11 +238,11 @@ const defineStepper = <const Steps extends Stepperize.Step[]>(
         );
       },
       Controls: ({ children, className, asChild, ...props }) => {
-        const Comp = asChild ? Slot : "div";
+        const Comp = asChild ? Slot : 'div';
         return (
           <Comp
+            className={cn('flex justify-end gap-4', className)}
             date-component="stepper-controls"
-            className={cn("flex justify-end gap-4", className)}
             {...props}
           >
             {children}
@@ -260,13 +258,13 @@ const Title = ({
   className,
   asChild,
   ...props
-}: React.ComponentProps<"h4"> & { asChild?: boolean }) => {
-  const Comp = asChild ? Slot : "h4";
+}: React.ComponentProps<'h4'> & { asChild?: boolean }) => {
+  const Comp = asChild ? Slot : 'h4';
 
   return (
     <Comp
+      className={cn('font-medium text-base', className)}
       date-component="stepper-step-title"
-      className={cn("text-base font-medium", className)}
       {...props}
     >
       {children}
@@ -279,13 +277,13 @@ const Description = ({
   className,
   asChild,
   ...props
-}: React.ComponentProps<"p"> & { asChild?: boolean }) => {
-  const Comp = asChild ? Slot : "p";
+}: React.ComponentProps<'p'> & { asChild?: boolean }) => {
+  const Comp = asChild ? Slot : 'p';
 
   return (
     <Comp
+      className={cn('text-muted-foreground text-sm', className)}
       date-component="stepper-step-description"
-      className={cn("text-sm text-muted-foreground", className)}
       {...props}
     >
       {children}
@@ -309,13 +307,13 @@ const StepperSeparator = ({
   }
   return (
     <div
-      date-component="stepper-separator"
+      className={classForSeparator({ orientation, labelOrientation })}
+      data-disabled={disabled}
       data-orientation={orientation}
       data-state={state}
-      data-disabled={disabled}
+      date-component="stepper-separator"
       role="separator"
       tabIndex={-1}
-      className={classForSeparator({ orientation, labelOrientation })}
     />
   );
 };
@@ -332,40 +330,40 @@ const CircleStepIndicator = ({
   const dashOffset = circumference - (circumference * fillPercentage) / 100;
   return (
     <div
+      aria-valuemax={totalSteps}
+      aria-valuemin={1}
+      aria-valuenow={currentStep}
+      className="relative inline-flex items-center justify-center"
       date-component="stepper-step-indicator"
       role="progressbar"
-      aria-valuenow={currentStep}
-      aria-valuemin={1}
-      aria-valuemax={totalSteps}
       tabIndex={-1}
-      className="relative inline-flex items-center justify-center"
     >
-      <svg width={size} height={size}>
+      <svg height={size} width={size}>
         <title>Step Indicator</title>
         <circle
+          className="text-muted-foreground"
           cx={size / 2}
           cy={size / 2}
-          r={radius}
           fill="none"
+          r={radius}
           stroke="currentColor"
           strokeWidth={strokeWidth}
-          className="text-muted-foreground"
         />
         <circle
+          className="text-primary transition-all duration-300 ease-in-out"
           cx={size / 2}
           cy={size / 2}
-          r={radius}
           fill="none"
+          r={radius}
           stroke="currentColor"
-          strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           strokeDashoffset={dashOffset}
-          className="text-primary transition-all duration-300 ease-in-out"
+          strokeWidth={strokeWidth}
           transform={`rotate(-90 ${size / 2} ${size / 2})`}
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-sm font-medium" aria-live="polite">
+        <span aria-live="polite" className="font-medium text-sm">
           {currentStep} of {totalSteps}
         </span>
       </div>
@@ -373,31 +371,31 @@ const CircleStepIndicator = ({
   );
 };
 
-const classForNavigationList = cva("flex gap-2", {
+const classForNavigationList = cva('flex gap-2', {
   variants: {
     variant: {
-      horizontal: "flex-row items-center justify-between",
-      vertical: "flex-col",
-      circle: "flex-row items-center justify-between",
+      horizontal: 'flex-row items-center justify-between',
+      vertical: 'flex-col',
+      circle: 'flex-row items-center justify-between',
     },
   },
 });
 
 const classForSeparator = cva(
   [
-    "bg-muted",
-    "data-[state=completed]:bg-primary data-[disabled]:opacity-50",
-    "transition-all duration-300 ease-in-out",
+    'bg-muted',
+    'data-[state=completed]:bg-primary data-[disabled]:opacity-50',
+    'transition-all duration-300 ease-in-out',
   ],
   {
     variants: {
       orientation: {
-        horizontal: "h-0.5 flex-1",
-        vertical: "h-full w-0.5",
+        horizontal: 'h-0.5 flex-1',
+        vertical: 'h-full w-0.5',
       },
       labelOrientation: {
         vertical:
-          "absolute left-[calc(50%+30px)] right-[calc(-50%+20px)] top-5 block shrink-0",
+          'absolute top-5 right-[calc(-50%+20px)] left-[calc(50%+30px)] block shrink-0',
       },
     },
   }
@@ -408,7 +406,7 @@ function scrollIntoStepperPanel(
   tracking?: boolean
 ) {
   if (tracking) {
-    node?.scrollIntoView({ behavior: "smooth", block: "center" });
+    node?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 }
 
@@ -423,11 +421,11 @@ const extractChildren = (children: React.ReactNode) => {
   for (const child of childrenArray) {
     if (React.isValidElement(child)) {
       if (child.type === Title) {
-        map.set("title", child);
+        map.set('title', child);
       } else if (child.type === Description) {
-        map.set("description", child);
+        map.set('description', child);
       } else {
-        map.set("panel", child);
+        map.set('panel', child);
       }
     }
   }
@@ -442,13 +440,13 @@ const onStepKeyDown = (
 ) => {
   const { key } = e;
   const directions = {
-    next: ["ArrowRight", "ArrowDown"],
-    prev: ["ArrowLeft", "ArrowUp"],
+    next: ['ArrowRight', 'ArrowDown'],
+    prev: ['ArrowLeft', 'ArrowUp'],
   };
 
   if (directions.next.includes(key) || directions.prev.includes(key)) {
-    const direction = directions.next.includes(key) ? "next" : "prev";
-    const step = direction === "next" ? nextStep : prevStep;
+    const direction = directions.next.includes(key) ? 'next' : 'prev';
+    const step = direction === 'next' ? nextStep : prevStep;
 
     if (!step) {
       return;
@@ -460,8 +458,8 @@ const onStepKeyDown = (
     }
 
     const isActive =
-      stepElement.parentElement?.getAttribute("data-state") !== "inactive";
-    if (isActive || direction === "prev") {
+      stepElement.parentElement?.getAttribute('data-state') !== 'inactive';
+    if (isActive || direction === 'prev') {
       stepElement.focus();
     }
   }
@@ -469,16 +467,16 @@ const onStepKeyDown = (
 
 const getStepState = (currentIndex: number, stepIndex: number) => {
   if (currentIndex === stepIndex) {
-    return "active";
+    return 'active';
   }
   if (currentIndex > stepIndex) {
-    return "completed";
+    return 'completed';
   }
-  return "inactive";
+  return 'inactive';
 };
 
-export type StepperVariant = "horizontal" | "vertical" | "circle";
-type StepperLabelOrientation = "horizontal" | "vertical";
+export type StepperVariant = 'horizontal' | 'vertical' | 'circle';
+type StepperLabelOrientation = 'horizontal' | 'vertical';
 
 type StepperConfigProps = {
   variant?: StepperVariant;
@@ -488,12 +486,12 @@ type StepperConfigProps = {
 
 type StepperDefineProps<Steps extends Stepperize.Step[]> = Omit<
   Stepperize.StepperReturn<Steps>,
-  "Scoped"
+  'Scoped'
 > & {
   Stepper: {
     Provider: (
-      props: Omit<Stepperize.ScopedProps<Steps>, "children"> &
-        Omit<React.ComponentProps<"div">, "children"> &
+      props: Omit<Stepperize.ScopedProps<Steps>, 'children'> &
+        Omit<React.ComponentProps<'div'>, 'children'> &
         StepperConfigProps & {
           children:
             | React.ReactNode
@@ -502,17 +500,17 @@ type StepperDefineProps<Steps extends Stepperize.Step[]> = Omit<
               }) => React.ReactNode);
         }
     ) => React.ReactElement;
-    Navigation: (props: React.ComponentProps<"nav">) => React.ReactElement;
+    Navigation: (props: React.ComponentProps<'nav'>) => React.ReactElement;
     Step: (
-      props: React.ComponentProps<"button"> & {
+      props: React.ComponentProps<'button'> & {
         of: Stepperize.Get.Id<Steps>;
         icon?: React.ReactNode;
       }
     ) => React.ReactElement;
-    Title: (props: AsChildProps<"h4">) => React.ReactElement;
-    Description: (props: AsChildProps<"p">) => React.ReactElement;
-    Panel: (props: AsChildProps<"div">) => React.ReactElement;
-    Controls: (props: AsChildProps<"div">) => React.ReactElement;
+    Title: (props: AsChildProps<'h4'>) => React.ReactElement;
+    Description: (props: AsChildProps<'p'>) => React.ReactElement;
+    Panel: (props: AsChildProps<'div'>) => React.ReactElement;
+    Controls: (props: AsChildProps<'div'>) => React.ReactElement;
   };
 };
 
