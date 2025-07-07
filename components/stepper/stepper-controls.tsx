@@ -5,10 +5,12 @@ import { xmlFormStepper } from "@/lib/xml-generator/stepperize-config"
 import { createFormStateSchema } from "@/providers/form-provider"
 import { useQueryStates } from "nuqs"
 import { useFormContext } from "react-hook-form"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Suspense } from "react"
 
 const { Stepper, useStepper } = xmlFormStepper
 
-export function StepperControls() {
+function StepperControlsContent() {
   const { current, isFirst, isLast, reset, beforeNext, prev } = useStepper()
   const form = useFormContext()
   const [, setFormStates] = useQueryStates(createFormStateSchema())
@@ -37,7 +39,7 @@ export function StepperControls() {
         onClick={handlePrevious}
         disabled={isFirst}
       >
-        Previous
+        Precedente
       </Button>
     )}
     <Button
@@ -49,7 +51,24 @@ export function StepperControls() {
         beforeNext(handleNext);
       }}
     >
-      {isLast ? "Reset" : "Next"}
+      {isLast ? "Reset" : "Successivo"}
     </Button>
   </Stepper.Controls>
+}
+
+function StepperControlsSkeleton() {
+  return (
+    <div className="flex gap-2 justify-between">
+      <Skeleton className="h-10 w-24" />
+      <Skeleton className="h-10 w-24" />
+    </div>
+  )
+}
+
+export function StepperControls() {
+  return (
+    <Suspense fallback={<StepperControlsSkeleton />}>
+      <StepperControlsContent />
+    </Suspense>
+  )
 }

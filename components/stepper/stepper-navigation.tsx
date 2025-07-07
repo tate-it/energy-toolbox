@@ -4,10 +4,12 @@ import { useFormContext } from "react-hook-form"
 import { xmlFormStepper } from "@/lib/xml-generator/stepperize-config"
 import { parseAsString, useQueryState, useQueryStates } from "nuqs"
 import { createFormStateSchema } from "@/providers/form-provider"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Suspense } from "react"
 
 const { Stepper, useStepper } = xmlFormStepper
 
-export function StepperNavigation() {
+function StepperNavigationContent() {
     const [, setFormStates] = useQueryStates(createFormStateSchema())
     const [, setCurrentStep] = useQueryState(
         'currentStep', 
@@ -43,4 +45,25 @@ export function StepperNavigation() {
     </Stepper.Step>
   ))}
 </Stepper.Navigation>
+}
+
+function StepperNavigationSkeleton() {
+  return (
+    <div className="flex flex-col gap-2">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="flex items-center gap-3 p-2">
+          <Skeleton className="h-6 w-6 rounded-full" />
+          <Skeleton className="h-4 w-24" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export function StepperNavigation() {
+  return (
+    <Suspense fallback={<StepperNavigationSkeleton />}>
+      <StepperNavigationContent />
+    </Suspense>
+  )
 }
