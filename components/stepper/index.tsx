@@ -477,7 +477,7 @@ const getStepState = (currentIndex: number, stepIndex: number) => {
   return "inactive";
 };
 
-type StepperVariant = "horizontal" | "vertical" | "circle";
+export type StepperVariant = "horizontal" | "vertical" | "circle";
 type StepperLabelOrientation = "horizontal" | "vertical";
 
 type StepperConfigProps = {

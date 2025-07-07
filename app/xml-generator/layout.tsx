@@ -1,6 +1,9 @@
 import type { Metadata } from "next"
 import { loadSearchParams } from "@/lib/xml-generator/nuqs-parsers"
 import { StepperProvider } from "@/providers/stepper-provider"
+import { FormProvider } from "@/providers/form-provider"
+import { StepperNavigation } from "@/components/stepper/stepper-navigation"
+import { StepperControls } from "@/components/stepper/stepper-controls"
 
 export const metadata: Metadata = {
   title: "Generatore XML Offerte SII",
@@ -26,9 +29,15 @@ export default async function XmlGeneratorLayout({
         </div>
       </header>
       <main className="container mx-auto px-4 py-8">
-        <StepperProvider initialStep={currentStep}>
-          {children}
-        </StepperProvider>
+      <FormProvider>
+        <StepperProvider initialStep={currentStep} variant="vertical" className="flex flex-col gap-4">
+          <div className="flex gap-6">
+            <StepperNavigation />
+            {children}
+          </div>
+          <StepperControls />
+          </StepperProvider>
+        </FormProvider>
       </main>
     </div>
   )
