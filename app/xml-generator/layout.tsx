@@ -1,24 +1,24 @@
-import type { Metadata } from 'next';
-import { StepperControls } from '@/components/stepper/stepper-controls';
-import { StepperNavigation } from '@/components/stepper/stepper-navigation';
-import { loadSearchParams } from '@/lib/xml-generator/nuqs-parsers';
-import { FormProvider } from '@/providers/form-provider';
-import { StepperProvider } from '@/providers/stepper-provider';
+import type { Metadata } from 'next'
+import { StepperControls } from '@/components/stepper/stepper-controls'
+import { StepperNavigation } from '@/components/stepper/stepper-navigation'
+import { loadSearchParams } from '@/lib/xml-generator/nuqs-parsers'
+import { FormProvider } from '@/providers/form-provider'
+import { StepperProvider } from '@/providers/stepper-provider'
 
 export const metadata: Metadata = {
   title: 'Generatore XML Offerte SII',
   description:
     'Crea e valida file XML per offerte del mercato energetico e gas conformi alle specifiche SII',
-};
+}
 
 export default async function XmlGeneratorLayout({
   children,
   searchParams,
 }: {
-  children: React.ReactNode;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  children: React.ReactNode
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const { currentStep } = await loadSearchParams(searchParams);
+  const { currentStep } = await loadSearchParams(searchParams)
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
@@ -45,5 +45,5 @@ export default async function XmlGeneratorLayout({
         </FormProvider>
       </main>
     </div>
-  );
+  )
 }

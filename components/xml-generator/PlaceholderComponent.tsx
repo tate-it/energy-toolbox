@@ -3,5 +3,5 @@ export function PlaceholderComponent() {
     <div className="py-8 text-center text-muted-foreground">
       step is under construction...
     </div>
-  );
+  )
 }

@@ -9,84 +9,84 @@
 export const ACTION_TYPES = {
   INSERIMENTO: 'INSERIMENTO',
   AGGIORNAMENTO: 'AGGIORNAMENTO',
-} as const;
+} as const
 
-export type ActionType = (typeof ACTION_TYPES)[keyof typeof ACTION_TYPES];
+export type ActionType = (typeof ACTION_TYPES)[keyof typeof ACTION_TYPES]
 
 // Market types (TIPO_MERCATO)
 export const MARKET_TYPES = {
   ELECTRICITY: '01',
   GAS: '02',
   DUAL_FUEL: '03',
-} as const;
+} as const
 
 export const MARKET_TYPE_LABELS: Record<string, string> = {
   '01': 'Electricity',
   '02': 'Gas',
   '03': 'Dual Fuel',
-} as const;
+} as const
 
-export type MarketType = (typeof MARKET_TYPES)[keyof typeof MARKET_TYPES];
+export type MarketType = (typeof MARKET_TYPES)[keyof typeof MARKET_TYPES]
 
 // Single offer options (OFFERTA_SINGOLA)
 export const SINGLE_OFFER_OPTIONS = {
   YES: 'SI',
   NO: 'NO',
-} as const;
+} as const
 
 export const SINGLE_OFFER_LABELS: Record<string, string> = {
   SI: 'Yes - can be subscribed individually',
   NO: 'No - only with another commodity',
-} as const;
+} as const
 
 export type SingleOfferOption =
-  (typeof SINGLE_OFFER_OPTIONS)[keyof typeof SINGLE_OFFER_OPTIONS];
+  (typeof SINGLE_OFFER_OPTIONS)[keyof typeof SINGLE_OFFER_OPTIONS]
 
 // Client types (TIPO_CLIENTE)
 export const CLIENT_TYPES = {
   DOMESTIC: '01',
   OTHER_USES: '02',
   RESIDENTIAL_CONDOMINIUM: '03',
-} as const;
+} as const
 
 export const CLIENT_TYPE_LABELS: Record<string, string> = {
   '01': 'Domestic',
   '02': 'Other Uses',
   '03': 'Residential Condominium (Gas)',
-} as const;
+} as const
 
-export type ClientType = (typeof CLIENT_TYPES)[keyof typeof CLIENT_TYPES];
+export type ClientType = (typeof CLIENT_TYPES)[keyof typeof CLIENT_TYPES]
 
 // Residential status (DOMESTICO_RESIDENTE)
 export const RESIDENTIAL_STATUS = {
   DOMESTIC_RESIDENT: '01',
   DOMESTIC_NON_RESIDENT: '02',
   ALL_TYPES: '03',
-} as const;
+} as const
 
 export const RESIDENTIAL_STATUS_LABELS: Record<string, string> = {
   '01': 'Domestic Resident',
   '02': 'Domestic Non-Resident',
   '03': 'All types',
-} as const;
+} as const
 
 export type ResidentialStatus =
-  (typeof RESIDENTIAL_STATUS)[keyof typeof RESIDENTIAL_STATUS];
+  (typeof RESIDENTIAL_STATUS)[keyof typeof RESIDENTIAL_STATUS]
 
 // Offer types (TIPO_OFFERTA)
 export const OFFER_TYPES = {
   FIXED: '01',
   VARIABLE: '02',
   FLAT: '03',
-} as const;
+} as const
 
 export const OFFER_TYPE_LABELS: Record<string, string> = {
   '01': 'Fixed',
   '02': 'Variable',
   '03': 'FLAT',
-} as const;
+} as const
 
-export type OfferType = (typeof OFFER_TYPES)[keyof typeof OFFER_TYPES];
+export type OfferType = (typeof OFFER_TYPES)[keyof typeof OFFER_TYPES]
 
 // Contract activation types (TIPOLOGIA_ATT_CONTR)
 export const CONTRACT_ACTIVATION_TYPES = {
@@ -95,7 +95,7 @@ export const CONTRACT_ACTIVATION_TYPES = {
   REACTIVATION: '03',
   CONTRACT_TRANSFER: '04',
   ALWAYS: '99',
-} as const;
+} as const
 
 export const CONTRACT_ACTIVATION_LABELS: Record<string, string> = {
   '01': 'Supplier Change',
@@ -103,10 +103,10 @@ export const CONTRACT_ACTIVATION_LABELS: Record<string, string> = {
   '03': 'Reactivation (Meter present but deactivated)',
   '04': 'Contract Transfer',
   '99': 'Always',
-} as const;
+} as const
 
 export type ContractActivationType =
-  (typeof CONTRACT_ACTIVATION_TYPES)[keyof typeof CONTRACT_ACTIVATION_TYPES];
+  (typeof CONTRACT_ACTIVATION_TYPES)[keyof typeof CONTRACT_ACTIVATION_TYPES]
 
 // Activation methods (MODALITA)
 export const ACTIVATION_METHODS = {
@@ -116,7 +116,7 @@ export const ACTIVATION_METHODS = {
   TELESELLING: '04',
   AGENCY: '05',
   OTHER: '99',
-} as const;
+} as const
 
 export const ACTIVATION_METHOD_LABELS: Record<string, string> = {
   '01': 'Web-only activation',
@@ -125,10 +125,10 @@ export const ACTIVATION_METHOD_LABELS: Record<string, string> = {
   '04': 'Teleselling',
   '05': 'Agency',
   '99': 'Other',
-} as const;
+} as const
 
 export type ActivationMethod =
-  (typeof ACTIVATION_METHODS)[keyof typeof ACTIVATION_METHODS];
+  (typeof ACTIVATION_METHODS)[keyof typeof ACTIVATION_METHODS]
 
 // Energy price indices (IDX_PREZZO_ENERGIA)
 export const ENERGY_PRICE_INDICES = {
@@ -152,7 +152,7 @@ export const ENERGY_PRICE_INDICES = {
   PSBIL_MONTHLY: '15',
   // Other
   OTHER: '99',
-} as const;
+} as const
 
 export const ENERGY_PRICE_INDEX_LABELS: Record<string, string> = {
   // Quarterly
@@ -175,10 +175,10 @@ export const ENERGY_PRICE_INDEX_LABELS: Record<string, string> = {
   '15': 'Psbil (Monthly)',
   // Other
   '99': 'Other (Not managed by Portal)',
-} as const;
+} as const
 
 export type EnergyPriceIndex =
-  (typeof ENERGY_PRICE_INDICES)[keyof typeof ENERGY_PRICE_INDICES];
+  (typeof ENERGY_PRICE_INDICES)[keyof typeof ENERGY_PRICE_INDICES]
 
 // Payment methods (MODALITA_PAGAMENTO)
 export const PAYMENT_METHODS = {
@@ -187,7 +187,7 @@ export const PAYMENT_METHODS = {
   CREDIT_CARD_DIRECT_DEBIT: '03',
   PRE_FILLED_BULLETIN: '04',
   OTHER: '99',
-} as const;
+} as const
 
 export const PAYMENT_METHOD_LABELS: Record<string, string> = {
   '01': 'Bank direct debit',
@@ -195,10 +195,10 @@ export const PAYMENT_METHOD_LABELS: Record<string, string> = {
   '03': 'Credit card direct debit',
   '04': 'Pre-filled bulletin',
   '99': 'Other',
-} as const;
+} as const
 
 export type PaymentMethod =
-  (typeof PAYMENT_METHODS)[keyof typeof PAYMENT_METHODS];
+  (typeof PAYMENT_METHODS)[keyof typeof PAYMENT_METHODS]
 
 // Regulated components (CODICE)
 export const REGULATED_COMPONENTS = {
@@ -213,7 +213,7 @@ export const REGULATED_COMPONENTS = {
   QTPSV: '07',
   QVD_FISSA: '09',
   QVD_VARIABILE: '10',
-} as const;
+} as const
 
 export const REGULATED_COMPONENT_LABELS: Record<string, string> = {
   '01': 'PCV',
@@ -225,10 +225,10 @@ export const REGULATED_COMPONENT_LABELS: Record<string, string> = {
   '07': 'QTpsv',
   '09': 'QVD_fissa',
   '10': 'QVD_Variabile',
-} as const;
+} as const
 
 export type RegulatedComponent =
-  (typeof REGULATED_COMPONENTS)[keyof typeof REGULATED_COMPONENTS];
+  (typeof REGULATED_COMPONENTS)[keyof typeof REGULATED_COMPONENTS]
 
 // Time band configurations (TIPOLOGIA_FASCE)
 export const TIME_BAND_CONFIGURATIONS = {
@@ -242,7 +242,7 @@ export const TIME_BAND_CONFIGURATIONS = {
   BIORARIO_F1_F23: '91',
   BIORARIO_F2_F13: '92',
   BIORARIO_F3_F12: '93',
-} as const;
+} as const
 
 export const TIME_BAND_CONFIGURATION_LABELS: Record<string, string> = {
   '01': 'Monorario',
@@ -255,10 +255,10 @@ export const TIME_BAND_CONFIGURATION_LABELS: Record<string, string> = {
   '91': 'Biorario (F1 / F2+F3)',
   '92': 'Biorario (F2 / F1+F3)',
   '93': 'Biorario (F3 / F1+F2)',
-} as const;
+} as const
 
 export type TimeBandConfiguration =
-  (typeof TIME_BAND_CONFIGURATIONS)[keyof typeof TIME_BAND_CONFIGURATIONS];
+  (typeof TIME_BAND_CONFIGURATIONS)[keyof typeof TIME_BAND_CONFIGURATIONS]
 
 // Dispatching types (TIPO_DISPACCIAMENTO)
 export const DISPATCHING_TYPES = {
@@ -276,7 +276,7 @@ export const DISPATCHING_TYPES = {
   REINTEGRAZIONE_ONERI_TUTELE_GRADUALI: '12',
   DISP_BT: '13',
   OTHER: '99',
-} as const;
+} as const
 
 export const DISPATCHING_TYPE_LABELS: Record<string, string> = {
   '01': 'Disp. del.111/06',
@@ -293,24 +293,24 @@ export const DISPATCHING_TYPE_LABELS: Record<string, string> = {
   '12': 'Reintegrazione oneri tutele graduali',
   '13': 'DispBT',
   '99': 'Altro',
-} as const;
+} as const
 
 export type DispatchingType =
-  (typeof DISPATCHING_TYPES)[keyof typeof DISPATCHING_TYPES];
+  (typeof DISPATCHING_TYPES)[keyof typeof DISPATCHING_TYPES]
 
 // Component types (TIPOLOGIA)
 export const COMPONENT_TYPES = {
   STANDARD: '01',
   OPTIONAL: '02',
-} as const;
+} as const
 
 export const COMPONENT_TYPE_LABELS: Record<string, string> = {
   '01': 'STANDARD - Price included',
   '02': 'OPTIONAL - Price not included',
-} as const;
+} as const
 
 export type ComponentType =
-  (typeof COMPONENT_TYPES)[keyof typeof COMPONENT_TYPES];
+  (typeof COMPONENT_TYPES)[keyof typeof COMPONENT_TYPES]
 
 // Macro areas (MACROAREA)
 export const MACRO_AREAS = {
@@ -319,7 +319,7 @@ export const MACRO_AREAS = {
   ENERGY_PRICE_COMPONENT: '04',
   ONE_TIME_FEE: '05',
   RENEWABLE_GREEN_ENERGY: '06',
-} as const;
+} as const
 
 export const MACRO_AREA_LABELS: Record<string, string> = {
   '01': 'Fixed commercialization fee',
@@ -327,9 +327,9 @@ export const MACRO_AREA_LABELS: Record<string, string> = {
   '04': 'Energy price component',
   '05': 'One-time fee',
   '06': 'Renewable energy / Green energy',
-} as const;
+} as const
 
-export type MacroArea = (typeof MACRO_AREAS)[keyof typeof MACRO_AREAS];
+export type MacroArea = (typeof MACRO_AREAS)[keyof typeof MACRO_AREAS]
 
 // Time bands for components (FASCIA_COMPONENTE)
 export const COMPONENT_TIME_BANDS = {
@@ -344,7 +344,7 @@ export const COMPONENT_TIME_BANDS = {
   F2_F3: '91',
   F1_F3: '92',
   F1_F2: '93',
-} as const;
+} as const
 
 export const COMPONENT_TIME_BAND_LABELS: Record<string, string> = {
   '01': 'Monorario/F1',
@@ -358,10 +358,10 @@ export const COMPONENT_TIME_BAND_LABELS: Record<string, string> = {
   '91': 'F2+F3',
   '92': 'F1+F3',
   '93': 'F1+F2',
-} as const;
+} as const
 
 export type ComponentTimeBand =
-  (typeof COMPONENT_TIME_BANDS)[keyof typeof COMPONENT_TIME_BANDS];
+  (typeof COMPONENT_TIME_BANDS)[keyof typeof COMPONENT_TIME_BANDS]
 
 // Units of measure (UNITA_MISURA)
 export const UNITS_OF_MEASURE = {
@@ -371,7 +371,7 @@ export const UNITS_OF_MEASURE = {
   EURO_SM3: '04',
   EURO: '05',
   PERCENTAGE: '06',
-} as const;
+} as const
 
 export const UNIT_OF_MEASURE_LABELS: Record<string, string> = {
   '01': '€/Year',
@@ -380,10 +380,10 @@ export const UNIT_OF_MEASURE_LABELS: Record<string, string> = {
   '04': '€/Sm³',
   '05': '€',
   '06': 'Percentage (%)',
-} as const;
+} as const
 
 export type UnitOfMeasure =
-  (typeof UNITS_OF_MEASURE)[keyof typeof UNITS_OF_MEASURE];
+  (typeof UNITS_OF_MEASURE)[keyof typeof UNITS_OF_MEASURE]
 
 // Contractual condition types (TIPOLOGIA_CONDIZIONE)
 export const CONTRACTUAL_CONDITION_TYPES = {
@@ -393,7 +393,7 @@ export const CONTRACTUAL_CONDITION_TYPES = {
   MULTI_YEAR_OFFER: '04',
   EARLY_WITHDRAWAL_CHARGES: '05',
   OTHER: '99',
-} as const;
+} as const
 
 export const CONTRACTUAL_CONDITION_LABELS: Record<string, string> = {
   '01': 'Activation',
@@ -402,54 +402,54 @@ export const CONTRACTUAL_CONDITION_LABELS: Record<string, string> = {
   '04': 'Multi-year Offer',
   '05': 'Early Withdrawal Charges',
   '99': 'Other',
-} as const;
+} as const
 
 export type ContractualConditionType =
-  (typeof CONTRACTUAL_CONDITION_TYPES)[keyof typeof CONTRACTUAL_CONDITION_TYPES];
+  (typeof CONTRACTUAL_CONDITION_TYPES)[keyof typeof CONTRACTUAL_CONDITION_TYPES]
 
 // Limiting condition flags (LIMITANTE)
 export const LIMITING_CONDITIONS = {
   YES: '01',
   NO: '02',
-} as const;
+} as const
 
 export const LIMITING_CONDITION_LABELS: Record<string, string> = {
   '01': 'Yes, it is limiting',
   '02': 'No, it is not limiting',
-} as const;
+} as const
 
 export type LimitingCondition =
-  (typeof LIMITING_CONDITIONS)[keyof typeof LIMITING_CONDITIONS];
+  (typeof LIMITING_CONDITIONS)[keyof typeof LIMITING_CONDITIONS]
 
 // Discount validity periods (VALIDITA)
 export const DISCOUNT_VALIDITY_PERIODS = {
   ENTRY: '01',
   WITHIN_12_MONTHS: '02',
   BEYOND_12_MONTHS: '03',
-} as const;
+} as const
 
 export const DISCOUNT_VALIDITY_LABELS: Record<string, string> = {
   '01': 'Entry',
   '02': 'Within 12 months',
   '03': 'Beyond 12 months',
-} as const;
+} as const
 
 export type DiscountValidityPeriod =
-  (typeof DISCOUNT_VALIDITY_PERIODS)[keyof typeof DISCOUNT_VALIDITY_PERIODS];
+  (typeof DISCOUNT_VALIDITY_PERIODS)[keyof typeof DISCOUNT_VALIDITY_PERIODS]
 
 // VAT applicability (IVA_SCONTO)
 export const VAT_APPLICABILITY = {
   YES: '01',
   NO: '02',
-} as const;
+} as const
 
 export const VAT_APPLICABILITY_LABELS: Record<string, string> = {
   '01': 'Yes',
   '02': 'No',
-} as const;
+} as const
 
 export type VatApplicability =
-  (typeof VAT_APPLICABILITY)[keyof typeof VAT_APPLICABILITY];
+  (typeof VAT_APPLICABILITY)[keyof typeof VAT_APPLICABILITY]
 
 // Discount application conditions (CONDIZIONE_APPLICAZIONE)
 export const DISCOUNT_CONDITIONS = {
@@ -458,7 +458,7 @@ export const DISCOUNT_CONDITIONS = {
   ONLINE_MANAGEMENT: '02',
   ELECTRONIC_BILLING_BANK_DEBIT: '03',
   OTHER: '99',
-} as const;
+} as const
 
 export const DISCOUNT_CONDITION_LABELS: Record<string, string> = {
   '00': 'Not conditioned',
@@ -466,10 +466,10 @@ export const DISCOUNT_CONDITION_LABELS: Record<string, string> = {
   '02': 'Online management',
   '03': 'Electronic billing + bank direct debit',
   '99': 'Other',
-} as const;
+} as const
 
 export type DiscountCondition =
-  (typeof DISCOUNT_CONDITIONS)[keyof typeof DISCOUNT_CONDITIONS];
+  (typeof DISCOUNT_CONDITIONS)[keyof typeof DISCOUNT_CONDITIONS]
 
 // Discount types (TIPOLOGIA for discounts)
 export const DISCOUNT_TYPES = {
@@ -477,16 +477,16 @@ export const DISCOUNT_TYPES = {
   POWER_DISCOUNT: '02',
   SALES_DISCOUNT: '03',
   REGULATED_PRICE_DISCOUNT: '04',
-} as const;
+} as const
 
 export const DISCOUNT_TYPE_LABELS: Record<string, string> = {
   '01': 'Fixed discount',
   '02': 'Power discount',
   '03': 'Sales discount',
   '04': 'Discount on regulated price',
-} as const;
+} as const
 
-export type DiscountType = (typeof DISCOUNT_TYPES)[keyof typeof DISCOUNT_TYPES];
+export type DiscountType = (typeof DISCOUNT_TYPES)[keyof typeof DISCOUNT_TYPES]
 
 // Additional products/services macro areas
 export const ADDITIONAL_PRODUCT_MACRO_AREAS = {
@@ -497,7 +497,7 @@ export const ADDITIONAL_PRODUCT_MACRO_AREAS = {
   AIR_CONDITIONING: '05',
   INSURANCE_POLICY: '06',
   OTHER: '99',
-} as const;
+} as const
 
 export const ADDITIONAL_PRODUCT_MACRO_AREA_LABELS: Record<string, string> = {
   '01': 'Boiler',
@@ -507,10 +507,10 @@ export const ADDITIONAL_PRODUCT_MACRO_AREA_LABELS: Record<string, string> = {
   '05': 'Air conditioning',
   '06': 'Insurance policy',
   '99': 'Other',
-} as const;
+} as const
 
 export type AdditionalProductMacroArea =
-  (typeof ADDITIONAL_PRODUCT_MACRO_AREAS)[keyof typeof ADDITIONAL_PRODUCT_MACRO_AREAS];
+  (typeof ADDITIONAL_PRODUCT_MACRO_AREAS)[keyof typeof ADDITIONAL_PRODUCT_MACRO_AREAS]
 
 // Months (for validity periods)
 export const MONTHS = {
@@ -526,7 +526,7 @@ export const MONTHS = {
   OCTOBER: '10',
   NOVEMBER: '11',
   DECEMBER: '12',
-} as const;
+} as const
 
 export const MONTH_LABELS: Record<string, string> = {
   '01': 'January',
@@ -541,15 +541,15 @@ export const MONTH_LABELS: Record<string, string> = {
   '10': 'October',
   '11': 'November',
   '12': 'December',
-} as const;
+} as const
 
-export type Month = (typeof MONTHS)[keyof typeof MONTHS];
+export type Month = (typeof MONTHS)[keyof typeof MONTHS]
 
 // Special constants
-export const INDETERMINATE_DURATION = -1;
-export const MAX_DURATION_MONTHS = 99;
-export const OTHER_CODE = '99';
-export const NO_GUARANTEES = 'NO';
+export const INDETERMINATE_DURATION = -1
+export const MAX_DURATION_MONTHS = 99
+export const OTHER_CODE = '99'
+export const NO_GUARANTEES = 'NO'
 
 // Field constraints
 export const FIELD_CONSTRAINTS = {
@@ -560,13 +560,13 @@ export const FIELD_CONSTRAINTS = {
   TELEFONO_MAX_LENGTH: 15,
   URL_MAX_LENGTH: 100,
   DESCRIZIONE_FILENAME_MAX_LENGTH: 25,
-} as const;
+} as const
 
 // Date formats
 export const DATE_FORMATS = {
   TIMESTAMP: 'GG/MM/AAAA_HH:MM:SS',
   MONTH_YEAR: 'MM/AAAA',
-} as const;
+} as const
 
 // Time band constants for weekly configuration
 export const TIME_BAND_CONSTANTS = {
@@ -576,35 +576,35 @@ export const TIME_BAND_CONSTANTS = {
   MAX_BAND_NUMBER: 8,
   PEAK_BAND_NUMBER: 7,
   OFFPEAK_BAND_NUMBER: 8,
-} as const;
+} as const
 
 // Helpers for conditional fields
 export const requiresWeeklyTimeBands = (tipologiaFasce: string): boolean => {
-  return ['02', '04', '05', '06'].includes(tipologiaFasce);
-};
+  return ['02', '04', '05', '06'].includes(tipologiaFasce)
+}
 
 export const requiresSingleOffer = (tipoMercato: string): boolean => {
-  return tipoMercato !== MARKET_TYPES.DUAL_FUEL;
-};
+  return tipoMercato !== MARKET_TYPES.DUAL_FUEL
+}
 
 export const requiresEnergyPriceReference = (tipoOfferta: string): boolean => {
-  return tipoOfferta === OFFER_TYPES.VARIABLE;
-};
+  return tipoOfferta === OFFER_TYPES.VARIABLE
+}
 
 export const requiresConsumptionLimits = (tipoOfferta: string): boolean => {
-  return tipoOfferta === OFFER_TYPES.FLAT;
-};
+  return tipoOfferta === OFFER_TYPES.FLAT
+}
 
 export const requiresDualOfferCodes = (tipoMercato: string): boolean => {
-  return tipoMercato === MARKET_TYPES.DUAL_FUEL;
-};
+  return tipoMercato === MARKET_TYPES.DUAL_FUEL
+}
 
 // Get components by market type
 export const getRegulatedComponentsByMarket = (
-  marketType: string
+  marketType: string,
 ): string[] => {
   if (marketType === MARKET_TYPES.ELECTRICITY) {
-    return [REGULATED_COMPONENTS.PCV, REGULATED_COMPONENTS.PPE];
+    return [REGULATED_COMPONENTS.PCV, REGULATED_COMPONENTS.PPE]
   }
   if (marketType === MARKET_TYPES.GAS) {
     return [
@@ -615,48 +615,48 @@ export const getRegulatedComponentsByMarket = (
       REGULATED_COMPONENTS.QTPSV,
       REGULATED_COMPONENTS.QVD_FISSA,
       REGULATED_COMPONENTS.QVD_VARIABILE,
-    ];
+    ]
   }
-  return [];
-};
+  return []
+}
 
 // Validation helpers
 export const isValidPIVA = (piva: string): boolean => {
-  return /^[A-Z0-9]{16}$/.test(piva);
-};
+  return /^[A-Z0-9]{16}$/.test(piva)
+}
 
 export const isValidFilenameDescription = (description: string): boolean => {
-  return /^[A-Za-z0-9]{1,25}$/.test(description);
-};
+  return /^[A-Za-z0-9]{1,25}$/.test(description)
+}
 
 export const isValidTimeBandFormat = (format: string): boolean => {
-  const regex = /^(\d{1,2}-\d,)*\d{1,2}-\d$/;
+  const regex = /^(\d{1,2}-\d,)*\d{1,2}-\d$/
   if (!regex.test(format)) {
-    return false;
+    return false
   }
 
-  const segments = format.split(',');
+  const segments = format.split(',')
   if (segments.length > TIME_BAND_CONSTANTS.MAX_SEGMENTS_PER_DAY) {
-    return false;
+    return false
   }
 
-  let lastQuarter = 0;
+  let lastQuarter = 0
   for (const segment of segments) {
-    const [quarter, band] = segment.split('-').map(Number);
+    const [quarter, band] = segment.split('-').map(Number)
     if (
       quarter <= lastQuarter ||
       quarter > TIME_BAND_CONSTANTS.QUARTERS_PER_DAY
     ) {
-      return false;
+      return false
     }
     if (
       band < TIME_BAND_CONSTANTS.MIN_BAND_NUMBER ||
       band > TIME_BAND_CONSTANTS.MAX_BAND_NUMBER
     ) {
-      return false;
+      return false
     }
-    lastQuarter = quarter;
+    lastQuarter = quarter
   }
 
-  return true;
-};
+  return true
+}

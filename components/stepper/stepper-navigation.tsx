@@ -1,39 +1,39 @@
-'use client';
+'use client'
 
-import { parseAsString, useQueryState } from 'nuqs';
-import { Suspense } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useFormStates } from '@/hooks/use-form-states';
-import { xmlFormStepper } from '@/lib/xml-generator/stepperize-config';
+import { parseAsString, useQueryState } from 'nuqs'
+import { Suspense } from 'react'
+import { useFormContext } from 'react-hook-form'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useFormStates } from '@/hooks/use-form-states'
+import { xmlFormStepper } from '@/lib/xml-generator/stepperize-config'
 
-const { Stepper, useStepper } = xmlFormStepper;
+const { Stepper, useStepper } = xmlFormStepper
 
 function StepperNavigationContent() {
-  const [, setFormStates] = useFormStates();
+  const [, setFormStates] = useFormStates()
   const [, setCurrentStep] = useQueryState(
     'currentStep',
-    parseAsString.withDefault('basicInfo')
-  );
-  const form = useFormContext();
-  const { current, all, goTo } = useStepper();
+    parseAsString.withDefault('basicInfo'),
+  )
+  const form = useFormContext()
+  const { current, all, goTo } = useStepper()
 
   const handleStepChange = async (stepId: typeof current.id) => {
-    const valid = await form.trigger();
+    const valid = await form.trigger()
     if (!valid) {
-      return;
+      return
     }
 
     // Save current step data before navigating
-    const currentValues = form.getValues();
+    const currentValues = form.getValues()
     await setFormStates({
       [current.id]: currentValues,
-    });
+    })
 
     // Update current step in URL
-    setCurrentStep(stepId);
-    goTo(stepId);
-  };
+    setCurrentStep(stepId)
+    goTo(stepId)
+  }
 
   return (
     <Stepper.Navigation>
@@ -48,7 +48,7 @@ function StepperNavigationContent() {
         </Stepper.Step>
       ))}
     </Stepper.Navigation>
-  );
+  )
 }
 
 function StepperNavigationSkeleton() {
@@ -61,7 +61,7 @@ function StepperNavigationSkeleton() {
         </div>
       ))}
     </div>
-  );
+  )
 }
 
 export function StepperNavigation() {
@@ -69,5 +69,5 @@ export function StepperNavigation() {
     <Suspense fallback={<StepperNavigationSkeleton />}>
       <StepperNavigationContent />
     </Suspense>
-  );
+  )
 }

@@ -39,8 +39,8 @@ export const baseConfig = [
     title: 'Validità e Revisione',
     description: 'Date di validità offerta e revisione finale',
   },
-] as const;
+] as const
 
-export const steps = baseConfig.map((step) => step.id);
+export const steps = baseConfig.map((step) => step.id)
 
-export type Step = (typeof steps)[number];
+export type Step = (typeof steps)[number]

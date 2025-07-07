@@ -1,33 +1,33 @@
-import { createLoader, createParser, parseAsStringLiteral } from 'nuqs/server';
-import { steps } from './stepperize/config';
+import { createLoader, createParser, parseAsStringLiteral } from 'nuqs/server'
+import { steps } from './stepperize/config'
 
 // Simple base64 form data parser
 export const parseAsFormData = createParser({
   parse: (value: string) => {
     if (!value) {
-      return {};
+      return {}
     }
     try {
-      return JSON.parse(atob(value));
+      return JSON.parse(atob(value))
     } catch {
-      return {};
+      return {}
     }
   },
   serialize: (value: unknown) => {
     if (!value || Object.keys(value).length === 0) {
-      return '';
+      return ''
     }
     try {
-      return btoa(JSON.stringify(value));
+      return btoa(JSON.stringify(value))
     } catch {
-      return '';
+      return ''
     }
   },
-});
+})
 
 export const formSearchParams = {
   currentStep: parseAsStringLiteral(steps).withDefault(steps[0]),
   formData: parseAsFormData.withDefault({}),
-};
+}
 
-export const loadSearchParams = createLoader(formSearchParams);
+export const loadSearchParams = createLoader(formSearchParams)

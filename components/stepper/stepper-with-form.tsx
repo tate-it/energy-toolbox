@@ -1,42 +1,42 @@
-'use client';
+'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { parseAsString, useQueryState } from 'nuqs';
-import { Suspense, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useFormStates } from '@/hooks/use-form-states';
-import { xmlFormStepper } from '@/lib/xml-generator/stepperize-config';
+import { zodResolver } from '@hookform/resolvers/zod'
+import { parseAsString, useQueryState } from 'nuqs'
+import { Suspense, useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useFormStates } from '@/hooks/use-form-states'
+import { xmlFormStepper } from '@/lib/xml-generator/stepperize-config'
 
-const { useStepper } = xmlFormStepper;
+const { useStepper } = xmlFormStepper
 
 function StepperWithFormContent() {
-  const methods = useStepper();
-  const [formStates] = useFormStates();
+  const methods = useStepper()
+  const [formStates] = useFormStates()
   const [currentStep, setCurrentStep] = useQueryState(
     'currentStep',
-    parseAsString.withDefault('basicInfo')
-  );
+    parseAsString.withDefault('basicInfo'),
+  )
 
   const form = useForm({
     mode: 'onTouched',
     resolver: zodResolver(methods.current.schema),
     // Initialize form with data from URL state for current step
     defaultValues: formStates[methods.current.id] || {},
-  });
+  })
 
   // Update form values when step changes
   useEffect(() => {
-    const currentStepData = formStates[methods.current.id] || {};
-    form.reset(currentStepData);
-  }, [methods, formStates, form]);
+    const currentStepData = formStates[methods.current.id] || {}
+    form.reset(currentStepData)
+  }, [methods, formStates, form])
 
   // Sync URL currentStep with stepper state
   useEffect(() => {
     if (methods.current.id !== currentStep) {
-      setCurrentStep(methods.current.id);
+      setCurrentStep(methods.current.id)
     }
-  }, [methods, currentStep, setCurrentStep]);
+  }, [methods, currentStep, setCurrentStep])
 
   return (
     <>
@@ -51,7 +51,7 @@ function StepperWithFormContent() {
         validityReview: ({ Component }) => <Component />,
       })}
     </>
-  );
+  )
 }
 
 function StepperWithFormSkeleton() {
@@ -78,7 +78,7 @@ function StepperWithFormSkeleton() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 export function StepperWithForm() {
@@ -86,5 +86,5 @@ export function StepperWithForm() {
     <Suspense fallback={<StepperWithFormSkeleton />}>
       <StepperWithFormContent />
     </Suspense>
-  );
+  )
 }

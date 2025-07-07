@@ -1,14 +1,14 @@
-'use client';
+'use client'
 
-import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
-import type * as React from 'react';
-import { buttonVariants } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
+import type * as React from 'react'
+import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 function AlertDialog({
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Root>) {
-  return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />;
+  return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />
 }
 
 function AlertDialogTrigger({
@@ -16,7 +16,7 @@ function AlertDialogTrigger({
 }: React.ComponentProps<typeof AlertDialogPrimitive.Trigger>) {
   return (
     <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />
-  );
+  )
 }
 
 function AlertDialogPortal({
@@ -24,7 +24,7 @@ function AlertDialogPortal({
 }: React.ComponentProps<typeof AlertDialogPrimitive.Portal>) {
   return (
     <AlertDialogPrimitive.Portal data-slot="alert-dialog-portal" {...props} />
-  );
+  )
 }
 
 function AlertDialogOverlay({
@@ -35,12 +35,12 @@ function AlertDialogOverlay({
     <AlertDialogPrimitive.Overlay
       className={cn(
         'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=open]:animate-in',
-        className
+        className,
       )}
       data-slot="alert-dialog-overlay"
       {...props}
     />
-  );
+  )
 }
 
 function AlertDialogContent({
@@ -53,13 +53,13 @@ function AlertDialogContent({
       <AlertDialogPrimitive.Content
         className={cn(
           'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border bg-background p-6 shadow-lg duration-200 data-[state=closed]:animate-out data-[state=open]:animate-in sm:max-w-lg',
-          className
+          className,
         )}
         data-slot="alert-dialog-content"
         {...props}
       />
     </AlertDialogPortal>
-  );
+  )
 }
 
 function AlertDialogHeader({
@@ -72,7 +72,7 @@ function AlertDialogHeader({
       data-slot="alert-dialog-header"
       {...props}
     />
-  );
+  )
 }
 
 function AlertDialogFooter({
@@ -83,12 +83,12 @@ function AlertDialogFooter({
     <div
       className={cn(
         'flex flex-col-reverse gap-2 sm:flex-row sm:justify-end',
-        className
+        className,
       )}
       data-slot="alert-dialog-footer"
       {...props}
     />
-  );
+  )
 }
 
 function AlertDialogTitle({
@@ -101,7 +101,7 @@ function AlertDialogTitle({
       data-slot="alert-dialog-title"
       {...props}
     />
-  );
+  )
 }
 
 function AlertDialogDescription({
@@ -114,7 +114,7 @@ function AlertDialogDescription({
       data-slot="alert-dialog-description"
       {...props}
     />
-  );
+  )
 }
 
 function AlertDialogAction({
@@ -126,7 +126,7 @@ function AlertDialogAction({
       className={cn(buttonVariants(), className)}
       {...props}
     />
-  );
+  )
 }
 
 function AlertDialogCancel({
@@ -138,7 +138,7 @@ function AlertDialogCancel({
       className={cn(buttonVariants({ variant: 'outline' }), className)}
       {...props}
     />
-  );
+  )
 }
 
 export {
@@ -153,4 +153,4 @@ export {
   AlertDialogDescription,
   AlertDialogAction,
   AlertDialogCancel,
-};
+}

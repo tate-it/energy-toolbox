@@ -1,8 +1,8 @@
-'use client';
+'use client'
 
-import type { StepperVariant } from '@/components/stepper';
-import type { Step } from '@/lib/xml-generator/stepperize/config';
-import { xmlFormStepper } from '@/lib/xml-generator/stepperize-config';
+import type { StepperVariant } from '@/components/stepper'
+import type { Step } from '@/lib/xml-generator/stepperize/config'
+import { xmlFormStepper } from '@/lib/xml-generator/stepperize-config'
 
 export function StepperProvider({
   initialStep,
@@ -10,12 +10,12 @@ export function StepperProvider({
   variant,
   className,
 }: {
-  initialStep: Step;
-  children: React.ReactNode;
-  variant: StepperVariant;
-  className?: string;
+  initialStep: Step
+  children: React.ReactNode
+  variant: StepperVariant
+  className?: string
 }) {
-  const { Stepper } = xmlFormStepper;
+  const { Stepper } = xmlFormStepper
   return (
     <Stepper.Provider
       className={className}
@@ -24,5 +24,5 @@ export function StepperProvider({
     >
       {children}
     </Stepper.Provider>
-  );
+  )
 }
