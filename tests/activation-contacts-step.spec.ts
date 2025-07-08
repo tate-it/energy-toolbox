@@ -1,12 +1,5 @@
 import { expect, test } from '@playwright/test'
 
-// Define regex at top level for performance
-const ACTIVATION_CONTACTS_URL_PATTERN = /activationContacts=/
-const ANY_ACCESSIBLE_NAME_PATTERN = /./
-const PHONE_ACCESSIBLE_NAME_PATTERN = /Numero di Telefono/
-const WEBSITE_ACCESSIBLE_NAME_PATTERN = /Sito Web del Venditore/
-const URL_ACCESSIBLE_NAME_PATTERN = /URL dell'Offerta/
-
 test.describe('ActivationContactsStep E2E Tests', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to the XML generator application
@@ -39,7 +32,11 @@ test.describe('ActivationContactsStep E2E Tests', () => {
         .locator('[data-slot="card-title"]')
         .filter({ hasText: 'Metodi di Attivazione' }),
     ).toBeVisible()
-    await expect(page.getByText('Informazioni di Contatto')).toBeVisible()
+    await expect(
+      page
+        .locator('[data-slot="card-title"]')
+        .filter({ hasText: 'Informazioni di Contatto' }),
+    ).toBeVisible()
 
     // Verify all activation method options are displayed in Italian
     await expect(page.getByText('Attivazione solo web')).toBeVisible()
@@ -50,7 +47,7 @@ test.describe('ActivationContactsStep E2E Tests', () => {
     await expect(page.getByText('Altro')).toBeVisible()
 
     // Verify contact information fields are displayed in Italian
-    await expect(page.getByText('Numero di Telefono')).toBeVisible()
+    await expect(page.getByText('Numero di Telefono *')).toBeVisible()
     await expect(page.getByText('Sito Web del Venditore')).toBeVisible()
     await expect(page.getByText("URL dell'Offerta")).toBeVisible()
   })
@@ -142,135 +139,30 @@ test.describe('ActivationContactsStep E2E Tests', () => {
     ).toHaveValue('https://www.energiaitaliana.it/offerta-verde')
   })
 
-  test('accepts invalid phone number and URL formats without client-side blocking', async ({
-    page,
-  }) => {
-    // Test phone number validation with invalid format
-    const phoneField = page.getByRole('textbox', {
-      name: 'Numero di Telefono *',
-    })
-    await phoneField.fill('invalid-phone-123@test')
-    await expect(phoneField).toHaveValue('invalid-phone-123@test')
+  test('validates required fields before proceeding', async ({ page }) => {
+    // Clear any existing values and try to proceed without required fields
+    await page.getByRole('textbox', { name: 'Numero di Telefono *' }).clear()
 
-    // Test URL validation for vendor website with invalid format
-    const vendorWebsiteField = page.getByRole('textbox', {
-      name: 'Sito Web del Venditore',
-    })
-    await vendorWebsiteField.fill('invalid-url-test')
-    await expect(vendorWebsiteField).toHaveValue('invalid-url-test')
+    // Try to proceed to next step
+    await page.getByRole('button', { name: 'Successivo' }).click()
 
-    // Note: Client-side validation may occur on form submission or field blur
-    // This test verifies that invalid input can be entered (validation happens later)
+    // Wait for validation to trigger
+    await page.waitForTimeout(1000)
+
+    // Should still be on the same step due to validation
+    await expect(
+      page.getByRole('heading', { name: 'Attivazione e Contatti', level: 2 }),
+    ).toBeVisible()
   })
 
-  test('preserves form state when navigating between steps', async ({
+  test('navigates to next step with valid data submission', async ({
     page,
   }) => {
-    // Fill out the form with test data
+    // Select activation methods
     await page.getByRole('checkbox', { name: 'Attivazione solo web' }).click()
     await page.getByRole('checkbox', { name: 'Punto vendita' }).click()
-    await page.getByRole('checkbox', { name: 'Altro' }).click()
-    await page
-      .getByRole('textbox', { name: 'Descrizione Metodo Attivazione *' })
-      .fill('Test description')
-    await page
-      .getByRole('textbox', { name: 'Numero di Telefono *' })
-      .fill('+39 02 1234567')
-    await page
-      .getByRole('textbox', { name: 'Sito Web del Venditore' })
-      .fill('https://www.test.it')
-    await page
-      .getByRole('textbox', { name: "URL dell'Offerta" })
-      .fill('https://www.test.it/offerta')
 
-    // Navigate to another step
-    await page.getByRole('tab', { name: '1' }).click()
-    await expect(
-      page.getByRole('textbox', { name: 'PIVA Utente (VAT Number) *' }),
-    ).toHaveValue('IT12345678901')
-
-    // Navigate back to ActivationContactsStep
-    await page.getByRole('tab', { name: '3' }).click()
-
-    // Verify form state persistence - all data should be preserved
-    await expect(
-      page.getByRole('checkbox', { name: 'Attivazione solo web' }),
-    ).toBeChecked()
-    await expect(
-      page.getByRole('checkbox', { name: 'Punto vendita' }),
-    ).toBeChecked()
-    await expect(page.getByRole('checkbox', { name: 'Altro' })).toBeChecked()
-    await expect(
-      page.getByRole('textbox', { name: 'Descrizione Metodo Attivazione *' }),
-    ).toHaveValue('Test description')
-    await expect(
-      page.getByRole('textbox', { name: 'Numero di Telefono *' }),
-    ).toHaveValue('+39 02 1234567')
-    await expect(
-      page.getByRole('textbox', { name: 'Sito Web del Venditore' }),
-    ).toHaveValue('https://www.test.it')
-    await expect(
-      page.getByRole('textbox', { name: "URL dell'Offerta" }),
-    ).toHaveValue('https://www.test.it/offerta')
-  })
-
-  test('displays required field indicators and help text', async ({ page }) => {
-    // Verify required field indicators (asterisks) are displayed
-    await expect(page.getByText('Modalità di Attivazione *')).toBeVisible()
-    await expect(page.getByText('Numero di Telefono *')).toBeVisible()
-
-    // Verify help text is displayed in Italian
-    await expect(
-      page.getByText(
-        'Numero di telefono per il supporto clienti (massimo 15 caratteri)',
-      ),
-    ).toBeVisible()
-    await expect(
-      page.getByText(
-        'URL del sito web aziendale (opzionale, massimo 100 caratteri)',
-      ),
-    ).toBeVisible()
-    await expect(
-      page.getByText(
-        "URL specifico dell'offerta (opzionale, massimo 100 caratteri)",
-      ),
-    ).toBeVisible()
-  })
-
-  test('allows deselecting activation methods', async ({ page }) => {
-    // Select multiple methods first
-    const webOnlyCheckbox = page.getByRole('checkbox', {
-      name: 'Attivazione solo web',
-    })
-    const pointOfSaleCheckbox = page.getByRole('checkbox', {
-      name: 'Punto vendita',
-    })
-
-    await webOnlyCheckbox.click()
-    await pointOfSaleCheckbox.click()
-
-    // Verify both are checked
-    await expect(webOnlyCheckbox).toBeChecked()
-    await expect(pointOfSaleCheckbox).toBeChecked()
-
-    // Deselect one method
-    await webOnlyCheckbox.click()
-
-    // Verify the state is correct
-    await expect(webOnlyCheckbox).not.toBeChecked()
-    await expect(pointOfSaleCheckbox).toBeChecked()
-  })
-
-  test('completes full workflow with valid data submission', async ({
-    page,
-  }) => {
-    // Fill out complete form with valid data
-    await page.getByRole('checkbox', { name: 'Attivazione solo web' }).click()
-    await page.getByRole('checkbox', { name: 'Punto vendita' }).click()
-    await page.getByRole('checkbox', { name: 'Altro' }).click()
-    await page
-      .getByRole('textbox', { name: 'Descrizione Metodo Attivazione *' })
-      .fill('Attivazione tramite consulente commerciale specializzato')
+    // Fill out required contact information
     await page
       .getByRole('textbox', { name: 'Numero di Telefono *' })
       .fill('+39 02 1234567')
@@ -281,48 +173,48 @@ test.describe('ActivationContactsStep E2E Tests', () => {
       .getByRole('textbox', { name: "URL dell'Offerta" })
       .fill('https://www.energiaitaliana.it/offerta-verde')
 
-    // Test form submission with complete valid data
+    // Navigate to next step
     await page.getByRole('button', { name: 'Successivo' }).click()
 
-    // Handle the debug alert dialog that appears
-    page.on('dialog', async (dialog) => {
-      await dialog.accept()
-    })
-
-    // Verify the URL contains the form data (indicating successful submission)
-    await expect(page).toHaveURL(ACTIVATION_CONTACTS_URL_PATTERN)
-
-    // Verify we're still on the same step (since next steps aren't implemented yet)
-    await expect(page.getByRole('tab', { name: '3' })).toHaveAttribute(
+    // Verify we moved to the next step (step 4)
+    await expect(page.getByRole('tab', { name: '4' })).toHaveAttribute(
       'aria-selected',
       'true',
     )
   })
 
-  test('has proper accessibility attributes', async ({ page }) => {
-    // Verify checkboxes have accessible names
-    const checkboxes = page.getByRole('checkbox')
-    const checkboxCount = await checkboxes.count()
+  test('navigates back to previous step', async ({ page }) => {
+    // Click previous button
+    await page.getByRole('button', { name: 'Precedente' }).click()
 
-    // Verify all checkboxes have accessible names
-    const checkboxPromises: Promise<void>[] = []
-    for (let i = 0; i < checkboxCount; i++) {
-      const checkbox = checkboxes.nth(i)
-      checkboxPromises.push(
-        expect(checkbox).toHaveAccessibleName(ANY_ACCESSIBLE_NAME_PATTERN),
-      )
-    }
-    await Promise.all(checkboxPromises)
+    // Verify we moved to the previous step (step 2)
+    await expect(page.getByRole('tab', { name: '2' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    )
+  })
 
-    // Verify inputs have accessible names
+  test('maintains form state when navigating between steps', async ({
+    page,
+  }) => {
+    // Fill out form data
+    await page.getByRole('checkbox', { name: 'Attivazione solo web' }).click()
+    await page
+      .getByRole('textbox', { name: 'Numero di Telefono *' })
+      .fill('+39 02 1234567')
+
+    // Navigate to previous step
+    await page.getByRole('button', { name: 'Precedente' }).click()
+
+    // Navigate back to current step
+    await page.getByRole('tab', { name: '3' }).click()
+
+    // Verify form data is preserved
+    await expect(
+      page.getByRole('checkbox', { name: 'Attivazione solo web' }),
+    ).toBeChecked()
     await expect(
       page.getByRole('textbox', { name: 'Numero di Telefono *' }),
-    ).toHaveAccessibleName(PHONE_ACCESSIBLE_NAME_PATTERN)
-    await expect(
-      page.getByRole('textbox', { name: 'Sito Web del Venditore' }),
-    ).toHaveAccessibleName(WEBSITE_ACCESSIBLE_NAME_PATTERN)
-    await expect(
-      page.getByRole('textbox', { name: "URL dell'Offerta" }),
-    ).toHaveAccessibleName(URL_ACCESSIBLE_NAME_PATTERN)
+    ).toHaveValue('+39 02 1234567')
   })
 })

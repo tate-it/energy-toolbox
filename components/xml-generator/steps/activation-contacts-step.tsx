@@ -25,7 +25,19 @@ export function ActivationContactsStep() {
 
   const activationMethods = watch('activationMethods') || []
 
-  const handleActivationMethodChange = (method: string, checked: boolean) => {
+  const activationMethodOptions = [
+    { value: '01', label: 'Attivazione solo web' },
+    { value: '02', label: 'Attivazione qualsiasi canale' },
+    { value: '03', label: 'Punto vendita' },
+    { value: '04', label: 'Teleselling' },
+    { value: '05', label: 'Agenzia' },
+    { value: '99', label: 'Altro' },
+  ] as const
+
+  const handleActivationMethodChange = (
+    method: (typeof activationMethodOptions)[number]['value'],
+    checked: boolean,
+  ) => {
     if (checked) {
       setValue('activationMethods', [...activationMethods, method])
     } else {
@@ -35,15 +47,6 @@ export function ActivationContactsStep() {
       )
     }
   }
-
-  const activationMethodOptions = [
-    { value: '01', label: 'Attivazione solo web' },
-    { value: '02', label: 'Attivazione qualsiasi canale' },
-    { value: '03', label: 'Punto vendita' },
-    { value: '04', label: 'Teleselling' },
-    { value: '05', label: 'Agenzia' },
-    { value: '99', label: 'Altro' },
-  ]
 
   return (
     <div className="space-y-6">

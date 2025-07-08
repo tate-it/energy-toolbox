@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { useFormStates } from '@/hooks/use-form-states'
 import {
   DISPATCHING_TYPE_LABELS,
   DISPATCHING_TYPES,
@@ -46,12 +47,16 @@ interface PricingConfigStepProps {
 
 export function PricingConfigStep({ className }: PricingConfigStepProps) {
   const { control, watch } = useFormContext()
+  const [formStates] = useFormStates()
 
-  // Watch form values from current and previous steps
-  const marketType = watch('marketType')
-  const offerType = watch('offerType')
-  const energyPriceIndex = watch('energyPriceIndex')
-  const timeBandConfiguration = watch('timeBandConfiguration')
+  // Get form values from URL state (from previous steps)
+  const offerDetails = formStates.offerDetails as Record<string, unknown>
+  const pricingConfig = formStates.pricingConfig as Record<string, unknown>
+
+  const marketType = offerDetails?.marketType as string
+  const offerType = offerDetails?.offerType as string
+  const energyPriceIndex = pricingConfig?.energyPriceIndex as string
+  const timeBandConfiguration = pricingConfig?.timeBandConfiguration as string
 
   const {
     fields: dispatchingFields,
