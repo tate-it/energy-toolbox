@@ -9,6 +9,14 @@ export default defineConfig({
     globals: true,
     setupFiles: './vitest.setup.mjs',
     css: true,
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/cypress/**',
+      '**/.{idea,git,cache,output,temp}/**',
+      '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
+      '**/tests/**', // Exclude Playwright tests directory
+    ],
     coverage: {
       reporter: ['text', 'json', 'html'],
       exclude: [

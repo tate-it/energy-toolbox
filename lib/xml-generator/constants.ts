@@ -21,7 +21,7 @@ export const MARKET_TYPES = {
 } as const
 
 export const MARKET_TYPE_LABELS: Record<string, string> = {
-  '01': 'Electricity',
+  '01': 'Elettrico',
   '02': 'Gas',
   '03': 'Dual Fuel',
 } as const
@@ -35,8 +35,8 @@ export const SINGLE_OFFER_OPTIONS = {
 } as const
 
 export const SINGLE_OFFER_LABELS: Record<string, string> = {
-  SI: 'Yes - can be subscribed individually',
-  NO: 'No - only with another commodity',
+  SI: 'Sì - può essere sottoscritta singolarmente',
+  NO: "No - solo con un'altra commodity",
 } as const
 
 export type SingleOfferOption =
@@ -50,9 +50,9 @@ export const CLIENT_TYPES = {
 } as const
 
 export const CLIENT_TYPE_LABELS: Record<string, string> = {
-  '01': 'Domestic',
-  '02': 'Other Uses',
-  '03': 'Residential Condominium (Gas)',
+  '01': 'Domestico',
+  '02': 'Altri Usi',
+  '03': 'Condominio Uso Domestico (Gas)',
 } as const
 
 export type ClientType = (typeof CLIENT_TYPES)[keyof typeof CLIENT_TYPES]
@@ -65,9 +65,9 @@ export const RESIDENTIAL_STATUS = {
 } as const
 
 export const RESIDENTIAL_STATUS_LABELS: Record<string, string> = {
-  '01': 'Domestic Resident',
-  '02': 'Domestic Non-Resident',
-  '03': 'All types',
+  '01': 'Domestico Residente',
+  '02': 'Domestico Non Residente',
+  '03': 'Tutti i tipi',
 } as const
 
 export type ResidentialStatus =
@@ -81,8 +81,8 @@ export const OFFER_TYPES = {
 } as const
 
 export const OFFER_TYPE_LABELS: Record<string, string> = {
-  '01': 'Fixed',
-  '02': 'Variable',
+  '01': 'Fisso',
+  '02': 'Variabile',
   '03': 'FLAT',
 } as const
 
@@ -98,11 +98,11 @@ export const CONTRACT_ACTIVATION_TYPES = {
 } as const
 
 export const CONTRACT_ACTIVATION_LABELS: Record<string, string> = {
-  '01': 'Supplier Change',
-  '02': 'First Activation (Meter not present)',
-  '03': 'Reactivation (Meter present but deactivated)',
-  '04': 'Contract Transfer',
-  '99': 'Always',
+  '01': 'Cambio Fornitore',
+  '02': 'Prima Attivazione (Contatore non presente)',
+  '03': 'Riattivazione (Contatore presente ma disattivato)',
+  '04': 'Voltura',
+  '99': 'Sempre',
 } as const
 
 export type ContractActivationType =

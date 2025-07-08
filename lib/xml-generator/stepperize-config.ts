@@ -1,6 +1,10 @@
 import { defineStepper } from '@/components/stepper'
 import { PlaceholderComponent } from '@/components/xml-generator'
+import { ActivationContactsStep } from '@/components/xml-generator/steps/activation-contacts-step'
 import { BasicInfoStep } from '@/components/xml-generator/steps/basic-info-step'
+import { CompanyComponentsStep } from '@/components/xml-generator/steps/company-components-step'
+import { OfferDetailsStep } from '@/components/xml-generator/steps/offer-details-step'
+import { PricingConfigStep } from '@/components/xml-generator/steps/pricing-config-step'
 import {
   activationContactsSchema,
   additionalFeaturesSchema,
@@ -26,10 +30,10 @@ const schemaMap = {
 
 const componentMap = {
   basicInfo: BasicInfoStep,
-  offerDetails: PlaceholderComponent,
-  activationContacts: PlaceholderComponent,
-  pricingConfig: PlaceholderComponent,
-  companyComponents: PlaceholderComponent,
+  offerDetails: OfferDetailsStep,
+  activationContacts: ActivationContactsStep,
+  pricingConfig: PricingConfigStep,
+  companyComponents: CompanyComponentsStep,
   paymentConditions: PlaceholderComponent,
   additionalFeatures: PlaceholderComponent,
   validityReview: PlaceholderComponent,

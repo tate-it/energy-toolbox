@@ -6,8 +6,8 @@
 - `components/xml-generator/StepperForm.test.tsx` - Unit tests for the stepper form
 - `components/xml-generator/steps/BasicInfoStep.tsx` - Basic information form step (PIVA, Offer Code) - COMPLETED
 - `components/xml-generator/steps/BasicInfoStep.test.tsx` - Unit tests for basic info step - COMPLETED
-- `components/xml-generator/steps/OfferDetailsStep.tsx` - Offer details form step
-- `components/xml-generator/steps/OfferDetailsStep.test.tsx` - Unit tests for offer details
+- `components/xml-generator/steps/OfferDetailsStep.tsx` - Offer details form step - COMPLETED
+- `components/xml-generator/steps/OfferDetailsStep.test.tsx` - Unit tests for offer details step - COMPLETED
 - `components/xml-generator/steps/ActivationContactsStep.tsx` - Activation methods and contacts step
 - `components/xml-generator/steps/ActivationContactsStep.test.tsx` - Unit tests for activation/contacts
 - `components/xml-generator/steps/PricingConfigStep.tsx` - Pricing configuration step
@@ -59,10 +59,10 @@
 - [ ] 2.0 Implement Form Sections with State Management (always refer to documentation/adding-new-steps-guide.md)
   - [x] 2.1 Create TypeScript types matching the complete SII XML structure in lib/xml-generator/types.ts
   - [x] 2.2 Implement BasicInfoStep component with PIVA and COD_OFFERTA fields using Stepperize context
-  - [ ] 2.3 Implement OfferDetailsStep with market type, client type, offer type, and related fields
-  - [ ] 2.4 Implement ActivationContactsStep with activation methods and contact information fields
-  - [ ] 2.5 Implement PricingConfigStep with energy price references, time bands, and dispatching
-  - [ ] 2.6 Implement CompanyComponentsStep with dynamic component addition and price intervals
+  - [x] 2.3 Implement OfferDetailsStep with market type, client type, offer type, and related fields
+  - [x] 2.4 Implement ActivationContactsStep with activation methods and contact information fields
+  - [x] 2.5 Implement PricingConfigStep with energy price references, time bands, and dispatching
+  - [x] 2.6 Implement CompanyComponentsStep with dynamic component addition and price intervals
   - [ ] 2.7 Implement PaymentConditionsStep with payment methods and contractual conditions
   - [ ] 2.8 Implement AdditionalFeaturesStep with discounts, zones, and additional products
   - [ ] 2.9 Implement ValidityReviewStep with date selection and final review summary

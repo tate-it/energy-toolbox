@@ -30,10 +30,6 @@ export function FormProvider({ children }: { children: React.ReactNode }) {
     setFormStates({
       [methods.current.id]: values,
     })
-
-    alert(
-      `Form values for step ${methods.current.id}: ${JSON.stringify(values)}`,
-    )
   }
   const form = useForm({
     mode: 'onTouched',
