@@ -5,7 +5,7 @@ import {
   type BasicInfoFormValues,
   basicInfoSchema,
 } from '@/lib/xml-generator/schemas'
-import { BasicInfoStep } from './BasicInfoStep'
+import { BasicInfoStep } from './basic-info-step'
 
 // Regex patterns defined at top level for performance
 const PIVA_UTENTE_REGEX = /PIVA Utente/i

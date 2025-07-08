@@ -620,18 +620,22 @@ export const getRegulatedComponentsByMarket = (
   return []
 }
 
+// Validation regex patterns
+const PIVA_REGEX = /^[A-Z0-9]{16}$/
+const FILENAME_DESCRIPTION_REGEX = /^[A-Za-z0-9]{1,25}$/
+const TIME_BAND_FORMAT_REGEX = /^(\d{1,2}-\d,)*\d{1,2}-\d$/
+
 // Validation helpers
 export const isValidPIVA = (piva: string): boolean => {
-  return /^[A-Z0-9]{16}$/.test(piva)
+  return PIVA_REGEX.test(piva)
 }
 
 export const isValidFilenameDescription = (description: string): boolean => {
-  return /^[A-Za-z0-9]{1,25}$/.test(description)
+  return FILENAME_DESCRIPTION_REGEX.test(description)
 }
 
 export const isValidTimeBandFormat = (format: string): boolean => {
-  const regex = /^(\d{1,2}-\d,)*\d{1,2}-\d$/
-  if (!regex.test(format)) {
+  if (!TIME_BAND_FORMAT_REGEX.test(format)) {
     return false
   }
 

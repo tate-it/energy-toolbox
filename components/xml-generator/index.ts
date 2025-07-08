@@ -1,4 +1,4 @@
 // Export all XML generator form components
 
-export { PlaceholderComponent } from './PlaceholderComponent'
-export { BasicInfoStep } from './steps/BasicInfoStep'
+export { PlaceholderComponent } from './placeholder-component'
+export { BasicInfoStep } from './steps/basic-info-step'

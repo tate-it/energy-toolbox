@@ -1,6 +1,6 @@
 import { defineStepper } from '@/components/stepper'
 import { PlaceholderComponent } from '@/components/xml-generator'
-import { BasicInfoStep } from '@/components/xml-generator/steps/BasicInfoStep'
+import { BasicInfoStep } from '@/components/xml-generator/steps/basic-info-step'
 import {
   activationContactsSchema,
   additionalFeaturesSchema,
