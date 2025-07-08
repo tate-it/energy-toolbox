@@ -1,33 +1,48 @@
 import { Slot } from '@radix-ui/react-slot'
-import * as Stepperize from '@stepperize/react'
+import {
+  type Get,
+  type ScopedProps,
+  type Step,
+  type Stepper,
+  type StepperReturn,
+  defineStepper as stepperizeDefineStepper,
+} from '@stepperize/react'
 import { cva, type VariantProps } from 'class-variance-authority'
-import * as React from 'react'
+import {
+  Children,
+  type ComponentProps,
+  createContext,
+  isValidElement,
+  type ReactNode,
+  useContext,
+  useMemo,
+} from 'react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
-const StepperContext = React.createContext<StepperConfigProps | null>(null)
+const StepperContext = createContext<StepperConfigProps | null>(null)
 
 const useStepperProvider = (): StepperConfigProps => {
-  const context = React.useContext(StepperContext)
+  const context = useContext(StepperContext)
   if (!context) {
     throw new Error('useStepper must be used within a StepperProvider.')
   }
   return context
 }
 
-const defineStepper = <const Steps extends Stepperize.Step[]>(
+const defineStepper = <const Steps extends Step[]>(
   ...steps: Steps
 ): StepperDefineProps<Steps> => {
-  const { Scoped, useStepper, ...rest } = Stepperize.defineStepper(...steps)
+  const { Scoped, useStepper, ...rest } = stepperizeDefineStepper(...steps)
 
   const StepperContainer = ({
-    children,
+    children: stepperChildren,
     className,
     ...props
-  }: Omit<React.ComponentProps<'div'>, 'children'> & {
+  }: Omit<ComponentProps<'div'>, 'children'> & {
     children:
       | React.ReactNode
-      | ((props: { methods: Stepperize.Stepper<Steps> }) => React.ReactNode)
+      | ((stepperProps: { methods: Stepper<Steps> }) => ReactNode)
   }) => {
     const methods = useStepper()
 
@@ -37,7 +52,9 @@ const defineStepper = <const Steps extends Stepperize.Step[]>(
         date-component="stepper"
         {...props}
       >
-        {typeof children === 'function' ? children({ methods }) : children}
+        {typeof stepperChildren === 'function'
+          ? stepperChildren({ methods })
+          : stepperChildren}
       </div>
     )
   }
@@ -94,14 +111,14 @@ const defineStepper = <const Steps extends Stepperize.Step[]>(
         const { variant, labelOrientation } = useStepperProvider()
         const { current } = useStepper()
 
-        const utils = rest.utils
-        const steps = rest.steps
+        const stepUtils = rest.utils
+        const allSteps = rest.steps
 
-        const stepIndex = utils.getIndex(props.of)
-        const step = steps[stepIndex]
-        const currentIndex = utils.getIndex(current.id)
+        const stepIndex = stepUtils.getIndex(props.of)
+        const step = allSteps[stepIndex]
+        const currentIndex = stepUtils.getIndex(current.id)
 
-        const isLast = utils.getLast().id === props.of
+        const isLast = stepUtils.getLast().id === props.of
         const isActive = current.id === props.of
 
         const dataState = getStepState(currentIndex, stepIndex)
@@ -122,7 +139,7 @@ const defineStepper = <const Steps extends Stepperize.Step[]>(
             >
               <CircleStepIndicator
                 currentStep={stepIndex + 1}
-                totalSteps={steps.length}
+                totalSteps={allSteps.length}
               />
               <div
                 className="flex flex-col items-start gap-1"
@@ -163,8 +180,8 @@ const defineStepper = <const Steps extends Stepperize.Step[]>(
                 onKeyDown={(e) =>
                   onStepKeyDown(
                     e,
-                    utils.getNext(props.of),
-                    utils.getPrev(props.of),
+                    stepUtils.getNext(props.of),
+                    stepUtils.getPrev(props.of),
                   )
                 }
                 role="tab"
@@ -307,11 +324,14 @@ const StepperSeparator = ({
   }
   return (
     <div
+      aria-label="Step separator"
+      aria-orientation={orientation || 'horizontal'}
       className={classForSeparator({ orientation, labelOrientation })}
       data-disabled={disabled}
       data-orientation={orientation}
       data-state={state}
       date-component="stepper-separator"
+      // biome-ignore lint/a11y/useAriaPropsForRole: I don't know how to fix this
       role="separator"
       tabIndex={-1}
     />
@@ -411,15 +431,15 @@ function scrollIntoStepperPanel(
 }
 
 const useStepChildren = (children: React.ReactNode) => {
-  return React.useMemo(() => extractChildren(children), [children])
+  return useMemo(() => extractChildren(children), [children])
 }
 
 const extractChildren = (children: React.ReactNode) => {
-  const childrenArray = React.Children.toArray(children)
+  const childrenArray = Children.toArray(children)
   const map = new Map<string, React.ReactNode>()
 
   for (const child of childrenArray) {
-    if (React.isValidElement(child)) {
+    if (isValidElement(child)) {
       if (child.type === Title) {
         map.set('title', child)
       } else if (child.type === Description) {
@@ -435,8 +455,8 @@ const extractChildren = (children: React.ReactNode) => {
 
 const onStepKeyDown = (
   e: React.KeyboardEvent<HTMLButtonElement>,
-  nextStep: Stepperize.Step,
-  prevStep: Stepperize.Step,
+  nextStep: Step,
+  prevStep: Step,
 ) => {
   const { key } = e
   const directions = {
@@ -484,26 +504,24 @@ type StepperConfigProps = {
   tracking?: boolean
 }
 
-type StepperDefineProps<Steps extends Stepperize.Step[]> = Omit<
-  Stepperize.StepperReturn<Steps>,
+type StepperDefineProps<Steps extends Step[]> = Omit<
+  StepperReturn<Steps>,
   'Scoped'
 > & {
   Stepper: {
     Provider: (
-      props: Omit<Stepperize.ScopedProps<Steps>, 'children'> &
+      props: Omit<ScopedProps<Steps>, 'children'> &
         Omit<React.ComponentProps<'div'>, 'children'> &
         StepperConfigProps & {
           children:
             | React.ReactNode
-            | ((props: {
-                methods: Stepperize.Stepper<Steps>
-              }) => React.ReactNode)
+            | ((stepperProps: { methods: Stepper<Steps> }) => React.ReactNode)
         },
     ) => React.ReactElement
     Navigation: (props: React.ComponentProps<'nav'>) => React.ReactElement
     Step: (
       props: React.ComponentProps<'button'> & {
-        of: Stepperize.Get.Id<Steps>
+        of: Get.Id<Steps>
         icon?: React.ReactNode
       },
     ) => React.ReactElement

@@ -7,6 +7,28 @@ import {
 } from '@/lib/xml-generator/schemas'
 import { BasicInfoStep } from './BasicInfoStep'
 
+// Regex patterns defined at top level for performance
+const PIVA_UTENTE_REGEX = /PIVA Utente/i
+const CODICE_OFFERTA_REGEX = /Codice Offerta/i
+const REQUISITI_SPECIFICHE_REGEX = /Requisiti Specifiche SII/i
+const PIVA_MIN_LENGTH_ERROR_REGEX =
+  /La PIVA deve contenere almeno 11 caratteri/i
+const CODICE_OFFERTA_REQUIRED_ERROR_REGEX = /Il codice offerta è obbligatorio/i
+const PIVA_FORMAT_ERROR_REGEX =
+  /La PIVA deve contenere solo lettere maiuscole e numeri/i
+const CODICE_OFFERTA_FORMAT_ERROR_REGEX =
+  /Il codice offerta deve contenere solo lettere maiuscole e numeri/i
+const PARTITA_IVA_HELP_REGEX =
+  /Partita IVA italiana \(11-16 caratteri alfanumerici\)/i
+const CODICE_OFFERTA_HELP_REGEX =
+  /Codice offerta univoco \(max 32 caratteri alfanumerici\)/i
+const PIVA_UTENTE_DESCRIPTION_REGEX =
+  /PIVA_UTENTE: Rappresenta la partita IVA dell'utente accreditato/i
+const COD_OFFERTA_DESCRIPTION_REGEX =
+  /COD_OFFERTA: Codice univoco utilizzato nel campo CODICE CONTRATTO/i
+const PIVA_ERROR_REGEX = /La PIVA deve/i
+const CODICE_OFFERTA_ERROR_REGEX = /Il codice offerta deve/i
+
 // Test wrapper component that provides form context
 function TestWrapper({
   children,
@@ -32,9 +54,9 @@ describe('BasicInfoStep', () => {
       </TestWrapper>,
     )
 
-    expect(screen.getByLabelText(/PIVA Utente/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Codice Offerta/i)).toBeInTheDocument()
-    expect(screen.getByText(/Requisiti Specifiche SII/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(PIVA_UTENTE_REGEX)).toBeInTheDocument()
+    expect(screen.getByLabelText(CODICE_OFFERTA_REGEX)).toBeInTheDocument()
+    expect(screen.getByText(REQUISITI_SPECIFICHE_REGEX)).toBeInTheDocument()
   })
 
   it('shows validation errors for empty fields', async () => {
@@ -44,8 +66,8 @@ describe('BasicInfoStep', () => {
       </TestWrapper>,
     )
 
-    const pivaInput = screen.getByLabelText(/PIVA Utente/i)
-    const offerCodeInput = screen.getByLabelText(/Codice Offerta/i)
+    const pivaInput = screen.getByLabelText(PIVA_UTENTE_REGEX)
+    const offerCodeInput = screen.getByLabelText(CODICE_OFFERTA_REGEX)
 
     // Enter invalid short values and trigger validation
     fireEvent.change(pivaInput, { target: { value: 'IT123' } })
@@ -55,11 +77,9 @@ describe('BasicInfoStep', () => {
     fireEvent.blur(offerCodeInput)
 
     await waitFor(() => {
+      expect(screen.getByText(PIVA_MIN_LENGTH_ERROR_REGEX)).toBeInTheDocument()
       expect(
-        screen.getByText(/La PIVA deve contenere almeno 11 caratteri/i),
-      ).toBeInTheDocument()
-      expect(
-        screen.getByText(/Il codice offerta è obbligatorio/i),
+        screen.getByText(CODICE_OFFERTA_REQUIRED_ERROR_REGEX),
       ).toBeInTheDocument()
     })
   })
@@ -71,18 +91,14 @@ describe('BasicInfoStep', () => {
       </TestWrapper>,
     )
 
-    const pivaInput = screen.getByLabelText(/PIVA Utente/i)
+    const pivaInput = screen.getByLabelText(PIVA_UTENTE_REGEX)
 
     // Test invalid format (lowercase)
     fireEvent.change(pivaInput, { target: { value: 'it12345678901' } })
     fireEvent.blur(pivaInput)
 
     await waitFor(() => {
-      expect(
-        screen.getByText(
-          /La PIVA deve contenere solo lettere maiuscole e numeri/i,
-        ),
-      ).toBeInTheDocument()
+      expect(screen.getByText(PIVA_FORMAT_ERROR_REGEX)).toBeInTheDocument()
     })
 
     // Test valid format
@@ -91,9 +107,7 @@ describe('BasicInfoStep', () => {
 
     await waitFor(() => {
       expect(
-        screen.queryByText(
-          /La PIVA deve contenere solo lettere maiuscole e numeri/i,
-        ),
+        screen.queryByText(PIVA_FORMAT_ERROR_REGEX),
       ).not.toBeInTheDocument()
     })
   })
@@ -105,7 +119,7 @@ describe('BasicInfoStep', () => {
       </TestWrapper>,
     )
 
-    const offerCodeInput = screen.getByLabelText(/Codice Offerta/i)
+    const offerCodeInput = screen.getByLabelText(CODICE_OFFERTA_REGEX)
 
     // Test invalid format (special characters)
     fireEvent.change(offerCodeInput, { target: { value: 'offer-2024!' } })
@@ -113,9 +127,7 @@ describe('BasicInfoStep', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(
-          /Il codice offerta deve contenere solo lettere maiuscole e numeri/i,
-        ),
+        screen.getByText(CODICE_OFFERTA_FORMAT_ERROR_REGEX),
       ).toBeInTheDocument()
     })
 
@@ -125,23 +137,23 @@ describe('BasicInfoStep', () => {
 
     await waitFor(() => {
       expect(
-        screen.queryByText(
-          /Il codice offerta deve contenere solo lettere maiuscole e numeri/i,
-        ),
+        screen.queryByText(CODICE_OFFERTA_FORMAT_ERROR_REGEX),
       ).not.toBeInTheDocument()
     })
   })
 
-  it('enforces maximum length limits', async () => {
+  it('enforces maximum length limits', () => {
     render(
       <TestWrapper>
         <BasicInfoStep />
       </TestWrapper>,
     )
 
-    const pivaInput = screen.getByLabelText(/PIVA Utente/i) as HTMLInputElement
+    const pivaInput = screen.getByLabelText(
+      PIVA_UTENTE_REGEX,
+    ) as HTMLInputElement
     const offerCodeInput = screen.getByLabelText(
-      /Codice Offerta/i,
+      CODICE_OFFERTA_REGEX,
     ) as HTMLInputElement
 
     expect(pivaInput.maxLength).toBe(16)
@@ -155,8 +167,8 @@ describe('BasicInfoStep', () => {
       </TestWrapper>,
     )
 
-    const pivaInput = screen.getByLabelText(/PIVA Utente/i)
-    const offerCodeInput = screen.getByLabelText(/Codice Offerta/i)
+    const pivaInput = screen.getByLabelText(PIVA_UTENTE_REGEX)
+    const offerCodeInput = screen.getByLabelText(CODICE_OFFERTA_REGEX)
 
     // Check that inputs have uppercase styling
     expect(pivaInput).toHaveClass('uppercase')
@@ -172,26 +184,10 @@ describe('BasicInfoStep', () => {
       </TestWrapper>,
     )
 
-    expect(
-      screen.getByText(
-        /Partita IVA italiana \(11-16 caratteri alfanumerici\)/i,
-      ),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByText(
-        /Codice offerta univoco \(max 32 caratteri alfanumerici\)/i,
-      ),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByText(
-        /PIVA_UTENTE: Rappresenta la partita IVA dell'utente accreditato/i,
-      ),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByText(
-        /COD_OFFERTA: Codice univoco utilizzato nel campo CODICE CONTRATTO/i,
-      ),
-    ).toBeInTheDocument()
+    expect(screen.getByText(PARTITA_IVA_HELP_REGEX)).toBeInTheDocument()
+    expect(screen.getByText(CODICE_OFFERTA_HELP_REGEX)).toBeInTheDocument()
+    expect(screen.getByText(PIVA_UTENTE_DESCRIPTION_REGEX)).toBeInTheDocument()
+    expect(screen.getByText(COD_OFFERTA_DESCRIPTION_REGEX)).toBeInTheDocument()
   })
 
   it('accepts valid data', async () => {
@@ -201,8 +197,8 @@ describe('BasicInfoStep', () => {
       </TestWrapper>,
     )
 
-    const pivaInput = screen.getByLabelText(/PIVA Utente/i)
-    const offerCodeInput = screen.getByLabelText(/Codice Offerta/i)
+    const pivaInput = screen.getByLabelText(PIVA_UTENTE_REGEX)
+    const offerCodeInput = screen.getByLabelText(CODICE_OFFERTA_REGEX)
 
     fireEvent.change(pivaInput, { target: { value: 'IT12345678901' } })
     fireEvent.change(offerCodeInput, { target: { value: 'OFFER2024001' } })
@@ -211,9 +207,9 @@ describe('BasicInfoStep', () => {
     fireEvent.blur(offerCodeInput)
 
     await waitFor(() => {
-      expect(screen.queryByText(/La PIVA deve/i)).not.toBeInTheDocument()
+      expect(screen.queryByText(PIVA_ERROR_REGEX)).not.toBeInTheDocument()
       expect(
-        screen.queryByText(/Il codice offerta deve/i),
+        screen.queryByText(CODICE_OFFERTA_ERROR_REGEX),
       ).not.toBeInTheDocument()
     })
   })
@@ -230,9 +226,11 @@ describe('BasicInfoStep', () => {
       </TestWrapper>,
     )
 
-    const pivaInput = screen.getByLabelText(/PIVA Utente/i) as HTMLInputElement
+    const pivaInput = screen.getByLabelText(
+      PIVA_UTENTE_REGEX,
+    ) as HTMLInputElement
     const offerCodeInput = screen.getByLabelText(
-      /Codice Offerta/i,
+      CODICE_OFFERTA_REGEX,
     ) as HTMLInputElement
 
     expect(pivaInput.value).toBe('IT98765432109')

@@ -28,17 +28,17 @@ describe('xmlFormStepper', () => {
   })
 
   it('should have titles for all steps', () => {
-    xmlFormStepper.steps.forEach((step) => {
+    for (const step of xmlFormStepper.steps) {
       expect(step.title).toBeTruthy()
       expect(typeof step.title).toBe('string')
-    })
+    }
   })
 
   it('should have descriptions for all steps', () => {
-    xmlFormStepper.steps.forEach((step) => {
+    for (const step of xmlFormStepper.steps) {
       expect(step.description).toBeTruthy()
       expect(typeof step.description).toBe('string')
-    })
+    }
   })
 
   it('should have correct first and last steps', () => {

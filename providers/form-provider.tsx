@@ -14,9 +14,9 @@ export const createFormStateSchema = () => {
   const schema: Record<string, typeof parseAsFormData> = {}
 
   // Add a query state for each step
-  xmlFormStepper.steps.forEach((step) => {
+  for (const step of xmlFormStepper.steps) {
     schema[step.id] = parseAsFormData.withDefault({})
-  })
+  }
 
   return schema
 }
