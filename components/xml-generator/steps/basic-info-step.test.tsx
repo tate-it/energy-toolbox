@@ -5,6 +5,7 @@ import {
   type BasicInfoFormValues,
   basicInfoSchema,
 } from '@/lib/xml-generator/schemas'
+import { StepperProvider } from '@/providers/stepper-provider'
 import { BasicInfoStep } from './basic-info-step'
 
 // Regex patterns defined at top level for performance
@@ -29,7 +30,7 @@ const COD_OFFERTA_DESCRIPTION_REGEX =
 const PIVA_ERROR_REGEX = /La PIVA deve/i
 const CODICE_OFFERTA_ERROR_REGEX = /Il codice offerta deve/i
 
-// Test wrapper component that provides form context
+// Test wrapper component that provides form context and stepper context
 function TestWrapper({
   children,
   defaultValues = {},
@@ -43,7 +44,11 @@ function TestWrapper({
     mode: 'onBlur', // Trigger validation on blur
   })
 
-  return <FormProvider {...form}>{children}</FormProvider>
+  return (
+    <StepperProvider initialStep="basicInfo" variant="horizontal">
+      <FormProvider {...form}>{children}</FormProvider>
+    </StepperProvider>
+  )
 }
 
 describe('BasicInfoStep', () => {
