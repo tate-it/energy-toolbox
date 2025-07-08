@@ -35,12 +35,18 @@ export function OfferDetailsStep() {
   const contractActivationTypes = watch('contractActivationTypes') || []
 
   const handleContractActivationChange = (value: string, checked: boolean) => {
+    const contractActivationType = value as '01' | '02' | '03' | '04' | '99'
     if (checked) {
-      setValue('contractActivationTypes', [...contractActivationTypes, value])
+      setValue('contractActivationTypes', [
+        ...contractActivationTypes,
+        contractActivationType,
+      ])
     } else {
       setValue(
         'contractActivationTypes',
-        contractActivationTypes.filter((type) => type !== value),
+        contractActivationTypes.filter(
+          (type) => type !== contractActivationType,
+        ),
       )
     }
   }
@@ -224,7 +230,9 @@ export function OfferDetailsStep() {
           {Object.entries(CONTRACT_ACTIVATION_LABELS).map(([value, label]) => (
             <div className="flex items-center space-x-2" key={value}>
               <Checkbox
-                checked={contractActivationTypes.includes(value)}
+                checked={contractActivationTypes.includes(
+                  value as '01' | '02' | '03' | '04' | '99',
+                )}
                 id={`activation-${value}`}
                 onCheckedChange={(checked) =>
                   handleContractActivationChange(value, !!checked)
