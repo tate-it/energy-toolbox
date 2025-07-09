@@ -77,13 +77,17 @@ test.describe('PricingConfigStep - Complete Functionality Test', () => {
     ).toBeVisible()
 
     // Verify Energy Price References section is visible (conditional on variable offer type)
-    await expect(page.getByText('Riferimenti Prezzo Energia').first()).toBeVisible()
+    await expect(
+      page.getByText('Riferimenti Prezzo Energia').first(),
+    ).toBeVisible()
     await expect(
       page.getByText('Indice di prezzo per le offerte a prezzo variabile'),
     ).toBeVisible()
 
     // Verify Time Band Configuration section is visible (conditional on electricity market)
-    await expect(page.getByText('Configurazione Fasce Orarie').first()).toBeVisible()
+    await expect(
+      page.getByText('Configurazione Fasce Orarie').first(),
+    ).toBeVisible()
     await expect(
       page.getByText(
         'Tipo di configurazione delle fasce orarie per le offerte elettriche',
@@ -123,7 +127,9 @@ test.describe('PricingConfigStep - Complete Functionality Test', () => {
       .click()
 
     // Wait for the conditional field to appear and verify
-    await expect(page.getByText('Descrizione Indice Alternativo')).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByText('Descrizione Indice Alternativo')).toBeVisible({
+      timeout: 10_000,
+    })
     await expect(
       page.getByRole('textbox', { name: 'Descrizione Indice Alternativo' }),
     ).toBeVisible()
@@ -223,7 +229,12 @@ test.describe('PricingConfigStep - Complete Functionality Test', () => {
     ).toBeVisible()
 
     // Delete second component
-    await page.getByRole('heading', { name: 'Componente Dispacciamento 2' }).locator('..').getByRole('button').first().click()
+    await page
+      .getByRole('heading', { name: 'Componente Dispacciamento 2' })
+      .locator('..')
+      .getByRole('button')
+      .first()
+      .click()
 
     // Verify second component is removed but first remains
     await expect(
@@ -247,16 +258,16 @@ test.describe('PricingConfigStep - Complete Functionality Test', () => {
   }) => {
     // Verify help section content is in Italian - use partial text matching
     await expect(
-      page.getByText('Obbligatorio solo per offerte a prezzo variabile')
+      page.getByText('Obbligatorio solo per offerte a prezzo variabile'),
     ).toBeVisible()
     await expect(
-      page.getByText('Obbligatorio per il mercato elettrico quando')
+      page.getByText('Obbligatorio per il mercato elettrico quando'),
     ).toBeVisible()
     await expect(
-      page.getByText('Obbligatorio quando la configurazione è')
+      page.getByText('Obbligatorio quando la configurazione è'),
     ).toBeVisible()
     await expect(
-      page.getByText('È possibile aggiungere più componenti')
+      page.getByText('È possibile aggiungere più componenti'),
     ).toBeVisible()
   })
 
