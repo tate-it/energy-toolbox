@@ -1,7 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { vi } from 'vitest'
 import { PaymentConditionsStep } from './payment-conditions-step'
 import { paymentConditionsSchema } from '@/lib/xml-generator/schemas'
 import type { PaymentConditionsFormValues } from '@/lib/xml-generator/schemas'
