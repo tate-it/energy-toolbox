@@ -39,21 +39,13 @@ import {
   UNIT_OF_MEASURE_LABELS,
 } from '@/lib/xml-generator/constants'
 import type { CompanyComponentsFormValues } from '@/lib/xml-generator/schemas'
+import { useFormStates } from '@/hooks/use-form-states'
 
-interface CompanyComponentsStepProps {
-  formData: {
-    offerDetails?: {
-      marketType?: string
-    }
-  }
-}
-
-export function CompanyComponentsStep({
-  formData,
-}: CompanyComponentsStepProps) {
+export function CompanyComponentsStep() {
   const form = useFormContext<CompanyComponentsFormValues>()
-  const marketType =
-    formData?.offerDetails?.marketType || MARKET_TYPES.ELECTRICITY
+  const [formStates] = useFormStates()
+
+  const marketType = formStates.offerDetails?.marketType ?? ''
 
   // Get available regulated components based on market type
   const availableRegulatedComponents =

@@ -1,19 +1,18 @@
 'use client'
 
-import { useQueryStates } from 'nuqs'
 import { Suspense } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useFormStates } from '@/hooks/use-form-states'
 import { xmlFormStepper } from '@/lib/xml-generator/stepperize-config'
-import { createFormStateSchema } from '@/providers/form-provider'
 
 const { Stepper, useStepper } = xmlFormStepper
 
 function StepperControlsContent() {
   const { current, isFirst, isLast, reset, beforeNext, prev } = useStepper()
   const form = useFormContext()
-  const [, setFormStates] = useQueryStates(createFormStateSchema())
+  const [, setFormStates] = useFormStates()
 
   const handlePrevious = () => {
     // Just use the built-in prev method, the currentStep will be synced automatically
@@ -28,7 +27,7 @@ function StepperControlsContent() {
 
     // Save current step data
     const currentValues = form.getValues()
-    await setFormStates({
+    setFormStates({
       [current.id]: currentValues,
     })
 
