@@ -116,6 +116,7 @@ describe('parseAsFormData', () => {
     it('should return empty string for null', () => {
       const parser = parseAsFormData(testSchema)
 
+      // @ts-expect-error - null should never be passed to the parser
       const result = parser.serialize(null)
 
       expect(result).toBe('')
@@ -124,6 +125,7 @@ describe('parseAsFormData', () => {
     it('should return empty string for undefined', () => {
       const parser = parseAsFormData(testSchema)
 
+      // @ts-expect-error - undefined should never be passed to the parser
       const result = parser.serialize(undefined)
 
       expect(result).toBe('')
@@ -165,6 +167,7 @@ describe('parseAsFormData', () => {
       circularRef.self = circularRef
       const parser = parseAsFormData(testSchema)
 
+      // @ts-expect-error - circular reference should never happen
       const result = parser.serialize(circularRef)
 
       expect(result).toBe('')
