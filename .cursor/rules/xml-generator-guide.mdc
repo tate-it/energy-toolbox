@@ -1,0 +1,41 @@
+---
+description: "XML Generator development patterns and Italian-first principles"
+alwaysApply: true
+---
+
+# XML Generator Development Guide
+
+This project follows specific patterns for the SII XML Generator.
+
+Complete guide: [adding-new-steps-guide.md](mdc:documentation/adding-new-steps-guide.md)
+
+## Core Development Principles
+
+### Italian-First Development (MANDATORY)
+- **ALL** user-facing text must be in Italian
+- Error messages, labels, placeholders, help text in Italian
+- Use proper Italian terminology for business concepts
+- Follow existing translation patterns in codebase
+
+### Modern Form Patterns (REQUIRED)
+- Use `FormField` with `control={form.control}` instead of old `register` pattern
+- Always include `FormLabel`, `FormControl`, `FormMessage`, `FormDescription`
+- Use `useFormContext<TypedFormValues>()` for type safety
+- Use `useFormStates()` hook for accessing cross-step state
+
+### Component Architecture Standards
+- Card-based layout: `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`
+- Consistent spacing: `space-y-6` between cards, `space-y-4` within cards
+- Header pattern: `<h2 className="font-bold text-2xl">Titolo</h2>`
+- Mark required fields: `<span className="text-destructive">*</span>`
+
+### Constants Usage (MANDATORY)
+- Import all labels from [constants.ts](mdc:lib/xml-generator/constants.ts)
+- Never hardcode option text - use `Object.entries(LABELS).map()`
+- Create both `_LABELS` (Italian UI) and `_VALUES` (logic constants)
+
+### Testing Requirements
+- Test with pnpm test:run (not npm test)
+- Test Italian labels and error messages
+- Include accessibility testing with `toHaveAccessibleName()`
+- Use regex patterns for label matching

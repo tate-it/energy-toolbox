@@ -1,0 +1,67 @@
+# XML Generator Testing Patterns
+
+Refer to the complete guide: [adding-new-steps-guide.md](mdc:documentation/adding-new-steps-guide.md)
+
+## Test Structure Template
+
+ALL XML generator tests must follow this pattern:
+
+```typescript
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { FormProvider, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { describe, it, expect } from 'vitest'
+import { StepComponent } from './step-component'
+import { stepSchema, type StepFormValues } from '@/lib/xml-generator/schemas'
+
+// Use Italian regex patterns
+const FIELD_LABEL_REGEX = /Campo Italiano/i
+const BUTTON_TEXT_REGEX = /Pulsante Italiano/i
+
+function TestWrapper({ children, defaultValues }: { 
+  children: React.ReactNode
+  defaultValues?: Partial<StepFormValues> 
+}) {
+  const methods = useForm<StepFormValues>({
+    resolver: zodResolver(stepSchema),
+    defaultValues,
+  })
+  return <FormProvider {...methods}>{children}</FormProvider>
+}
+
+describe('StepComponent', () => {
+  it('renders il componente con etichette italiane corrette', () => {
+    // Test Italian labels
+  })
+
+  it('ha attributi di accessibilità appropriati', () => {
+    // Test accessibility with toHaveAccessibleName()
+  })
+})
+```
+
+## Required Test Patterns
+
+### Italian Testing (MANDATORY)
+- Test ALL Italian labels and text
+- Use regex patterns for label matching
+- Test Italian error messages and validation
+
+### Accessibility Testing (REQUIRED)
+- Test `toHaveAccessibleName()` for all form fields
+- Test checkbox and radio button labels
+- Test proper ARIA attributes
+
+### Test Commands
+- Use `pnpm test:run` (not npm test)
+- Reference memory about pnpm usage
+
+### Test Data
+- Use realistic Italian data in tests
+- Test with pre-filled form values
+- Test edge cases with Italian context
+description:
+globs:
+alwaysApply: false
+---

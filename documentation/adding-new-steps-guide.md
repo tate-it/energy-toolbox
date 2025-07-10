@@ -1,329 +1,800 @@
-# Adding New Steps to the XML Generator
+# Aggiunta di Nuovi Passi al Generatore XML
 
-This guide explains how to add new form steps to the SII XML Generator application. The application uses a modular architecture where each step consists of a schema definition, a component, and integration with the main stepper.
+Questa guida spiega come aggiungere nuovi passi del modulo al Generatore XML SII. L'applicazione utilizza un'architettura modulare dove ogni passo consiste in una definizione di schema, un componente, e integrazione con lo stepper principale.
 
-## Overview
+## Panoramica
 
-The XML generator is built with the following structure:
-- **Schemas**: Define validation rules and types (`lib/xml-generator/schemas.ts`)
-- **Components**: Individual form components for each step (`components/xml-generator/`)
-- **Stepper Configuration**: Maps steps to schemas (`lib/xml-generator/stepperize-config.ts`)
-- **Main Page**: Orchestrates the entire flow (`app/xml-generator/page.tsx`)
+Il generatore XML è costruito con la seguente struttura:
+- **Schemi**: Definiscono regole di validazione e tipi (`lib/xml-generator/schemas.ts`)
+- **Componenti**: Componenti di modulo individuali per ogni passo (`components/xml-generator/steps/`)
+- **Configurazione Stepper**: Mappa i passi agli schemi (`lib/xml-generator/stepperize-config.ts`)
+- **Costanti**: Etichette e opzioni centralizzate (`lib/xml-generator/constants.ts`)
+- **Gestione Stato**: Stato cross-step tramite `useFormStates` (`hooks/use-form-states.ts`)
 
-## Step-by-Step Process
+## Processo Passo-per-Passo
 
-### 1. Define the Schema
+### 1. Definire lo Schema
 
-First, add your validation schema to `lib/xml-generator/schemas.ts`:
+Prima, aggiungi il tuo schema di validazione a `lib/xml-generator/schemas.ts`:
 
 ```typescript
-// Add to lib/xml-generator/schemas.ts
+// Aggiungi a lib/xml-generator/schemas.ts
 
-// Example: Activation & Contacts Schema
-export const activationContactsSchema = z.object({
-  activationMethods: z.array(z.enum(['01', '02', '03', '04', '05', '99'])).min(1, 'At least one activation method is required'),
-  activationDescription: z.string().max(2000).optional(),
-  phoneNumber: z.string().min(1, 'Phone number is required').max(15),
-  vendorWebsite: z.string().url('Invalid URL').max(100).optional(),
-  offerUrl: z.string().url('Invalid URL').max(100).optional(),
-})
+// Esempio: Schema Attivazione & Contatti
+export const activationContactsSchema = z
+  .object({
+    activationMethods: z
+      .array(z.enum(['01', '02', '03', '04', '05', '99']))
+      .min(1, 'Seleziona almeno un metodo di attivazione'),
+    
+    activationDescription: z
+      .string()
+      .max(2000, 'La descrizione non può superare i 2000 caratteri')
+      .optional(),
+    
+    phone: z
+      .string()
+      .min(1, 'Il numero di telefono è obbligatorio')
+      .max(15, 'Il numero di telefono non può superare i 15 caratteri')
+      .regex(
+        /^[\d\s\-+()]+$/,
+        'Il numero di telefono può contenere solo numeri, spazi, trattini, più e parentesi'
+      ),
+    
+    vendorWebsite: z
+      .string()
+      .max(100, "L'URL del sito venditore non può superare i 100 caratteri")
+      .url('Inserisci un URL valido')
+      .optional()
+      .or(z.literal('')),
+    
+    offerUrl: z
+      .string()
+      .max(100, "L'URL dell'offerta non può superare i 100 caratteri")
+      .url('Inserisci un URL valido')
+      .optional()
+      .or(z.literal('')),
+  })
+  .refine(
+    (data) => {
+      // Validazione personalizzata: activationDescription è obbligatoria quando "Altro" (99) è selezionato
+      if (
+        data.activationMethods.includes('99') &&
+        (!data.activationDescription || data.activationDescription.trim() === '')
+      ) {
+        return false
+      }
+      return true
+    },
+    {
+      message: 'La descrizione del metodo di attivazione è obbligatoria quando si seleziona "Altro"',
+      path: ['activationDescription'],
+    }
+  )
 
-// Add the corresponding type export
+// Aggiungi l'export del tipo corrispondente
 export type ActivationContactsFormValues = z.infer<typeof activationContactsSchema>
 ```
 
-**Schema Guidelines:**
-- Use descriptive field names that match the SII specification
-- Add proper validation rules (min/max length, required fields, etc.)
-- Include helpful error messages
-- Export both the schema and its TypeScript type
+**Linee Guida per gli Schemi:**
+- Usa nomi di campo descrittivi che corrispondono alle specifiche SII
+- Aggiungi regole di validazione appropriate (lunghezza min/max, campi obbligatori, ecc.)
+- Includi messaggi di errore utili **in italiano**
+- Esporta sia lo schema che il suo tipo TypeScript
+- Usa `refine` per validazioni personalizzate complesse
 
-### 2. Create the Component
+### 2. Aggiungere Costanti
 
-Create a new component file in `components/xml-generator/`:
+Aggiungi le costanti necessarie a `lib/xml-generator/constants.ts`:
 
 ```typescript
-// components/xml-generator/ActivationContactsComponent.tsx
+// lib/xml-generator/constants.ts
+
+// Etichette per i metodi di attivazione
+export const ACTIVATION_METHOD_LABELS: Record<string, string> = {
+  '01': 'Attivazione solo web',
+  '02': 'Attivazione qualsiasi canale', 
+  '03': 'Punto vendita',
+  '04': 'Teleselling',
+  '05': 'Agenzia',
+  '99': 'Altro',
+} as const
+
+// Valori enum per i metodi di attivazione
+export const ACTIVATION_METHODS = {
+  WEB_ONLY: '01',
+  ANY_CHANNEL: '02', 
+  POINT_OF_SALE: '03',
+  TELESELLING: '04',
+  AGENCY: '05',
+  OTHER: '99',
+} as const
+```
+
+**Linee Guida per le Costanti:**
+- Crea sia etichette che valori enum
+- Usa **italiano** per tutte le etichette utente
+- Mantieni consistenza con il pattern esistente
+- Aggiungi `as const` per type safety
+
+### 3. Creare il Componente
+
+Crea un nuovo file componente in `components/xml-generator/steps/`:
+
+```typescript
+// components/xml-generator/steps/activation-contacts-step.tsx
+
+'use client'
 
 import { useFormContext } from 'react-hook-form'
-import { Input } from '@/components/ui/input'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { useFormStates } from '@/hooks/use-form-states'
+import { ACTIVATION_METHOD_LABELS } from '@/lib/xml-generator/constants'
 import type { ActivationContactsFormValues } from '@/lib/xml-generator/schemas'
 
-export function ActivationContactsComponent() {
-  const {
-    register,
-    formState: { errors },
-    watch,
-    setValue,
-  } = useFormContext<ActivationContactsFormValues>()
-
-  const activationMethods = watch('activationMethods') || []
-
-  const handleActivationMethodChange = (method: string, checked: boolean) => {
-    if (checked) {
-      setValue('activationMethods', [...activationMethods, method])
-    } else {
-      setValue('activationMethods', activationMethods.filter(m => m !== method))
-    }
-  }
+export function ActivationContactsStep() {
+  const form = useFormContext<ActivationContactsFormValues>()
+  const [formStates] = useFormStates()
+  
+  // Accesso ai dati dei passi precedenti per logica condizionale
+  const offerDetails = formStates.offerDetails
+  const marketType = offerDetails?.marketType
 
   return (
-    <div className="space-y-6 text-start">
-      {/* Activation Methods */}
-      <div className="space-y-4">
-        <label className="block text-sm font-medium text-primary">
-          Activation Methods *
-        </label>
-        <div className="space-y-2">
-          {[
-            { value: '01', label: 'Web-only activation' },
-            { value: '02', label: 'Any channel activation' },
-            { value: '03', label: 'Point of sale' },
-            { value: '04', label: 'Teleselling' },
-            { value: '05', label: 'Agency' },
-            { value: '99', label: 'Other' },
-          ].map((method) => (
-            <div key={method.value} className="flex items-center space-x-2">
-              <Checkbox
-                id={`activation-${method.value}`}
-                checked={activationMethods.includes(method.value)}
-                onCheckedChange={(checked) => 
-                  handleActivationMethodChange(method.value, !!checked)
-                }
-              />
-              <label 
-                htmlFor={`activation-${method.value}`}
-                className="text-sm font-medium"
-              >
-                {method.label}
-              </label>
-            </div>
-          ))}
-        </div>
-        {errors.activationMethods && (
-          <span className="text-sm text-destructive">
-            {errors.activationMethods.message}
-          </span>
-        )}
+    <div className="space-y-6">
+      {/* Header del Passo */}
+      <div>
+        <h2 className="font-bold text-2xl">Attivazione e Contatti</h2>
+        <p className="text-muted-foreground">
+          Configura i metodi di attivazione e le informazioni di contatto per l'offerta
+        </p>
       </div>
 
-      {/* Description for "Other" */}
-      {activationMethods.includes('99') && (
-        <div className="space-y-2">
-          <label
-            htmlFor={register('activationDescription').name}
-            className="block text-sm font-medium text-primary"
-          >
-            Activation Description *
-          </label>
-          <Textarea
-            id={register('activationDescription').name}
-            {...register('activationDescription')}
-            placeholder="Describe the other activation method..."
-            className="block w-full"
-            rows={3}
+      {/* Sezione Metodi di Attivazione */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Metodi di Attivazione</CardTitle>
+          <CardDescription>
+            Seleziona uno o più metodi attraverso i quali l'offerta può essere attivata
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <FormField
+            control={form.control}
+            name="activationMethods"
+            render={() => (
+              <FormItem>
+                <FormLabel className="font-medium text-base">
+                  Modalità di Attivazione <span className="text-destructive">*</span>
+                </FormLabel>
+                
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {Object.entries(ACTIVATION_METHOD_LABELS).map(([value, label]) => (
+                    <FormField
+                      key={value}
+                      control={form.control}
+                      name="activationMethods"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(value as any)}
+                              onCheckedChange={(checked) => {
+                                const updatedValue = checked
+                                  ? [...(field.value || []), value]
+                                  : field.value?.filter((item) => item !== value) || []
+                                field.onChange(updatedValue)
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="cursor-pointer font-normal text-sm">
+                            {label}
+                          </FormLabel>
+                        </FormItem>
+                      )}
+                    />
+                  ))}
+                </div>
+                
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          {errors.activationDescription && (
-            <span className="text-sm text-destructive">
-              {errors.activationDescription.message}
-            </span>
-          )}
-        </div>
-      )}
 
-      {/* Contact Information */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium">Contact Information</h3>
-        
-        <div className="space-y-2">
-          <label
-            htmlFor={register('phoneNumber').name}
-            className="block text-sm font-medium text-primary"
-          >
-            Phone Number *
-          </label>
-          <Input
-            id={register('phoneNumber').name}
-            {...register('phoneNumber')}
-            placeholder="+39 123 456 7890"
-            className="block w-full"
-          />
-          {errors.phoneNumber && (
-            <span className="text-sm text-destructive">
-              {errors.phoneNumber.message}
-            </span>
+          {/* Campo Condizionale: Descrizione per "Altro" */}
+          {form.watch('activationMethods')?.includes('99') && (
+            <FormField
+              control={form.control}
+              name="activationDescription"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-medium text-sm">
+                    Descrizione Metodo Attivazione <span className="text-destructive">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      className="min-h-[100px]"
+                      placeholder="Descrivi il metodo di attivazione alternativo..."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Obbligatorio quando si seleziona "Altro". Massimo 2000 caratteri.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           )}
-        </div>
+        </CardContent>
+      </Card>
 
-        <div className="space-y-2">
-          <label
-            htmlFor={register('vendorWebsite').name}
-            className="block text-sm font-medium text-primary"
-          >
-            Vendor Website
-          </label>
-          <Input
-            id={register('vendorWebsite').name}
-            {...register('vendorWebsite')}
-            placeholder="https://www.example.com"
-            className="block w-full"
+      {/* Sezione Informazioni di Contatto */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Informazioni di Contatto</CardTitle>
+          <CardDescription>
+            Fornisci le informazioni di contatto per l'offerta
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Numero di Telefono <span className="text-destructive">*</span></FormLabel>
+                <FormControl>
+                  <Input
+                    type="tel"
+                    placeholder="es. +39 02 1234567"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Numero di telefono per il supporto clienti (massimo 15 caratteri)
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          {errors.vendorWebsite && (
-            <span className="text-sm text-destructive">
-              {errors.vendorWebsite.message}
-            </span>
-          )}
-        </div>
 
-        <div className="space-y-2">
-          <label
-            htmlFor={register('offerUrl').name}
-            className="block text-sm font-medium text-primary"
-          >
-            Offer URL
-          </label>
-          <Input
-            id={register('offerUrl').name}
-            {...register('offerUrl')}
-            placeholder="https://www.example.com/offers/special-offer"
-            className="block w-full"
+          <FormField
+            control={form.control}
+            name="vendorWebsite"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Sito Web del Venditore</FormLabel>
+                <FormControl>
+                  <Input
+                    type="url"
+                    placeholder="https://www.esempio.it"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  URL del sito web aziendale (opzionale, massimo 100 caratteri)
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          {errors.offerUrl && (
-            <span className="text-sm text-destructive">
-              {errors.offerUrl.message}
-            </span>
-          )}
-        </div>
-      </div>
+
+          <FormField
+            control={form.control}
+            name="offerUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>URL dell'Offerta</FormLabel>
+                <FormControl>
+                  <Input
+                    type="url"
+                    placeholder="https://www.esempio.it/offerta-speciale"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  URL specifico dell'offerta (opzionale, massimo 100 caratteri)
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </CardContent>
+      </Card>
     </div>
   )
 }
 ```
 
-**Component Guidelines:**
-- Use `useFormContext` to access form methods
-- Follow consistent styling with existing components
-- Include proper labels and error handling
-- Use appropriate UI components from the design system
-- Handle conditional fields (show/hide based on other field values)
-- Mark required fields with asterisks (*)
+**Linee Guida per i Componenti:**
+- Usa `useFormContext` per accedere ai metodi del form
+- Usa `useFormStates` per accedere ai dati dei passi precedenti
+- Segui lo styling consistente con layout a Card
+- Includi etichette appropriate e gestione degli errori
+- Usa componenti UI appropriati dal design system
+- Gestisci campi condizionali (mostra/nascondi basato su altri valori)
+- Marca i campi obbligatori con asterischi (*)
+- **Usa italiano** per tutto il testo utente
 
-### 3. Update the Component Index
+### 4. Aggiornare l'Index dei Componenti
 
-Add your new component to `components/xml-generator/index.ts`:
+Aggiungi il tuo nuovo componente a `components/xml-generator/index.ts`:
 
 ```typescript
 // components/xml-generator/index.ts
 
 // Export all XML generator form components
-export { BasicInfoComponent } from './BasicInfoComponent'
-export { OfferDetailsComponent } from './OfferDetailsComponent'
-export { ActivationContactsComponent } from './ActivationContactsComponent' // Add this line
-export { PlaceholderComponent } from './PlaceholderComponent'
+export { PlaceholderComponent } from './placeholder-component'
+export { ActivationContactsStep } from './steps/activation-contacts-step' // Aggiungi questa riga
+export { BasicInfoStep } from './steps/basic-info-step'
+export { CompanyComponentsStep } from './steps/company-components-step'
+export { OfferDetailsStep } from './steps/offer-details-step'
+export { PricingConfigStep } from './steps/pricing-config-step'
+// ... altri export
 ```
 
-### 4. Update the Stepper Configuration
+### 5. Aggiornare la Configurazione dello Stepper
 
-Update `lib/xml-generator/stepperize-config.ts` to use your new schema:
+Aggiungi il tuo passo a `lib/xml-generator/stepperize/config.ts`:
+
+```typescript
+// lib/xml-generator/stepperize/config.ts
+
+export const baseConfig = [
+  {
+    id: 'basicInfo',
+    title: 'Informazioni di Base',
+    description: 'Partita IVA e Codice Offerta',
+  },
+  {
+    id: 'offerDetails', 
+    title: 'Dettagli Offerta',
+    description: 'Tipo mercato, tipo cliente e configurazione offerta',
+  },
+  {
+    id: 'activationContacts', // Aggiungi questo passo
+    title: 'Attivazione e Contatti',
+    description: 'Modalità di attivazione e informazioni di contatto',
+  },
+  // ... altri passi
+] as const
+```
+
+### 6. Aggiornare la Configurazione dello Stepper Principale
+
+Aggiorna `lib/xml-generator/stepperize-config.ts` per includere il tuo nuovo schema e componente:
 
 ```typescript
 // lib/xml-generator/stepperize-config.ts
 
-import { defineStepper } from '@stepperize/react'
+import { ActivationContactsStep } from '@/components/xml-generator/steps/activation-contacts-step' // Aggiungi import
 import {
-  basicInfoSchema,
-  offerDetailsSchema,
-  activationContactsSchema, // Add this import
-  // ... other schemas
+  activationContactsSchema, // Aggiungi import dello schema
+  // ... altri schemi
 } from './schemas'
 
-export const xmlFormStepper = defineStepper(
-  {
-    id: 'basic-info',
-    title: 'Basic Information',
-    description: 'VAT Number and Offer Code',
-    schema: basicInfoSchema,
-  },
-  {
-    id: 'offer-details',
-    title: 'Offer Details',
-    description: 'Market type, client type, and offer configuration',
-    schema: offerDetailsSchema,
-  },
-  {
-    id: 'activation-contacts',
-    title: 'Activation & Contacts',
-    description: 'Activation methods and contact information',
-    schema: activationContactsSchema, // Update this line
-  },
-  // ... other steps
-)
+const schemaMap = {
+  basicInfo: basicInfoSchema,
+  offerDetails: offerDetailsSchema,
+  activationContacts: activationContactsSchema, // Aggiungi mapping dello schema
+  // ... altri mapping
+} as const
+
+const componentMap = {
+  basicInfo: BasicInfoStep,
+  offerDetails: OfferDetailsStep,
+  activationContacts: ActivationContactsStep, // Aggiungi mapping del componente
+  // ... altri mapping
+} as const
+
+// Il resto della configurazione viene gestito automaticamente
 ```
 
-### 5. Update the Main Page
+### 7. Creare Test Completi
 
-Finally, update `app/xml-generator/page.tsx` to include your new component:
+Crea test completi per il tuo componente:
 
 ```typescript
-// app/xml-generator/page.tsx
+// components/xml-generator/steps/activation-contacts-step.test.tsx
 
-import { 
-  BasicInfoComponent, 
-  OfferDetailsComponent,
-  ActivationContactsComponent, // Add this import
-  PlaceholderComponent 
-} from '@/components/xml-generator'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { FormProvider, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { describe, it, expect } from 'vitest'
+import { ActivationContactsStep } from './activation-contacts-step'
+import { activationContactsSchema, type ActivationContactsFormValues } from '@/lib/xml-generator/schemas'
 
-// In the stepper.switch section:
-{stepper.switch({
-  'basic-info': () => <BasicInfoComponent />,
-  'offer-details': () => <OfferDetailsComponent />,
-  'activation-contacts': () => <ActivationContactsComponent />, // Update this line
-  'pricing-config': () => <PlaceholderComponent>,
-  // ... other steps
-})}
+// Pattern per test regex consistenti
+const ACTIVATION_METHODS_REGEX = /Modalità di Attivazione/i
+const PHONE_NUMBER_REGEX = /Numero di Telefono/i
+const VENDOR_WEBSITE_REGEX = /Sito Web del Venditore/i
+
+// Wrapper di test che fornisce il contesto del form
+function TestWrapper({ 
+  children, 
+  defaultValues 
+}: { 
+  children: React.ReactNode
+  defaultValues?: Partial<ActivationContactsFormValues> 
+}) {
+  const methods = useForm<ActivationContactsFormValues>({
+    resolver: zodResolver(activationContactsSchema),
+    defaultValues: {
+      activationMethods: [],
+      activationDescription: '',
+      phone: '',
+      vendorWebsite: '',
+      offerUrl: '',
+      ...defaultValues,
+    },
+  })
+
+  return (
+    <FormProvider {...methods}>
+      {children}
+    </FormProvider>
+  )
+}
+
+describe('ActivationContactsStep', () => {
+  it('renders il componente con etichette italiane corrette', () => {
+    render(
+      <TestWrapper>
+        <ActivationContactsStep />
+      </TestWrapper>
+    )
+
+    expect(screen.getByText('Attivazione e Contatti')).toBeInTheDocument()
+    expect(screen.getByText('Configura i metodi di attivazione e le informazioni di contatto per l\'offerta')).toBeInTheDocument()
+    expect(screen.getByText('Metodi di Attivazione')).toBeInTheDocument()
+    expect(screen.getByText('Informazioni di Contatto')).toBeInTheDocument()
+  })
+
+  it('mostra tutte le opzioni dei metodi di attivazione con etichette italiane', () => {
+    render(
+      <TestWrapper>
+        <ActivationContactsStep />
+      </TestWrapper>
+    )
+
+    expect(screen.getByText('Attivazione solo web')).toBeInTheDocument()
+    expect(screen.getByText('Attivazione qualsiasi canale')).toBeInTheDocument()
+    expect(screen.getByText('Punto vendita')).toBeInTheDocument()
+    expect(screen.getByText('Teleselling')).toBeInTheDocument()
+    expect(screen.getByText('Agenzia')).toBeInTheDocument()
+    expect(screen.getByText('Altro')).toBeInTheDocument()
+  })
+
+  it('permette la selezione di metodi di attivazione multipli', async () => {
+    const user = userEvent.setup()
+    
+    render(
+      <TestWrapper>
+        <ActivationContactsStep />
+      </TestWrapper>
+    )
+
+    const webOnlyCheckbox = screen.getByRole('checkbox', { name: /attivazione solo web/i })
+    const anyChannelCheckbox = screen.getByRole('checkbox', { name: /attivazione qualsiasi canale/i })
+
+    await user.click(webOnlyCheckbox)
+    await user.click(anyChannelCheckbox)
+
+    expect(webOnlyCheckbox).toBeChecked()
+    expect(anyChannelCheckbox).toBeChecked()
+  })
+
+  it('mostra il campo descrizione attivazione quando "Altro" è selezionato', async () => {
+    const user = userEvent.setup()
+    
+    render(
+      <TestWrapper>
+        <ActivationContactsStep />
+      </TestWrapper>
+    )
+
+    const otherCheckbox = screen.getByRole('checkbox', { name: /altro/i })
+    await user.click(otherCheckbox)
+
+    expect(screen.getByText('Descrizione Metodo Attivazione')).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('Descrivi il metodo di attivazione alternativo...')).toBeInTheDocument()
+  })
+
+  it('accetta input validi per numero di telefono', async () => {
+    const user = userEvent.setup()
+    
+    render(
+      <TestWrapper>
+        <ActivationContactsStep />
+      </TestWrapper>
+    )
+
+    const phoneInput = screen.getByLabelText(PHONE_NUMBER_REGEX)
+    await user.type(phoneInput, '+39 02 1234567')
+
+    expect(phoneInput).toHaveValue('+39 02 1234567')
+  })
+
+  it('mostra indicatori di campi obbligatori', () => {
+    render(
+      <TestWrapper>
+        <ActivationContactsStep />
+      </TestWrapper>
+    )
+
+    // Controlla gli asterischi obbligatori
+    const requiredFields = screen.getAllByText('*')
+    expect(requiredFields.length).toBeGreaterThan(0)
+  })
+
+  it('ha attributi di accessibilità appropriati', () => {
+    render(
+      <TestWrapper>
+        <ActivationContactsStep />
+      </TestWrapper>
+    )
+
+    // Controlla che le checkbox abbiano etichette appropriate
+    const checkboxes = screen.getAllByRole('checkbox')
+    checkboxes.forEach(checkbox => {
+      expect(checkbox).toHaveAccessibleName()
+    })
+
+    // Controlla che gli input abbiano etichette appropriate
+    const phoneInput = screen.getByLabelText(PHONE_NUMBER_REGEX)
+    expect(phoneInput).toHaveAccessibleName()
+  })
+
+  it('gestisce dati precompilati correttamente', () => {
+    const defaultValues: Partial<ActivationContactsFormValues> = {
+      activationMethods: ['01', '03'],
+      phone: '+39 02 1234567',
+      vendorWebsite: 'https://www.esempio.it',
+    }
+
+    render(
+      <TestWrapper defaultValues={defaultValues}>
+        <ActivationContactsStep />
+      </TestWrapper>
+    )
+
+    const webOnlyCheckbox = screen.getByRole('checkbox', { name: /attivazione solo web/i })
+    const pointOfSaleCheckbox = screen.getByRole('checkbox', { name: /punto vendita/i })
+    const phoneInput = screen.getByLabelText(PHONE_NUMBER_REGEX)
+
+    expect(webOnlyCheckbox).toBeChecked()
+    expect(pointOfSaleCheckbox).toBeChecked()
+    expect(phoneInput).toHaveValue('+39 02 1234567')
+  })
+})
+```
+
+## Pattern Avanzati
+
+### 1. Array Dinamici con Componenti Nidificati
+
+Per passi complessi con array dinamici:
+
+```typescript
+export function ComplexStep() {
+  const form = useFormContext<ComplexFormValues>()
+  
+  const {
+    fields: itemFields,
+    append: appendItem,
+    remove: removeItem,
+  } = useFieldArray({
+    control: form.control,
+    name: 'items',
+  })
+
+  const addNewItem = () => {
+    appendItem({
+      name: '',
+      description: '',
+      priceIntervals: [
+        {
+          price: 0,
+          unitOfMeasure: '01',
+        },
+      ],
+    })
+  }
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="font-semibold text-lg">Passo Complesso</h2>
+        <p className="text-muted-foreground text-sm">
+          Gestisce elementi dinamici con componenti nidificati
+        </p>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Elementi Dinamici</CardTitle>
+          <CardDescription>
+            Aggiungi e configura elementi con intervalli di prezzo
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            {itemFields.map((field, index) => (
+              <ItemCard
+                key={field.id}
+                index={index}
+                onRemove={() => removeItem(index)}
+                showRemove={itemFields.length > 1}
+              />
+            ))}
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={addNewItem}
+              className="w-full"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Aggiungi Elemento
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+```
+
+### 2. Logica Condizionale Basata su Passi Precedenti
+
+```typescript
+export function ConditionalStep() {
+  const form = useFormContext<ConditionalFormValues>()
+  const [formStates] = useFormStates()
+
+  // Accesso ai dati dei passi precedenti
+  const offerDetails = formStates.offerDetails
+  const marketType = offerDetails?.marketType
+  const offerType = offerDetails?.offerType
+
+  // Logica condizionale per mostrare sezioni
+  const showEnergyPriceReference = offerType === OFFER_TYPES.VARIABLE
+  const showTimeBandConfiguration = marketType === MARKET_TYPES.ELECTRICITY && offerType !== OFFER_TYPES.FLAT
+
+  return (
+    <div className="space-y-6">
+      {showEnergyPriceReference && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Riferimenti Prezzo Energia</CardTitle>
+            <CardDescription>
+              Visibile solo per offerte a prezzo variabile
+            </CardDescription>
+          </CardHeader>
+          {/* Contenuto condizionale */}
+        </Card>
+      )}
+
+      {showTimeBandConfiguration && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Configurazione Fasce Orarie</CardTitle>
+            <CardDescription>
+              Visibile solo per mercato elettrico non-FLAT
+            </CardDescription>
+          </CardHeader>
+          {/* Contenuto condizionale */}
+        </Card>
+      )}
+    </div>
+  )
+}
+```
+
+### 3. Validazione Personalizzata Complessa
+
+```typescript
+export const complexSchema = z
+  .object({
+    type: z.enum(['01', '02', '03']),
+    minValue: z.number().min(0),
+    maxValue: z.number().min(0),
+    description: z.string().optional(),
+    items: z.array(
+      z.object({
+        name: z.string().min(1),
+        price: z.number().min(0),
+      })
+    ).min(1),
+  })
+  .refine(
+    (data) => {
+      // Validazione range
+      if (data.minValue >= data.maxValue) {
+        return false
+      }
+      return true
+    },
+    {
+      message: 'Il valore minimo deve essere inferiore al valore massimo',
+      path: ['maxValue'],
+    }
+  )
+  .refine(
+    (data) => {
+      // Descrizione obbligatoria per tipo "Altro"
+      if (data.type === '99' && !data.description) {
+        return false
+      }
+      return true
+    },
+    {
+      message: 'La descrizione è obbligatoria quando si seleziona "Altro"',
+      path: ['description'],
+    }
+  )
 ```
 
 ## Best Practices
 
-### 1. Field Naming Conventions
-- Use camelCase for form field names
-- Match SII specification field names where possible
-- Use descriptive names that indicate the field's purpose
+### 1. Convenzioni per Nomi di Campo
+- Usa camelCase per i nomi dei campi del form
+- Abbina i nomi dei campi delle specifiche SII dove possibile
+- Usa nomi descrittivi che indicano lo scopo del campo
 
-### 2. Validation Rules
-- Always validate required fields
-- Use appropriate data types (string, number, date, etc.)
-- Set reasonable min/max limits based on SII requirements
-- Provide clear, user-friendly error messages
+### 2. Regole di Validazione
+- Valida sempre i campi obbligatori
+- Usa tipi di dati appropriati (string, number, date, ecc.)
+- Imposta limiti min/max ragionevoli basati sui requisiti SII
+- Fornisci messaggi di errore chiari e user-friendly **in italiano**
 
-### 3. Conditional Logic
-- Use `watch()` to monitor field changes
-- Show/hide fields based on other field values
-- Update validation rules dynamically when needed
+### 3. Logica Condizionale
+- Usa `watch()` per monitorare i cambiamenti dei campi
+- Mostra/nascondi campi basati sui valori di altri campi
+- Aggiorna le regole di validazione dinamicamente quando necessario
+- Usa `useFormStates` per accedere ai dati dei passi precedenti
 
-### 4. UI/UX Guidelines
-- Group related fields together
-- Use appropriate input types (text, select, checkbox, etc.)
-- Include help text for complex fields
-- Mark required fields clearly
-- Provide consistent spacing and layout
+### 4. Linee Guida UI/UX
+- Raggruppa campi correlati insieme
+- Usa tipi di input appropriati (text, select, checkbox, ecc.)
+- Includi testo di aiuto per campi complessi
+- Marca chiaramente i campi obbligatori
+- Fornisci spaziatura e layout consistenti
+- **Usa sempre italiano** per il testo utente
 
-### 5. Testing
-After adding a new step, test the following:
-- Form validation works correctly
-- Data persists when navigating between steps
-- URL updates properly
-- Component renders without errors
-- All conditional logic works as expected
+### 5. Test
+Dopo aver aggiunto un nuovo passo, testa quanto segue:
+- La validazione del form funziona correttamente
+- I dati persistono quando si naviga tra i passi
+- L'URL si aggiorna correttamente
+- Il componente viene renderizzato senza errori
+- Tutta la logica condizionale funziona come previsto
+- L'accessibilità è appropriata
+- Le etichette italiane sono corrette
 
-## Common Patterns
+## Pattern Comuni
 
-### Multiple Selection Fields
+### Campi di Selezione Multipla
 ```typescript
-// For fields that allow multiple selections
 const handleMultiSelect = (value: string, checked: boolean, fieldName: string) => {
   const currentValues = watch(fieldName) || []
   if (checked) {
@@ -334,9 +805,8 @@ const handleMultiSelect = (value: string, checked: boolean, fieldName: string) =
 }
 ```
 
-### Conditional Required Fields
+### Campi Obbligatori Condizionali
 ```typescript
-// Schema with conditional validation
 const schema = z.object({
   type: z.enum(['01', '02', '99']),
   description: z.string().optional(),
@@ -346,44 +816,118 @@ const schema = z.object({
   }
   return true
 }, {
-  message: 'Description is required when type is "Other"',
+  message: 'La descrizione è obbligatoria quando il tipo è "Altro"',
   path: ['description'],
 })
 ```
 
-### Dynamic Field Arrays
+### Array di Campi Dinamici
 ```typescript
-// For repeatable sections
 const { fields, append, remove } = useFieldArray({
   control,
   name: 'items'
 })
+
+// Aggiunta di nuovo elemento
+const addItem = () => {
+  append({
+    name: '',
+    value: '',
+    // ... altri campi di default
+  })
+}
 ```
 
-## Troubleshooting
+### Componenti Nidificati per Array Complessi
+```typescript
+interface ItemCardProps {
+  index: number
+  onRemove: () => void
+  showRemove: boolean
+}
 
-### Common Issues
+function ItemCard({ index, onRemove, showRemove }: ItemCardProps) {
+  const form = useFormContext<FormValues>()
+  
+  return (
+    <Card className="bg-muted/50">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm">Elemento {index + 1}</CardTitle>
+          {showRemove && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={onRemove}
+              className="text-destructive hover:text-destructive"
+            >
+              <Trash2 className="h-3 w-3" />
+            </Button>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {/* Campi del form per questo elemento */}
+      </CardContent>
+    </Card>
+  )
+}
+```
 
-1. **Schema not updating**: Make sure to restart the development server after schema changes
-2. **Component not rendering**: Check the import/export statements and stepper switch
-3. **Validation not working**: Ensure the schema is properly associated with the step
-4. **Data not persisting**: Verify that field names match between schema and component
+## Risoluzione dei Problemi
 
-### Debugging Tips
+### Problemi Comuni
 
-1. Use the debug panel at the bottom of the page to inspect form data
-2. Check browser console for TypeScript errors
-3. Use React DevTools to inspect component state
-4. Test form validation by submitting with invalid data
+1. **Schema non aggiornato**: Assicurati di riavviare il server di sviluppo dopo le modifiche allo schema
+2. **Componente non renderizzato**: Controlla le dichiarazioni import/export e lo switch dello stepper
+3. **Validazione non funzionante**: Assicurati che lo schema sia associato correttamente al passo
+4. **Dati non persistenti**: Verifica che i nomi dei campi corrispondano tra schema e componente
+5. **Errori TypeScript**: Controlla che i tipi siano esportati e importati correttamente
 
-## SII Specification Reference
+### Suggerimenti per il Debug
 
-When implementing new steps, always refer to the SII specification document:
+1. Usa il pannello di debug in fondo alla pagina per ispezionare i dati del form
+2. Controlla la console del browser per errori TypeScript
+3. Usa React DevTools per ispezionare lo stato del componente
+4. Testa la validazione del form inviando dati non validi
+5. Usa `console.log` nel componente per tracciare i cambiamenti dei dati
+
+### Gestione Errori Comuni
+
+```typescript
+// Gestione errori di validazione personalizzati
+const handleValidationError = (errors: any) => {
+  console.error('Errori di validazione:', errors)
+  // Logica personalizzata per gestire errori specifici
+}
+
+// Debugging stato del form
+const debugFormState = () => {
+  const formData = watch()
+  console.log('Dati correnti del form:', formData)
+  console.log('Errori del form:', errors)
+}
+```
+
+## Riferimento alle Specifiche SII
+
+Quando implementi nuovi passi, fai sempre riferimento al documento delle specifiche SII:
 - **File**: `documentation/functional-requirements-sii-xml.md`
 - **Schema**: `documentation/xml-schema.xsd`
 
-Each step should implement the corresponding section from the SII specification with proper field validation and formatting.
+Ogni passo dovrebbe implementare la sezione corrispondente delle specifiche SII con validazione e formattazione appropriate dei campi.
 
-## Example: Complete Implementation
+## Esempio: Implementazione Completa
 
-For a complete example, see the existing `BasicInfoComponent` and `OfferDetailsComponent` implementations, which demonstrate all the patterns described in this guide. 
+Per un esempio completo, consulta l'implementazione esistente di `ActivationContactsStep` e `CompanyComponentsStep`, che dimostrano tutti i pattern descritti in questa guida, inclusi:
+
+- Pattern FormField moderni con validazione italiana
+- Uso delle costanti per etichette e opzioni
+- Gestione di array dinamici con componenti nidificati
+- Logica condizionale basata sui valori dei campi
+- Test completi con pattern di accessibilità
+- Layout a Card consistente
+- Gestione stato cross-step con useFormStates
+
+L'implementazione attuale è significativamente più avanzata di quanto suggerito nelle versioni precedenti di questa guida, con pattern migliori per manutenibilità, internazionalizzazione e esperienza utente. 
