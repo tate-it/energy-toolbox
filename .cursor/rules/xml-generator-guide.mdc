@@ -1,8 +1,7 @@
 ---
-description: "XML Generator development patterns and Italian-first principles"
-alwaysApply: true
+globs: components/xml-generator/steps/**/*.tsx
+alwaysApply: false
 ---
-
 # XML Generator Development Guide
 
 This project follows specific patterns for the SII XML Generator.

@@ -1,3 +1,7 @@
+---
+globs: components/xml-generator/steps/**/*.tsx
+alwaysApply: false
+---
 # XML Generator Schema Development
 
 Refer to the complete guide: [adding-new-steps-guide.md](mdc:documentation/adding-new-steps-guide.md)
@@ -51,7 +55,56 @@ export type NewStepFormValues = z.infer<typeof newStepSchema>
 - Optional fields: `.optional()` or `.optional().or(z.literal(''))`
 - Enums: `z.enum(['01', '02'], { required_error: 'Seleziona un\'opzione' })`
 - Custom validation: Use `.refine()` with Italian error messages
-description:
-globs:
-alwaysApply: false
----
+# XML Generator Schema Development
+
+Refer to the complete guide: [adding-new-steps-guide.md](mdc:documentation/adding-new-steps-guide.md)
+
+## Schema Creation Pattern
+
+When creating new schemas for the XML generator:
+
+```typescript
+export const newStepSchema = z
+  .object({
+    requiredField: z
+      .string()
+      .min(1, 'Il campo è obbligatorio')
+      .max(255, 'Massimo 255 caratteri'),
+    optionalField: z.string().optional(),
+    selectField: z.enum(['01', '02', '03'], {
+      required_error: 'Seleziona un\'opzione',
+    }),
+  })
+  .refine(
+    (data) => {
+      // Custom validation logic
+      return true
+    },
+    {
+      message: 'Errore di validazione personalizzato',
+      path: ['fieldName'],
+    }
+  )
+
+export type NewStepFormValues = z.infer<typeof newStepSchema>
+```
+
+## Requirements
+
+### Italian Error Messages (MANDATORY)
+- ALL error messages must be in Italian
+- Use user-friendly, contextual messages
+- Include character limits based on SII specification
+
+### Schema Structure
+- Use descriptive field names matching SII specifications
+- Include proper min/max validation
+- Export both schema and TypeScript type
+- Use `refine` for complex custom validation
+- Use enum values that match constants from [constants.ts](mdc:lib/xml-generator/constants.ts)
+
+### Validation Patterns
+- Required fields: `.min(1, 'Il campo è obbligatorio')`
+- Optional fields: `.optional()` or `.optional().or(z.literal(''))`
+- Enums: `z.enum(['01', '02'], { required_error: 'Seleziona un\'opzione' })`
+- Custom validation: Use `.refine()` with Italian error messages

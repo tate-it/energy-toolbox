@@ -1,3 +1,7 @@
+---
+globs: components/xml-generator/steps/**/*.tsx
+alwaysApply: false
+---
 # XML Generator Step Components
 
 Refer to the complete guide: [adding-new-steps-guide.md](mdc:documentation/adding-new-steps-guide.md)
@@ -63,7 +67,68 @@ export function StepName() {
 - Card-based sections with consistent spacing
 - `space-y-6` between main sections
 - `space-y-4` within card content
-description:
-globs:
-alwaysApply: false
----
+# XML Generator Step Components
+
+Refer to the complete guide: [adding-new-steps-guide.md](mdc:documentation/adding-new-steps-guide.md)
+
+## Required Component Structure
+
+ALL step components must follow this exact pattern:
+
+```typescript
+'use client'
+
+import { useFormContext } from 'react-hook-form'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { useFormStates } from '@/hooks/use-form-states'
+import { RELEVANT_LABELS } from '@/lib/xml-generator/constants'
+import type { StepFormValues } from '@/lib/xml-generator/schemas'
+
+export function StepName() {
+  const form = useFormContext<StepFormValues>()
+  const [formStates] = useFormStates()
+  
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="font-bold text-2xl">Titolo in Italiano</h2>
+        <p className="text-muted-foreground">Descrizione del passo</p>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Sezione</CardTitle>
+          <CardDescription>Descrizione della sezione</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* FormField components */}
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+```
+
+## Mandatory Patterns
+
+### Form Fields (REQUIRED)
+- Use `FormField` with `control={form.control}` 
+- Include `FormLabel`, `FormControl`, `FormMessage`
+- Add `FormDescription` for help text
+- Required fields: `<span className="text-destructive">*</span>`
+
+### Italian Text (MANDATORY)
+- ALL user-facing text must be in Italian
+- Italian placeholders and help text
+- Italian error messages
+
+### Constants Usage (MANDATORY)
+- Import from [constants.ts](mdc:lib/xml-generator/constants.ts)
+- Use `Object.entries(LABELS).map()` for options
+- Never hardcode option labels
+
+### Layout Standards
+- Card-based sections with consistent spacing
+- `space-y-6` between main sections
+- `space-y-4` within card content
