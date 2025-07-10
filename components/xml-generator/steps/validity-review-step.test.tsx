@@ -12,6 +12,16 @@ import { ValidityReviewStep } from './validity-review-step'
 // Mock useFormStates hook
 vi.mock('@/hooks/use-form-states')
 
+// Regex patterns for testing
+const PERCENTAGE_REGEX = /\d+%/
+const SECTIONS_REGEX = /\d+\/7 sezioni/
+const START_DATE_REGEX = /Data di Inizio/
+const END_DATE_REGEX = /Data di Fine/
+const REVIEW_CONFIRMATION_REGEX = /Confermo di aver revisionato/
+const NOTES_REGEX = /Note Aggiuntive/
+const XML_PREVIEW_REGEX =
+  /La funzionalità di anteprima e generazione XML sarà implementata/
+
 // Mock form data for testing
 const mockFormData = {
   basicInfo: {
@@ -152,8 +162,8 @@ describe('ValidityReviewStep', () => {
     )
 
     // Should show completion progress
-    expect(screen.getByText(/\d+%/)).toBeInTheDocument()
-    expect(screen.getByText(/\d+\/7 sezioni/)).toBeInTheDocument()
+    expect(screen.getByText(PERCENTAGE_REGEX)).toBeInTheDocument()
+    expect(screen.getByText(SECTIONS_REGEX)).toBeInTheDocument()
   })
 
   it('renders validity period form fields', () => {
@@ -164,8 +174,8 @@ describe('ValidityReviewStep', () => {
     )
 
     // Check form fields
-    expect(screen.getByLabelText(/Data di Inizio/)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Data di Fine/)).toBeInTheDocument()
+    expect(screen.getByLabelText(START_DATE_REGEX)).toBeInTheDocument()
+    expect(screen.getByLabelText(END_DATE_REGEX)).toBeInTheDocument()
     expect(screen.getByPlaceholderText('gg/mm/aaaa')).toBeInTheDocument()
   })
 
@@ -191,7 +201,7 @@ describe('ValidityReviewStep', () => {
     )
 
     const checkbox = screen.getByRole('checkbox', {
-      name: /Confermo di aver revisionato/,
+      name: REVIEW_CONFIRMATION_REGEX,
     })
     expect(checkbox).toBeInTheDocument()
     expect(checkbox).not.toBeChecked()
@@ -204,7 +214,7 @@ describe('ValidityReviewStep', () => {
       </TestWrapper>,
     )
 
-    const textarea = screen.getByLabelText(/Note Aggiuntive/)
+    const textarea = screen.getByLabelText(NOTES_REGEX)
     expect(textarea).toBeInTheDocument()
     expect(textarea).toBeInstanceOf(HTMLTextAreaElement)
   })
@@ -216,7 +226,7 @@ describe('ValidityReviewStep', () => {
       </TestWrapper>,
     )
 
-    const startDateInput = screen.getByLabelText(/Data di Inizio/)
+    const startDateInput = screen.getByLabelText(START_DATE_REGEX)
     fireEvent.change(startDateInput, { target: { value: '01/01/2024' } })
     expect(startDateInput).toHaveValue('01/01/2024')
   })
@@ -228,7 +238,7 @@ describe('ValidityReviewStep', () => {
       </TestWrapper>,
     )
 
-    const endDateInput = screen.getByLabelText(/Data di Fine/)
+    const endDateInput = screen.getByLabelText(END_DATE_REGEX)
     fireEvent.change(endDateInput, { target: { value: '31/12/2024' } })
     expect(endDateInput).toHaveValue('31/12/2024')
   })
@@ -241,7 +251,7 @@ describe('ValidityReviewStep', () => {
     )
 
     const checkbox = screen.getByRole('checkbox', {
-      name: /Confermo di aver revisionato/,
+      name: REVIEW_CONFIRMATION_REGEX,
     })
     fireEvent.click(checkbox)
     expect(checkbox).toBeChecked()
@@ -254,7 +264,7 @@ describe('ValidityReviewStep', () => {
       </TestWrapper>,
     )
 
-    const textarea = screen.getByLabelText(/Note Aggiuntive/)
+    const textarea = screen.getByLabelText(NOTES_REGEX)
     fireEvent.change(textarea, { target: { value: 'Test notes' } })
     expect(textarea).toHaveValue('Test notes')
   })
@@ -312,7 +322,7 @@ describe('ValidityReviewStep', () => {
     )
 
     // Should show lower completion percentage when data is missing
-    expect(screen.getByText(/\d+\/7 sezioni/)).toBeInTheDocument()
+    expect(screen.getByText(SECTIONS_REGEX)).toBeInTheDocument()
   })
 
   it('displays market type labels correctly', () => {
@@ -334,11 +344,7 @@ describe('ValidityReviewStep', () => {
     )
 
     expect(screen.getByText('Anteprima XML')).toBeInTheDocument()
-    expect(
-      screen.getByText(
-        /La funzionalità di anteprima e generazione XML sarà implementata/,
-      ),
-    ).toBeInTheDocument()
+    expect(screen.getByText(XML_PREVIEW_REGEX)).toBeInTheDocument()
   })
 
   it('handles missing form states gracefully', () => {
@@ -411,13 +417,13 @@ describe('ValidityReviewStep', () => {
     )
 
     // Check that form fields have proper labels
-    expect(screen.getByLabelText(/Data di Inizio/)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Data di Fine/)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Note Aggiuntive/)).toBeInTheDocument()
+    expect(screen.getByLabelText(START_DATE_REGEX)).toBeInTheDocument()
+    expect(screen.getByLabelText(END_DATE_REGEX)).toBeInTheDocument()
+    expect(screen.getByLabelText(NOTES_REGEX)).toBeInTheDocument()
 
     // Check checkbox has proper label
     expect(
-      screen.getByRole('checkbox', { name: /Confermo di aver revisionato/ }),
+      screen.getByRole('checkbox', { name: REVIEW_CONFIRMATION_REGEX }),
     ).toBeInTheDocument()
   })
 
@@ -441,7 +447,7 @@ describe('ValidityReviewStep', () => {
     expect(screen.getByDisplayValue('31/12/2024')).toBeInTheDocument()
     expect(screen.getByDisplayValue('Test notes')).toBeInTheDocument()
     expect(
-      screen.getByRole('checkbox', { name: /Confermo di aver revisionato/ }),
+      screen.getByRole('checkbox', { name: REVIEW_CONFIRMATION_REGEX }),
     ).toBeChecked()
   })
 
@@ -454,7 +460,7 @@ describe('ValidityReviewStep', () => {
 
     // Check for the presence of progress text and percentage display
     expect(screen.getByText('Progresso completamento')).toBeInTheDocument()
-    expect(screen.getByText(/\d+%/)).toBeInTheDocument()
+    expect(screen.getByText(PERCENTAGE_REGEX)).toBeInTheDocument()
 
     // Check that progress bar container exists
     const progressContainer = screen
@@ -470,7 +476,7 @@ describe('ValidityReviewStep', () => {
       </TestWrapper>,
     )
 
-    const badge = screen.getByText(/\d+\/7 sezioni/)
+    const badge = screen.getByText(SECTIONS_REGEX)
     expect(badge).toBeInTheDocument()
     expect(badge).toHaveClass('inline-flex') // Badge styling
   })

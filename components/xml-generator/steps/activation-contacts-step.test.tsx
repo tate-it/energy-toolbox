@@ -9,6 +9,15 @@ import {
 } from '@/lib/xml-generator/schemas'
 import { ActivationContactsStep } from './activation-contacts-step'
 
+// Regex patterns defined at top level for performance
+const ACTIVATION_WEB_ONLY_REGEX = /attivazione solo web/i
+const ACTIVATION_ANY_CHANNEL_REGEX = /attivazione qualsiasi canale/i
+const ACTIVATION_OTHER_REGEX = /altro/i
+const ACTIVATION_POINT_OF_SALE_REGEX = /punto vendita/i
+const PHONE_NUMBER_REGEX = /numero di telefono/i
+const VENDOR_WEBSITE_REGEX = /sito web del venditore/i
+const OFFER_URL_REGEX = /url dell'offerta/i
+
 // Test wrapper component with form provider
 function TestWrapper({
   children,
@@ -87,10 +96,10 @@ describe('ActivationContactsStep', () => {
     )
 
     const webOnlyCheckbox = screen.getByRole('checkbox', {
-      name: /attivazione solo web/i,
+      name: ACTIVATION_WEB_ONLY_REGEX,
     })
     const anyChannelCheckbox = screen.getByRole('checkbox', {
-      name: /attivazione qualsiasi canale/i,
+      name: ACTIVATION_ANY_CHANNEL_REGEX,
     })
 
     await user.click(webOnlyCheckbox)
@@ -109,7 +118,9 @@ describe('ActivationContactsStep', () => {
       </TestWrapper>,
     )
 
-    const otherCheckbox = screen.getByRole('checkbox', { name: /altro/i })
+    const otherCheckbox = screen.getByRole('checkbox', {
+      name: ACTIVATION_OTHER_REGEX,
+    })
     await user.click(otherCheckbox)
 
     expect(
@@ -131,7 +142,9 @@ describe('ActivationContactsStep', () => {
       </TestWrapper>,
     )
 
-    const otherCheckbox = screen.getByRole('checkbox', { name: /altro/i })
+    const otherCheckbox = screen.getByRole('checkbox', {
+      name: ACTIVATION_OTHER_REGEX,
+    })
 
     // Select "Altro"
     await user.click(otherCheckbox)
@@ -155,7 +168,7 @@ describe('ActivationContactsStep', () => {
       </TestWrapper>,
     )
 
-    const phoneInput = screen.getByLabelText(/numero di telefono/i)
+    const phoneInput = screen.getByLabelText(PHONE_NUMBER_REGEX)
     await user.type(phoneInput, '+39 02 1234567')
 
     expect(phoneInput).toHaveValue('+39 02 1234567')
@@ -170,8 +183,8 @@ describe('ActivationContactsStep', () => {
       </TestWrapper>,
     )
 
-    const vendorWebsiteInput = screen.getByLabelText(/sito web del venditore/i)
-    const offerUrlInput = screen.getByLabelText(/url dell'offerta/i)
+    const vendorWebsiteInput = screen.getByLabelText(VENDOR_WEBSITE_REGEX)
+    const offerUrlInput = screen.getByLabelText(OFFER_URL_REGEX)
 
     await user.type(vendorWebsiteInput, 'https://www.esempio.it')
     await user.type(offerUrlInput, 'https://www.esempio.it/offerta')
@@ -231,14 +244,14 @@ describe('ActivationContactsStep', () => {
     )
 
     const webOnlyCheckbox = screen.getByRole('checkbox', {
-      name: /attivazione solo web/i,
+      name: ACTIVATION_WEB_ONLY_REGEX,
     })
     const pointOfSaleCheckbox = screen.getByRole('checkbox', {
-      name: /punto vendita/i,
+      name: ACTIVATION_POINT_OF_SALE_REGEX,
     })
-    const phoneInput = screen.getByLabelText(/numero di telefono/i)
-    const vendorWebsiteInput = screen.getByLabelText(/sito web del venditore/i)
-    const offerUrlInput = screen.getByLabelText(/url dell'offerta/i)
+    const phoneInput = screen.getByLabelText(PHONE_NUMBER_REGEX)
+    const vendorWebsiteInput = screen.getByLabelText(VENDOR_WEBSITE_REGEX)
+    const offerUrlInput = screen.getByLabelText(OFFER_URL_REGEX)
 
     expect(webOnlyCheckbox).toBeChecked()
     expect(pointOfSaleCheckbox).toBeChecked()
@@ -281,10 +294,10 @@ describe('ActivationContactsStep', () => {
     )
 
     const webOnlyCheckbox = screen.getByRole('checkbox', {
-      name: /attivazione solo web/i,
+      name: ACTIVATION_WEB_ONLY_REGEX,
     })
     const anyChannelCheckbox = screen.getByRole('checkbox', {
-      name: /attivazione qualsiasi canale/i,
+      name: ACTIVATION_ANY_CHANNEL_REGEX,
     })
 
     expect(webOnlyCheckbox).toBeChecked()
@@ -304,14 +317,14 @@ describe('ActivationContactsStep', () => {
 
     // Check that checkboxes have proper labels
     const checkboxes = screen.getAllByRole('checkbox')
-    checkboxes.forEach((checkbox) => {
+    for (const checkbox of checkboxes) {
       expect(checkbox).toHaveAccessibleName()
-    })
+    }
 
     // Check that inputs have proper labels
-    const phoneInput = screen.getByLabelText(/numero di telefono/i)
-    const vendorWebsiteInput = screen.getByLabelText(/sito web del venditore/i)
-    const offerUrlInput = screen.getByLabelText(/url dell'offerta/i)
+    const phoneInput = screen.getByLabelText(PHONE_NUMBER_REGEX)
+    const vendorWebsiteInput = screen.getByLabelText(VENDOR_WEBSITE_REGEX)
+    const offerUrlInput = screen.getByLabelText(OFFER_URL_REGEX)
 
     expect(phoneInput).toHaveAccessibleName()
     expect(vendorWebsiteInput).toHaveAccessibleName()

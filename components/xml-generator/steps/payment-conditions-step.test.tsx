@@ -5,6 +5,17 @@ import type { PaymentConditionsFormValues } from '@/lib/xml-generator/schemas'
 import { paymentConditionsSchema } from '@/lib/xml-generator/schemas'
 import { PaymentConditionsStep } from './payment-conditions-step'
 
+// Regex literals defined at top level to avoid performance issues
+const PAYMENT_METHODS_DESCRIPTION_REGEX =
+  /Definisci i metodi di pagamento accettati/
+const PAYMENT_METHODS_SECTION_REGEX =
+  /Specifica i metodi di pagamento disponibili/
+const CONTRACTUAL_CONDITIONS_REGEX =
+  /Aggiungi le condizioni contrattuali specifiche/
+const PAYMENT_TYPE_REGEX = /Tipo di Pagamento/
+const CONDITION_TYPE_REGEX = /Tipo di Condizione/
+const LIMITING_CONDITION_REGEX = /Condizione Limitante/
+
 const TestWrapper = ({
   children,
   formData = {},
@@ -37,7 +48,7 @@ describe('PaymentConditionsStep', () => {
       screen.getByText('Metodi di Pagamento e Condizioni'),
     ).toBeInTheDocument()
     expect(
-      screen.getByText(/Definisci i metodi di pagamento accettati/),
+      screen.getByText(PAYMENT_METHODS_DESCRIPTION_REGEX),
     ).toBeInTheDocument()
   })
 
@@ -49,9 +60,7 @@ describe('PaymentConditionsStep', () => {
     )
 
     expect(screen.getByText('Metodi di Pagamento')).toBeInTheDocument()
-    expect(
-      screen.getByText(/Specifica i metodi di pagamento disponibili/),
-    ).toBeInTheDocument()
+    expect(screen.getByText(PAYMENT_METHODS_SECTION_REGEX)).toBeInTheDocument()
   })
 
   it('renders contractual conditions section', () => {
@@ -62,9 +71,7 @@ describe('PaymentConditionsStep', () => {
     )
 
     expect(screen.getByText('Condizioni Contrattuali')).toBeInTheDocument()
-    expect(
-      screen.getByText(/Aggiungi le condizioni contrattuali specifiche/),
-    ).toBeInTheDocument()
+    expect(screen.getByText(CONTRACTUAL_CONDITIONS_REGEX)).toBeInTheDocument()
   })
 
   it('allows adding new payment methods', () => {
@@ -92,7 +99,7 @@ describe('PaymentConditionsStep', () => {
     fireEvent.click(addButton)
 
     const paymentTypeSelect = screen.getByRole('combobox', {
-      name: /Tipo di Pagamento/,
+      name: PAYMENT_TYPE_REGEX,
     })
     fireEvent.click(paymentTypeSelect)
 
@@ -116,7 +123,7 @@ describe('PaymentConditionsStep', () => {
     fireEvent.click(addButton)
 
     const paymentTypeSelect = screen.getByRole('combobox', {
-      name: /Tipo di Pagamento/,
+      name: PAYMENT_TYPE_REGEX,
     })
     fireEvent.click(paymentTypeSelect)
 
@@ -192,7 +199,7 @@ describe('PaymentConditionsStep', () => {
     fireEvent.click(addButton)
 
     const conditionTypeSelect = screen.getByRole('combobox', {
-      name: /Tipo di Condizione/,
+      name: CONDITION_TYPE_REGEX,
     })
     fireEvent.click(conditionTypeSelect)
 
@@ -217,7 +224,7 @@ describe('PaymentConditionsStep', () => {
     fireEvent.click(addButton)
 
     const limitingSelect = screen.getByRole('combobox', {
-      name: /Condizione Limitante/,
+      name: LIMITING_CONDITION_REGEX,
     })
     fireEvent.click(limitingSelect)
 
@@ -236,7 +243,7 @@ describe('PaymentConditionsStep', () => {
     fireEvent.click(addButton)
 
     const conditionTypeSelect = screen.getByRole('combobox', {
-      name: /Tipo di Condizione/,
+      name: CONDITION_TYPE_REGEX,
     })
     fireEvent.click(conditionTypeSelect)
 
@@ -296,7 +303,7 @@ describe('PaymentConditionsStep', () => {
     fireEvent.click(addButton)
 
     const paymentTypeSelect = screen.getByRole('combobox', {
-      name: /Tipo di Pagamento/,
+      name: PAYMENT_TYPE_REGEX,
     })
     fireEvent.click(paymentTypeSelect)
 
@@ -324,7 +331,7 @@ describe('PaymentConditionsStep', () => {
     fireEvent.click(addButton)
 
     const conditionTypeSelect = screen.getByRole('combobox', {
-      name: /Tipo di Condizione/,
+      name: CONDITION_TYPE_REGEX,
     })
     fireEvent.click(conditionTypeSelect)
 

@@ -6,6 +6,26 @@ import type { AdditionalFeaturesFormValues } from '@/lib/xml-generator/schemas'
 import { additionalFeaturesSchema } from '@/lib/xml-generator/schemas'
 import { AdditionalFeaturesStep } from './additional-features-step'
 
+// Regex patterns defined at top level for performance
+const REGEX_PATTERNS = {
+  configureCharacteristics: /Configura caratteristiche dell'offerta/,
+  addElectricityOffer: /Aggiungi Offerta Elettrica/,
+  addRegion: /Aggiungi Regione/,
+  addProvince: /Aggiungi Provincia/,
+  addMunicipality: /Aggiungi Comune/,
+  addDiscount: /Aggiungi Sconto/,
+  condition: /Condizione/,
+  other: /Other/,
+  addPrice: /Aggiungi Prezzo/,
+  priceNumber: /Prezzo \d+/,
+  addProduct: /Aggiungi Prodotto\/Servizio/,
+  macroArea: /Macroarea/,
+  minConsumption: /Consumo Minimo/,
+  maxConsumption: /Consumo Massimo/,
+  minPower: /Potenza Minima/,
+  maxPower: /Potenza Massima/,
+} as const
+
 // Mock the useFormStates hook
 const mockUseFormStates = vi.fn()
 vi.mock('@/hooks/use-form-states', () => ({
@@ -62,7 +82,7 @@ describe('AdditionalFeaturesStep', () => {
 
     expect(screen.getByText('Funzionalità Aggiuntive')).toBeInTheDocument()
     expect(
-      screen.getByText(/Configura caratteristiche dell'offerta/),
+      screen.getByText(REGEX_PATTERNS.configureCharacteristics),
     ).toBeInTheDocument()
   })
 
@@ -159,7 +179,7 @@ describe('AdditionalFeaturesStep', () => {
       )
 
       const addElectricityButton = screen.getByRole('button', {
-        name: /Aggiungi Offerta Elettrica/,
+        name: REGEX_PATTERNS.addElectricityOffer,
       })
 
       // Initially no electricity inputs should be present
@@ -205,7 +225,7 @@ describe('AdditionalFeaturesStep', () => {
       )
 
       const addRegionButton = screen.getByRole('button', {
-        name: /Aggiungi Regione/,
+        name: REGEX_PATTERNS.addRegion,
       })
       fireEvent.click(addRegionButton)
 
@@ -224,7 +244,7 @@ describe('AdditionalFeaturesStep', () => {
       )
 
       const addProvinceButton = screen.getByRole('button', {
-        name: /Aggiungi Provincia/,
+        name: REGEX_PATTERNS.addProvince,
       })
       fireEvent.click(addProvinceButton)
 
@@ -243,7 +263,7 @@ describe('AdditionalFeaturesStep', () => {
       )
 
       const addMunicipalityButton = screen.getByRole('button', {
-        name: /Aggiungi Comune/,
+        name: REGEX_PATTERNS.addMunicipality,
       })
       fireEvent.click(addMunicipalityButton)
 
@@ -265,7 +285,7 @@ describe('AdditionalFeaturesStep', () => {
 
       expect(screen.getByText('Sconti')).toBeInTheDocument()
       expect(
-        screen.getByRole('button', { name: /Aggiungi Sconto/ }),
+        screen.getByRole('button', { name: REGEX_PATTERNS.addDiscount }),
       ).toBeInTheDocument()
     })
 
@@ -277,7 +297,7 @@ describe('AdditionalFeaturesStep', () => {
       )
 
       const addDiscountButton = screen.getByRole('button', {
-        name: /Aggiungi Sconto/,
+        name: REGEX_PATTERNS.addDiscount,
       })
       fireEvent.click(addDiscountButton)
 
@@ -287,7 +307,7 @@ describe('AdditionalFeaturesStep', () => {
       expect(screen.getByText('Descrizione Sconto *')).toBeInTheDocument()
     })
 
-    it('shows condition description field when "Other" condition is selected', async () => {
+    it('shows condition description field when "Other" condition is selected', () => {
       render(
         <TestWrapper>
           <AdditionalFeaturesStep />
@@ -296,18 +316,20 @@ describe('AdditionalFeaturesStep', () => {
 
       // Add a discount first
       const addDiscountButton = screen.getByRole('button', {
-        name: /Aggiungi Sconto/,
+        name: REGEX_PATTERNS.addDiscount,
       })
       fireEvent.click(addDiscountButton)
 
       // Find and click the condition select
       const conditionSelect = screen.getByRole('combobox', {
-        name: /Condizione/,
+        name: REGEX_PATTERNS.condition,
       })
       fireEvent.click(conditionSelect)
 
       // Select "Other" option
-      const otherOption = screen.getByRole('option', { name: /Other/ })
+      const otherOption = screen.getByRole('option', {
+        name: REGEX_PATTERNS.other,
+      })
       fireEvent.click(otherOption)
 
       // Check if description field appears
@@ -323,17 +345,17 @@ describe('AdditionalFeaturesStep', () => {
 
       // Add a discount first
       const addDiscountButton = screen.getByRole('button', {
-        name: /Aggiungi Sconto/,
+        name: REGEX_PATTERNS.addDiscount,
       })
       fireEvent.click(addDiscountButton)
 
       // Add a new price
       const addPriceButton = screen.getByRole('button', {
-        name: /Aggiungi Prezzo/,
+        name: REGEX_PATTERNS.addPrice,
       })
       fireEvent.click(addPriceButton)
 
-      const priceCards = screen.getAllByText(/Prezzo \d+/)
+      const priceCards = screen.getAllByText(REGEX_PATTERNS.priceNumber)
       expect(priceCards).toHaveLength(2) // Initial + added
     })
   })
@@ -350,7 +372,7 @@ describe('AdditionalFeaturesStep', () => {
         screen.getByText('Prodotti e Servizi Aggiuntivi'),
       ).toBeInTheDocument()
       expect(
-        screen.getByRole('button', { name: /Aggiungi Prodotto\/Servizio/ }),
+        screen.getByRole('button', { name: REGEX_PATTERNS.addProduct }),
       ).toBeInTheDocument()
     })
 
@@ -362,7 +384,7 @@ describe('AdditionalFeaturesStep', () => {
       )
 
       const addProductButton = screen.getByRole('button', {
-        name: /Aggiungi Prodotto\/Servizio/,
+        name: REGEX_PATTERNS.addProduct,
       })
       fireEvent.click(addProductButton)
 
@@ -374,7 +396,7 @@ describe('AdditionalFeaturesStep', () => {
       ).toBeInTheDocument()
     })
 
-    it('shows macro area details field when "Other" macro area is selected', async () => {
+    it('shows macro area details field when "Other" macro area is selected', () => {
       render(
         <TestWrapper>
           <AdditionalFeaturesStep />
@@ -383,18 +405,20 @@ describe('AdditionalFeaturesStep', () => {
 
       // Add a product first
       const addProductButton = screen.getByRole('button', {
-        name: /Aggiungi Prodotto\/Servizio/,
+        name: REGEX_PATTERNS.addProduct,
       })
       fireEvent.click(addProductButton)
 
       // Find and click the macro area select
       const macroAreaSelect = screen.getByRole('combobox', {
-        name: /Macroarea/,
+        name: REGEX_PATTERNS.macroArea,
       })
       fireEvent.click(macroAreaSelect)
 
       // Select "Other" option
-      const otherOption = screen.getByRole('option', { name: /Other/ })
+      const otherOption = screen.getByRole('option', {
+        name: REGEX_PATTERNS.other,
+      })
       fireEvent.click(otherOption)
 
       // Check if details field appears
@@ -410,7 +434,7 @@ describe('AdditionalFeaturesStep', () => {
 
       // Add a product first
       const addProductButton = screen.getByRole('button', {
-        name: /Aggiungi Prodotto\/Servizio/,
+        name: REGEX_PATTERNS.addProduct,
       })
       fireEvent.click(addProductButton)
 
@@ -426,7 +450,7 @@ describe('AdditionalFeaturesStep', () => {
   })
 
   describe('Form Validation', () => {
-    it('validates required fields in discounts', async () => {
+    it('validates required fields in discounts', () => {
       render(
         <TestWrapper>
           <AdditionalFeaturesStep />
@@ -435,7 +459,7 @@ describe('AdditionalFeaturesStep', () => {
 
       // Add a discount
       const addDiscountButton = screen.getByRole('button', {
-        name: /Aggiungi Sconto/,
+        name: REGEX_PATTERNS.addDiscount,
       })
       fireEvent.click(addDiscountButton)
 
@@ -447,7 +471,7 @@ describe('AdditionalFeaturesStep', () => {
       // This test assumes validation happens on blur or form submission
     })
 
-    it('validates consumption range consistency', async () => {
+    it('validates consumption range consistency', () => {
       render(
         <TestWrapper offerType="03">
           {' '}
@@ -456,8 +480,8 @@ describe('AdditionalFeaturesStep', () => {
         </TestWrapper>,
       )
 
-      const minInput = screen.getByLabelText(/Consumo Minimo/)
-      const maxInput = screen.getByLabelText(/Consumo Massimo/)
+      const minInput = screen.getByLabelText(REGEX_PATTERNS.minConsumption)
+      const maxInput = screen.getByLabelText(REGEX_PATTERNS.maxConsumption)
 
       fireEvent.change(minInput, { target: { value: '1000' } })
       fireEvent.change(maxInput, { target: { value: '500' } })
@@ -466,7 +490,7 @@ describe('AdditionalFeaturesStep', () => {
       // Should show validation error for invalid range
     })
 
-    it('validates power range consistency', async () => {
+    it('validates power range consistency', () => {
       render(
         <TestWrapper marketType="01" offerType="01">
           {' '}
@@ -475,8 +499,8 @@ describe('AdditionalFeaturesStep', () => {
         </TestWrapper>,
       )
 
-      const minPowerInput = screen.getByLabelText(/Potenza Minima/)
-      const maxPowerInput = screen.getByLabelText(/Potenza Massima/)
+      const minPowerInput = screen.getByLabelText(REGEX_PATTERNS.minPower)
+      const maxPowerInput = screen.getByLabelText(REGEX_PATTERNS.maxPower)
 
       fireEvent.change(minPowerInput, { target: { value: '10.5' } })
       fireEvent.change(maxPowerInput, { target: { value: '5.0' } })
@@ -526,10 +550,10 @@ describe('AdditionalFeaturesStep', () => {
 
       // Check for proper button roles
       expect(
-        screen.getByRole('button', { name: /Aggiungi Sconto/ }),
+        screen.getByRole('button', { name: REGEX_PATTERNS.addDiscount }),
       ).toBeInTheDocument()
       expect(
-        screen.getByRole('button', { name: /Aggiungi Prodotto\/Servizio/ }),
+        screen.getByRole('button', { name: REGEX_PATTERNS.addProduct }),
       ).toBeInTheDocument()
     })
 
@@ -541,7 +565,7 @@ describe('AdditionalFeaturesStep', () => {
       )
 
       const addDiscountButton = screen.getByRole('button', {
-        name: /Aggiungi Sconto/,
+        name: REGEX_PATTERNS.addDiscount,
       })
       addDiscountButton.focus()
       expect(addDiscountButton).toHaveFocus()

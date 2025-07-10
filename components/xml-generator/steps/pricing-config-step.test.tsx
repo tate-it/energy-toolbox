@@ -16,12 +16,35 @@ import { PricingConfigStep } from './pricing-config-step'
 // Mock the useFormStates hook
 vi.mock('@/hooks/use-form-states')
 
+// Regex patterns for testing
+const CONFIGURE_ENERGY_PRICES_REGEX = /Configura i prezzi dell'energia/
+const VARIABLE_OFFER_MANDATORY_REGEX =
+  /Obbligatorio solo per offerte a prezzo variabile/
+const ELECTRICITY_MARKET_MANDATORY_REGEX =
+  /Obbligatorio per il mercato elettrico/
+const ENERGY_PRICE_VARIABLE_OFFER_REGEX =
+  /Indice di prezzo per le offerte a prezzo variabile/
+const ALTERNATIVE_INDEX_DESCRIPTION_REGEX =
+  /Descrizione dell'indice alternativo/
+const TIME_BAND_CONFIGURATION_REGEX =
+  /Tipo di configurazione delle fasce orarie/
+const DISPATCHING_COMPONENTS_REGEX =
+  /Componenti di dispacciamento per le offerte elettriche/
+const NO_DISPATCHING_COMPONENTS_REGEX =
+  /Nessun componente di dispacciamento aggiunto/
+const DISPATCHING_TYPE_REGEX = /Tipo Dispacciamento/
+const NUMERIC_VALUE_REGEX = /Valore numerico con separatore decimale/
+const ENERGY_PRICE_INDEX_REGEX = /Indice Prezzo Energia/
+const TIME_BAND_TYPE_REGEX = /Tipologia Fasce/
+const OPTIONAL_DESCRIPTION_REGEX =
+  /Descrizione opzionale del componente \(max 255 caratteri\)/
+
 const TestWrapper = ({
   children,
   formData = {},
 }: {
   children: React.ReactNode
-  formData?: any
+  formData?: Record<string, unknown>
 }) => {
   const form = useForm<PricingConfigFormValues>({
     resolver: zodResolver(pricingConfigSchema),
@@ -46,6 +69,7 @@ const TestWrapper = ({
 
   // Set up the mock for useFormStates
   const mockFormStates = {
+    basicInfo: {},
     offerDetails: {
       marketType: '',
       offerType: '',
@@ -56,8 +80,13 @@ const TestWrapper = ({
       timeBandConfiguration: '',
       ...(formData.pricingConfig || {}),
     },
+    activationContacts: {},
+    companyComponents: {},
+    paymentConditions: {},
+    additionalFeatures: {},
+    validityReview: {},
     ...formData,
-  }
+  } as unknown as ReturnType<typeof useFormStates>[0]
 
   // Reset the mock for each test to avoid interference
   vi.mocked(useFormStates).mockClear()
@@ -75,9 +104,7 @@ describe('PricingConfigStep', () => {
     )
 
     expect(screen.getByText('Configurazione Prezzi')).toBeInTheDocument()
-    expect(
-      screen.getByText(/Configura i prezzi dell'energia/),
-    ).toBeInTheDocument()
+    expect(screen.getByText(CONFIGURE_ENERGY_PRICES_REGEX)).toBeInTheDocument()
   })
 
   it('renders help information section', () => {
@@ -88,11 +115,9 @@ describe('PricingConfigStep', () => {
     )
 
     expect(screen.getByText('Informazioni di Aiuto')).toBeInTheDocument()
+    expect(screen.getByText(VARIABLE_OFFER_MANDATORY_REGEX)).toBeInTheDocument()
     expect(
-      screen.getByText(/Obbligatorio solo per offerte a prezzo variabile/),
-    ).toBeInTheDocument()
-    expect(
-      screen.getAllByText(/Obbligatorio per il mercato elettrico/),
+      screen.getAllByText(ELECTRICITY_MARKET_MANDATORY_REGEX),
     ).toHaveLength(2)
   })
 
@@ -112,7 +137,7 @@ describe('PricingConfigStep', () => {
     expect(screen.getByText('Riferimenti Prezzo Energia')).toBeInTheDocument()
     expect(screen.getByText('Indice Prezzo Energia')).toBeInTheDocument()
     expect(
-      screen.getByText(/Indice di prezzo per le offerte a prezzo variabile/),
+      screen.getByText(ENERGY_PRICE_VARIABLE_OFFER_REGEX),
     ).toBeInTheDocument()
   })
 
@@ -155,7 +180,7 @@ describe('PricingConfigStep', () => {
       screen.getByText('Descrizione Indice Alternativo'),
     ).toBeInTheDocument()
     expect(
-      screen.getByText(/Descrizione dell'indice alternativo/),
+      screen.getByText(ALTERNATIVE_INDEX_DESCRIPTION_REGEX),
     ).toBeInTheDocument()
   })
 
@@ -175,9 +200,7 @@ describe('PricingConfigStep', () => {
 
     expect(screen.getByText('Configurazione Fasce Orarie')).toBeInTheDocument()
     expect(screen.getByText('Tipologia Fasce')).toBeInTheDocument()
-    expect(
-      screen.getByText(/Tipo di configurazione delle fasce orarie/),
-    ).toBeInTheDocument()
+    expect(screen.getByText(TIME_BAND_CONFIGURATION_REGEX)).toBeInTheDocument()
   })
 
   it('does not show time band configuration section for gas market', () => {
@@ -261,11 +284,7 @@ describe('PricingConfigStep', () => {
     )
 
     expect(screen.getByText('Dispacciamento')).toBeInTheDocument()
-    expect(
-      screen.getByText(
-        /Componenti di dispacciamento per le offerte elettriche/,
-      ),
-    ).toBeInTheDocument()
+    expect(screen.getByText(DISPATCHING_COMPONENTS_REGEX)).toBeInTheDocument()
     expect(
       screen.getByText('Aggiungi Componente Dispacciamento'),
     ).toBeInTheDocument()
@@ -304,7 +323,7 @@ describe('PricingConfigStep', () => {
     )
 
     expect(
-      screen.getByText(/Nessun componente di dispacciamento aggiunto/),
+      screen.getByText(NO_DISPATCHING_COMPONENTS_REGEX),
     ).toBeInTheDocument()
     expect(screen.getByText('Aggiungi il primo componente')).toBeInTheDocument()
   })
@@ -350,7 +369,7 @@ describe('PricingConfigStep', () => {
     fireEvent.click(addButton)
 
     const dispatchingTypeSelect = screen.getByRole('combobox', {
-      name: /Tipo Dispacciamento/,
+      name: DISPATCHING_TYPE_REGEX,
     })
     fireEvent.click(dispatchingTypeSelect)
 
@@ -359,9 +378,7 @@ describe('PricingConfigStep', () => {
     fireEvent.click(otherOption)
 
     expect(screen.getByText('Valore Dispacciamento')).toBeInTheDocument()
-    expect(
-      screen.getByText(/Valore numerico con separatore decimale/),
-    ).toBeInTheDocument()
+    expect(screen.getByText(NUMERIC_VALUE_REGEX)).toBeInTheDocument()
   })
 
   it('allows removing dispatching components', () => {
@@ -404,7 +421,7 @@ describe('PricingConfigStep', () => {
     )
 
     const energyPriceSelect = screen.getByRole('combobox', {
-      name: /Indice Prezzo Energia/,
+      name: ENERGY_PRICE_INDEX_REGEX,
     })
     fireEvent.click(energyPriceSelect)
 
@@ -430,7 +447,7 @@ describe('PricingConfigStep', () => {
     )
 
     const timeBandSelect = screen.getByRole('combobox', {
-      name: /Tipologia Fasce/,
+      name: TIME_BAND_TYPE_REGEX,
     })
     fireEvent.click(timeBandSelect)
 
@@ -456,7 +473,7 @@ describe('PricingConfigStep', () => {
     fireEvent.click(addButton)
 
     const dispatchingTypeSelect = screen.getByRole('combobox', {
-      name: /Tipo Dispacciamento/,
+      name: DISPATCHING_TYPE_REGEX,
     })
     fireEvent.click(dispatchingTypeSelect)
 
@@ -570,7 +587,7 @@ describe('PricingConfigStep', () => {
     fireEvent.click(addButton)
 
     const dispatchingTypeSelect = screen.getByRole('combobox', {
-      name: /Tipo Dispacciamento/,
+      name: DISPATCHING_TYPE_REGEX,
     })
     fireEvent.click(dispatchingTypeSelect)
 
@@ -620,23 +637,17 @@ describe('PricingConfigStep', () => {
     const addButton = screen.getByText('Aggiungi Componente Dispacciamento')
     fireEvent.click(addButton)
 
-    expect(
-      screen.getByText(
-        /Descrizione opzionale del componente \(max 255 caratteri\)/,
-      ),
-    ).toBeInTheDocument()
+    expect(screen.getByText(OPTIONAL_DESCRIPTION_REGEX)).toBeInTheDocument()
 
     // Select "Other" dispatching type to show the dispatching value field
     const dispatchingTypeSelect = screen.getByRole('combobox', {
-      name: /Tipo Dispacciamento/,
+      name: DISPATCHING_TYPE_REGEX,
     })
     fireEvent.click(dispatchingTypeSelect)
 
     const otherOption = screen.getByText('Altro')
     fireEvent.click(otherOption)
 
-    expect(
-      screen.getByText(/Valore numerico con separatore decimale/),
-    ).toBeInTheDocument()
+    expect(screen.getByText(NUMERIC_VALUE_REGEX)).toBeInTheDocument()
   })
 })
