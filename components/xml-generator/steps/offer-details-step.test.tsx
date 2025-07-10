@@ -8,6 +8,13 @@ import {
 } from '@/lib/xml-generator/schemas'
 import { OfferDetailsStep } from './offer-details-step'
 
+// Regex patterns for testing Italian labels
+const SUPPLIER_CHANGE_CHECKBOX_REGEX = /cambio fornitore/i
+const FIRST_ACTIVATION_CHECKBOX_REGEX = /prima attivazione/i
+const DURATION_PLACEHOLDER_REGEX = /inserisci -1 per durata indeterminata/i
+const GUARANTEES_PLACEHOLDER_REGEX =
+  /inserisci 'no' se non sono richieste garanzie/i
+
 // Wrapper component for testing
 function TestWrapper({
   children,
@@ -141,7 +148,7 @@ describe('OfferDetailsStep', () => {
     })
   })
 
-  it('allows multiple contract activation types to be selected', async () => {
+  it('allows multiple contract activation types to be selected', () => {
     render(
       <TestWrapper>
         <OfferDetailsStep />
@@ -150,10 +157,10 @@ describe('OfferDetailsStep', () => {
 
     // Select multiple contract activation types
     const supplierChangeCheckbox = screen.getByRole('checkbox', {
-      name: /cambio fornitore/i,
+      name: SUPPLIER_CHANGE_CHECKBOX_REGEX,
     })
     const firstActivationCheckbox = screen.getByRole('checkbox', {
-      name: /prima attivazione/i,
+      name: FIRST_ACTIVATION_CHECKBOX_REGEX,
     })
 
     fireEvent.click(supplierChangeCheckbox)
@@ -164,7 +171,7 @@ describe('OfferDetailsStep', () => {
     expect(firstActivationCheckbox).toBeChecked()
   })
 
-  it('validates required fields', async () => {
+  it('validates required fields', () => {
     render(
       <TestWrapper>
         <OfferDetailsStep />
@@ -179,10 +186,10 @@ describe('OfferDetailsStep', () => {
       "Inserisci una descrizione dettagliata dell'offerta",
     )
     const durationInput = screen.getByPlaceholderText(
-      /inserisci -1 per durata indeterminata/i,
+      DURATION_PLACEHOLDER_REGEX,
     )
     const guaranteesInput = screen.getByPlaceholderText(
-      /inserisci 'no' se non sono richieste garanzie/i,
+      GUARANTEES_PLACEHOLDER_REGEX,
     )
 
     // Check that the inputs exist and are properly configured
@@ -192,7 +199,7 @@ describe('OfferDetailsStep', () => {
     expect(guaranteesInput).toBeInTheDocument()
   })
 
-  it('accepts valid form data', async () => {
+  it('accepts valid form data', () => {
     const defaultValues: Partial<OfferDetailsFormValues> = {
       marketType: '01',
       singleOffer: 'SI',
@@ -219,7 +226,7 @@ describe('OfferDetailsStep', () => {
     expect(screen.getByDisplayValue('NO')).toBeInTheDocument()
   })
 
-  it('handles duration field correctly', async () => {
+  it('handles duration field correctly', () => {
     render(
       <TestWrapper>
         <OfferDetailsStep />
@@ -227,7 +234,7 @@ describe('OfferDetailsStep', () => {
     )
 
     const durationInput = screen.getByPlaceholderText(
-      /inserisci -1 per durata indeterminata/i,
+      DURATION_PLACEHOLDER_REGEX,
     )
 
     // Test entering -1 for indeterminate duration
@@ -267,7 +274,7 @@ describe('OfferDetailsStep', () => {
     ).toBeInTheDocument()
   })
 
-  it('validates text field lengths', async () => {
+  it('validates text field lengths', () => {
     render(
       <TestWrapper>
         <OfferDetailsStep />
@@ -295,7 +302,7 @@ describe('OfferDetailsStep', () => {
     expect(offerDescriptionInput).toHaveValue(validDescription)
   })
 
-  it('validates duration range', async () => {
+  it('validates duration range', () => {
     render(
       <TestWrapper>
         <OfferDetailsStep />
@@ -303,7 +310,7 @@ describe('OfferDetailsStep', () => {
     )
 
     const durationInput = screen.getByPlaceholderText(
-      /inserisci -1 per durata indeterminata/i,
+      DURATION_PLACEHOLDER_REGEX,
     )
 
     // Test valid duration values

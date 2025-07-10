@@ -8,12 +8,32 @@ import type { CompanyComponentsFormValues } from '@/lib/xml-generator/schemas'
 import { companyComponentsSchema } from '@/lib/xml-generator/schemas'
 import { CompanyComponentsStep } from './company-components-step'
 
+// Define regex patterns at top level for performance
+const COMPONENT_DESCRIPTION_REGEX = /Definisci i componenti regolati/
+const REGULATED_COMPONENTS_REGEX = /Seleziona i componenti regolati/
+const ELECTRICITY_MARKET_REGEX =
+  /Seleziona i componenti regolati in base al tipo di mercato \(Elettricità\)/
+const GAS_MARKET_REGEX =
+  /Seleziona i componenti regolati in base al tipo di mercato \(Gas\)/
+const COMPANY_COMPONENTS_REGEX = /Aggiungi i componenti aziendali/
+const COMPONENT_TYPE_REGEX = /Tipo Componente/
+const MACRO_AREA_REGEX = /Macroarea/
+const UNIT_MEASURE_REGEX = /Unità di Misura/
+const TIME_BAND_REGEX = /Fascia Componente/
+const PCV_CHECKBOX_REGEX = /PCV \(01\)/
+
+interface TestFormData {
+  offerDetails?: {
+    marketType?: string
+  }
+}
+
 const TestWrapper = ({
   children,
   formData = {},
 }: {
   children: React.ReactNode
-  formData?: any
+  formData?: TestFormData
 }) => {
   const form = useForm<CompanyComponentsFormValues>({
     resolver: zodResolver(companyComponentsSchema),
@@ -35,7 +55,7 @@ const TestWrapper = ({
 
   // Reset the mock for each test to avoid interference
   vi.mocked(useFormStates).mockClear()
-  vi.mocked(useFormStates).mockReturnValue([mockFormStates, vi.fn()])
+  vi.mocked(useFormStates).mockReturnValue([mockFormStates as never, vi.fn()])
 
   return <FormProvider {...form}>{children}</FormProvider>
 }
@@ -49,9 +69,7 @@ describe('CompanyComponentsStep', () => {
     )
 
     expect(screen.getByText('Componenti Impresa')).toBeInTheDocument()
-    expect(
-      screen.getByText(/Definisci i componenti regolati/),
-    ).toBeInTheDocument()
+    expect(screen.getByText(COMPONENT_DESCRIPTION_REGEX)).toBeInTheDocument()
   })
 
   it('renders regulated components section', () => {
@@ -62,9 +80,7 @@ describe('CompanyComponentsStep', () => {
     )
 
     expect(screen.getByText('Componenti Regolate')).toBeInTheDocument()
-    expect(
-      screen.getByText(/Seleziona i componenti regolati/),
-    ).toBeInTheDocument()
+    expect(screen.getByText(REGULATED_COMPONENTS_REGEX)).toBeInTheDocument()
   })
 
   it('shows electricity components for electricity market type', () => {
@@ -86,11 +102,7 @@ describe('CompanyComponentsStep', () => {
     expect(screen.getByText('PCV (01)')).toBeInTheDocument()
     expect(screen.getByText('PPE (02)')).toBeInTheDocument()
     // Use a more specific text matcher to find the CardDescription
-    expect(
-      screen.getByText(
-        /Seleziona i componenti regolati in base al tipo di mercato \(Elettricità\)/,
-      ),
-    ).toBeInTheDocument()
+    expect(screen.getByText(ELECTRICITY_MARKET_REGEX)).toBeInTheDocument()
   })
 
   it('shows gas components for gas market type', () => {
@@ -110,11 +122,7 @@ describe('CompanyComponentsStep', () => {
     expect(screen.getByText('CPR (04)')).toBeInTheDocument()
     expect(screen.getByText('GRAD (05)')).toBeInTheDocument()
     // Use a more specific text matcher to find the CardDescription
-    expect(
-      screen.getByText(
-        /Seleziona i componenti regolati in base al tipo di mercato \(Gas\)/,
-      ),
-    ).toBeInTheDocument()
+    expect(screen.getByText(GAS_MARKET_REGEX)).toBeInTheDocument()
   })
 
   it('renders company components section', () => {
@@ -125,9 +133,7 @@ describe('CompanyComponentsStep', () => {
     )
 
     expect(screen.getByText('Componenti Aziendali')).toBeInTheDocument()
-    expect(
-      screen.getByText(/Aggiungi i componenti aziendali/),
-    ).toBeInTheDocument()
+    expect(screen.getByText(COMPANY_COMPONENTS_REGEX)).toBeInTheDocument()
   })
 
   it('allows adding new company components', () => {
@@ -221,7 +227,7 @@ describe('CompanyComponentsStep', () => {
     fireEvent.click(addButton)
 
     const componentTypeSelect = screen.getByRole('combobox', {
-      name: /Tipo Componente/,
+      name: COMPONENT_TYPE_REGEX,
     })
     fireEvent.click(componentTypeSelect)
 
@@ -243,7 +249,9 @@ describe('CompanyComponentsStep', () => {
     const addButton = screen.getByText('Aggiungi Componente Aziendale')
     fireEvent.click(addButton)
 
-    const macroAreaSelect = screen.getByRole('combobox', { name: /Macroarea/ })
+    const macroAreaSelect = screen.getByRole('combobox', {
+      name: MACRO_AREA_REGEX,
+    })
     fireEvent.click(macroAreaSelect)
 
     expect(
@@ -265,7 +273,9 @@ describe('CompanyComponentsStep', () => {
     const addButton = screen.getByText('Aggiungi Componente Aziendale')
     fireEvent.click(addButton)
 
-    const unitSelect = screen.getByRole('combobox', { name: /Unità di Misura/ })
+    const unitSelect = screen.getByRole('combobox', {
+      name: UNIT_MEASURE_REGEX,
+    })
     fireEvent.click(unitSelect)
 
     // Use getAllByText to handle multiple elements, then check the first one
@@ -286,7 +296,7 @@ describe('CompanyComponentsStep', () => {
     fireEvent.click(addButton)
 
     const timeBandSelect = screen.getByRole('combobox', {
-      name: /Fascia Componente/,
+      name: TIME_BAND_REGEX,
     })
     fireEvent.click(timeBandSelect)
 
@@ -380,7 +390,9 @@ describe('CompanyComponentsStep', () => {
       </TestWrapper>,
     )
 
-    const pcvCheckbox = screen.getByRole('checkbox', { name: /PCV \(01\)/ })
+    const pcvCheckbox = screen.getByRole('checkbox', {
+      name: PCV_CHECKBOX_REGEX,
+    })
     fireEvent.click(pcvCheckbox)
 
     expect(pcvCheckbox).toBeChecked()
