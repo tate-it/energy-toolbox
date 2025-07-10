@@ -52,8 +52,8 @@ export function AdditionalFeaturesStep() {
       <div>
         <h2 className="font-semibold text-lg">Funzionalità Aggiuntive</h2>
         <p className="text-muted-foreground text-sm">
-          Configura caratteristiche dell'offerta, sconti, zone geografiche e
-          prodotti aggiuntivi
+          Configura caratteristiche dell&apos;offerta, sconti, zone geografiche
+          e prodotti aggiuntivi
         </p>
       </div>
 
@@ -97,11 +97,14 @@ function OfferCharacteristicsSection({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Caratteristiche dell'Offerta</CardTitle>
+        <CardTitle>Caratteristiche dell&apos;Offerta</CardTitle>
         <CardDescription>
-          {isFlatOffer && 'Limiti di consumo obbligatori per offerte FLAT. '}
-          {isElectricityOffer &&
-            'Limiti di potenza opzionali per offerte elettriche.'}
+          {isFlatOffer && (
+            <span>Limiti di consumo obbligatori per offerte FLAT. </span>
+          )}
+          {isElectricityOffer && (
+            <span>Limiti di potenza opzionali per offerte elettriche.</span>
+          )}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -390,10 +393,10 @@ function ZoneOffersSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Zone dell'Offerta</CardTitle>
+        <CardTitle>Zone dell&apos;Offerta</CardTitle>
         <CardDescription>
-          Limitazioni geografiche dell'offerta (opzionale). Inserire i codici
-          numerici delle zone.
+          Limitazioni geografiche dell&apos;offerta (opzionale). Inserire i
+          codici numerici delle zone.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -572,7 +575,7 @@ function DiscountsSection() {
       <CardHeader>
         <CardTitle>Sconti</CardTitle>
         <CardDescription>
-          Configura gli sconti applicabili all'offerta (opzionale)
+          Configura gli sconti applicabili all&apos;offerta (opzionale)
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -764,8 +767,8 @@ function DiscountCard({ index, onRemove, showRemove }: DiscountCardProps) {
                       />
                     </FormControl>
                     <FormDescription>
-                      Obbligatorio quando si seleziona "Altro". Massimo 3000
-                      caratteri.
+                      Obbligatorio quando si seleziona &quot;Altro&quot;.
+                      Massimo 3000 caratteri.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -1011,8 +1014,8 @@ function AdditionalProductsSection() {
       <CardHeader>
         <CardTitle>Prodotti e Servizi Aggiuntivi</CardTitle>
         <CardDescription>
-          Prodotti o servizi aggiuntivi offerti insieme all'offerta principale
-          (opzionale)
+          Prodotti o servizi aggiuntivi offerti insieme all&apos;offerta
+          principale (opzionale)
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -1156,8 +1159,8 @@ function AdditionalProductCard({
                   />
                 </FormControl>
                 <FormDescription>
-                  Obbligatorio quando si seleziona "Altro". Massimo 3000
-                  caratteri.
+                  Obbligatorio quando si seleziona &quot;Altro&quot;. Massimo
+                  3000 caratteri.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

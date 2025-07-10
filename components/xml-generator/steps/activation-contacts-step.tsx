@@ -54,7 +54,7 @@ export function ActivationContactsStep() {
         <h2 className="font-bold text-2xl">Attivazione e Contatti</h2>
         <p className="text-muted-foreground">
           Configura i metodi di attivazione e le informazioni di contatto per
-          l'offerta
+          l&apos;offerta
         </p>
       </div>
 
@@ -62,8 +62,8 @@ export function ActivationContactsStep() {
         <CardHeader>
           <CardTitle>Metodi di Attivazione</CardTitle>
           <CardDescription>
-            Seleziona uno o più metodi attraverso i quali l'offerta può essere
-            attivata
+            Seleziona uno o più metodi attraverso i quali l&apos;offerta può
+            essere attivata
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -129,7 +129,7 @@ export function ActivationContactsStep() {
         <CardHeader>
           <CardTitle>Informazioni di Contatto</CardTitle>
           <CardDescription>
-            Fornisci le informazioni di contatto per l'offerta
+            Fornisci le informazioni di contatto per l&apos;offerta
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -173,7 +173,7 @@ export function ActivationContactsStep() {
 
           <div className="space-y-2">
             <Label className="font-medium text-sm" htmlFor="offerUrl">
-              URL dell'Offerta
+              URL dell&apos;Offerta
             </Label>
             <Input
               id="offerUrl"
@@ -187,7 +187,7 @@ export function ActivationContactsStep() {
               </p>
             )}
             <p className="text-muted-foreground text-xs">
-              URL specifico dell'offerta (opzionale, massimo 100 caratteri)
+              URL specifico dell&apos;offerta (opzionale, massimo 100 caratteri)
             </p>
           </div>
         </CardContent>

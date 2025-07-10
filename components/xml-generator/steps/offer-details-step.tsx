@@ -102,7 +102,7 @@ export function OfferDetailsStep() {
               value={watch('singleOffer')}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Seleziona se l'offerta può essere sottoscritta singolarmente" />
+                <SelectValue placeholder="Seleziona se l&apos;offerta può essere sottoscritta singolarmente" />
               </SelectTrigger>
               <SelectContent>
                 {Object.entries(SINGLE_OFFER_LABELS).map(([value, label]) => (
@@ -257,13 +257,13 @@ export function OfferDetailsStep() {
       {/* Offer Name */}
       <div className="space-y-2">
         <Label className="font-medium text-primary text-sm" htmlFor="offerName">
-          Nome dell'Offerta *
+          Nome dell&apos;Offerta *
         </Label>
         <Input
           id="offerName"
           {...register('offerName')}
           className="w-full"
-          placeholder="Inserisci il nome dell'offerta"
+          placeholder="Inserisci il nome dell&apos;offerta"
         />
         {errors.offerName && (
           <span className="text-destructive text-sm">
@@ -278,13 +278,13 @@ export function OfferDetailsStep() {
           className="font-medium text-primary text-sm"
           htmlFor="offerDescription"
         >
-          Descrizione dell'Offerta *
+          Descrizione dell&apos;Offerta *
         </Label>
         <Textarea
           id="offerDescription"
           {...register('offerDescription')}
           className="min-h-[120px] w-full"
-          placeholder="Inserisci una descrizione dettagliata dell'offerta"
+          placeholder="Inserisci una descrizione dettagliata dell&apos;offerta"
           rows={5}
         />
         {errors.offerDescription && (
@@ -339,8 +339,8 @@ export function OfferDetailsStep() {
           rows={4}
         />
         <div className="text-muted-foreground text-xs">
-          Inserisci "NO" se non sono richieste garanzie, altrimenti descrivi le
-          garanzie richieste come cauzioni o domiciliazioni
+          Inserisci &quot;NO&quot; se non sono richieste garanzie, altrimenti
+          descrivi le garanzie richieste come cauzioni o domiciliazioni
         </div>
         {errors.guarantees && (
           <span className="text-destructive text-sm">

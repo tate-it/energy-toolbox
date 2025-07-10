@@ -233,8 +233,8 @@ function PaymentMethodCard({
                     />
                   </FormControl>
                   <FormDescription>
-                    Obbligatorio quando si seleziona "Altro". Massimo 3000
-                    caratteri.
+                    Obbligatorio quando si seleziona &quot;Altro&quot;. Massimo
+                    3000 caratteri.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -361,8 +361,8 @@ function ContractualConditionCard({
                   />
                 </FormControl>
                 <FormDescription>
-                  Obbligatorio quando si seleziona "Altro". Massimo 3000
-                  caratteri.
+                  Obbligatorio quando si seleziona &quot;Altro&quot;. Massimo
+                  3000 caratteri.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

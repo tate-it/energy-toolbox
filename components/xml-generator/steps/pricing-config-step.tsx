@@ -98,8 +98,8 @@ export function PricingConfigStep({ className }: PricingConfigStepProps) {
         <div>
           <h2 className="font-semibold text-lg">Configurazione Prezzi</h2>
           <p className="text-muted-foreground text-sm">
-            Configura i prezzi dell'energia, le fasce orarie e i componenti di
-            dispacciamento
+            Configura i prezzi dell&apos;energia, le fasce orarie e i componenti
+            di dispacciamento
           </p>
         </div>
 
@@ -136,7 +136,7 @@ export function PricingConfigStep({ className }: PricingConfigStepProps) {
                       </SelectContent>
                     </Select>
                     <FormDescription>
-                      Seleziona l'indice di prezzo per l'energia
+                      Seleziona l&apos;indice di prezzo per l&apos;energia
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -152,12 +152,13 @@ export function PricingConfigStep({ className }: PricingConfigStepProps) {
                       <FormLabel>Descrizione Indice Alternativo</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Descrivi l'indice alternativo..."
+                          placeholder="Descrivi l&apos;indice alternativo..."
                           {...field}
                         />
                       </FormControl>
                       <FormDescription>
-                        Descrizione dell'indice alternativo (max 3000 caratteri)
+                        Descrizione dell&apos;indice alternativo (max 3000
+                        caratteri)
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -218,8 +219,8 @@ export function PricingConfigStep({ className }: PricingConfigStepProps) {
                     </h3>
                     <p className="mb-4 text-muted-foreground text-xs">
                       Formato: XXI-YI,XXII-YII,...,XXN-YN dove XXi (1-96) è
-                      l'ultimo quarto d'ora di applicazione della fascia e Yi
-                      (1-8) è il numero della fascia applicata
+                      l&apos;ultimo quarto d&apos;ora di applicazione della
+                      fascia e Yi (1-8) è il numero della fascia applicata
                     </p>
                   </div>
 
@@ -361,7 +362,8 @@ export function PricingConfigStep({ className }: PricingConfigStepProps) {
                             />
                           </FormControl>
                           <FormDescription>
-                            Valore numerico con separatore decimale '.'
+                            Valore numerico con separatore decimale
+                            &apos;.&apos;
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -434,7 +436,7 @@ export function PricingConfigStep({ className }: PricingConfigStepProps) {
               </p>
               <p>
                 <strong>Fasce Orarie:</strong> Obbligatorio per il mercato
-                elettrico quando l'offerta non è FLAT.
+                elettrico quando l&apos;offerta non è FLAT.
               </p>
               <p>
                 <strong>Fasce Orarie Settimanali:</strong> Obbligatorio quando

@@ -128,7 +128,7 @@ function ValidityPeriodCard({
           Periodo di Validità
         </CardTitle>
         <CardDescription>
-          Definisci le date di validità per l'offerta commerciale
+          Definisci le date di validità per l&apos;offerta commerciale
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -147,7 +147,8 @@ function ValidityPeriodCard({
                   />
                 </FormControl>
                 <FormDescription>
-                  Data di inizio validità dell'offerta (formato: gg/mm/aaaa)
+                  Data di inizio validità dell&apos;offerta (formato:
+                  gg/mm/aaaa)
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -168,8 +169,8 @@ function ValidityPeriodCard({
                   />
                 </FormControl>
                 <FormDescription>
-                  Data di fine validità dell'offerta (lasciare vuoto per durata
-                  indeterminata)
+                  Data di fine validità dell&apos;offerta (lasciare vuoto per
+                  durata indeterminata)
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -481,7 +482,7 @@ export function ValidityReviewStep() {
           Validità e Revisione Finale
         </h2>
         <p className="text-gray-600">
-          Configura le date di validità dell'offerta e rivedi tutte le
+          Configura le date di validità dell&apos;offerta e rivedi tutte le
           informazioni inserite prima di generare il file XML.
         </p>
       </div>
