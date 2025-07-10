@@ -12,7 +12,6 @@
     "includes": [
       "**",
       "!**/*.test.tsx",
-      "!**/*.test.ts",
       "!vitest.setup.mjs",
       "!components/ui/**",
       "!**/*.css"
