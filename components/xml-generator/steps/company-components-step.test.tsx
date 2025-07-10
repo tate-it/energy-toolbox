@@ -1,10 +1,12 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { vi } from 'vitest'
 import { CompanyComponentsStep } from './company-components-step'
 import { companyComponentsSchema } from '@/lib/xml-generator/schemas'
 import type { CompanyComponentsFormValues } from '@/lib/xml-generator/schemas'
 import { MARKET_TYPES } from '@/lib/xml-generator/constants'
+import { useFormStates } from '@/hooks/use-form-states'
 
 const TestWrapper = ({ 
   children, 
@@ -19,7 +21,21 @@ const TestWrapper = ({
       regulatedComponents: [],
       companyComponents: [],
     },
+    mode: 'onChange', // Prevent uncontrolled/controlled issues
   })
+
+  // Set up the mock for useFormStates - ensure market type is properly set
+  const mockFormStates = {
+    offerDetails: {
+      marketType: formData.offerDetails?.marketType || '',
+      ...(formData.offerDetails || {}),
+    },
+    ...formData,
+  }
+  
+  // Reset the mock for each test to avoid interference
+  vi.mocked(useFormStates).mockClear()
+  vi.mocked(useFormStates).mockReturnValue([mockFormStates, vi.fn()])
 
   return <FormProvider {...form}>{children}</FormProvider>
 }
@@ -28,7 +44,7 @@ describe('CompanyComponentsStep', () => {
   it('renders the component title and description', () => {
     render(
       <TestWrapper>
-        <CompanyComponentsStep formData={{}} />
+        <CompanyComponentsStep />
       </TestWrapper>
     )
 
@@ -39,7 +55,7 @@ describe('CompanyComponentsStep', () => {
   it('renders regulated components section', () => {
     render(
       <TestWrapper>
-        <CompanyComponentsStep formData={{}} />
+        <CompanyComponentsStep />
       </TestWrapper>
     )
 
@@ -56,13 +72,17 @@ describe('CompanyComponentsStep', () => {
 
     render(
       <TestWrapper formData={formData}>
-        <CompanyComponentsStep formData={formData} />
+        <CompanyComponentsStep />
       </TestWrapper>
     )
 
+    // Debug: log what's actually rendered
+    // screen.debug()
+
     expect(screen.getByText('PCV (01)')).toBeInTheDocument()
     expect(screen.getByText('PPE (02)')).toBeInTheDocument()
-    expect(screen.getByText('Elettricità')).toBeInTheDocument()
+    // Use a more specific text matcher to find the CardDescription
+    expect(screen.getByText(/Seleziona i componenti regolati in base al tipo di mercato \(Elettricità\)/)).toBeInTheDocument()
   })
 
   it('shows gas components for gas market type', () => {
@@ -74,20 +94,21 @@ describe('CompanyComponentsStep', () => {
 
     render(
       <TestWrapper formData={formData}>
-        <CompanyComponentsStep formData={formData} />
+        <CompanyComponentsStep />
       </TestWrapper>
     )
 
     expect(screen.getByText('CCR (03)')).toBeInTheDocument()
     expect(screen.getByText('CPR (04)')).toBeInTheDocument()
     expect(screen.getByText('GRAD (05)')).toBeInTheDocument()
-    expect(screen.getByText('Gas')).toBeInTheDocument()
+    // Use a more specific text matcher to find the CardDescription
+    expect(screen.getByText(/Seleziona i componenti regolati in base al tipo di mercato \(Gas\)/)).toBeInTheDocument()
   })
 
   it('renders company components section', () => {
     render(
       <TestWrapper>
-        <CompanyComponentsStep formData={{}} />
+        <CompanyComponentsStep />
       </TestWrapper>
     )
 
@@ -98,7 +119,7 @@ describe('CompanyComponentsStep', () => {
   it('allows adding new company components', () => {
     render(
       <TestWrapper>
-        <CompanyComponentsStep formData={{}} />
+        <CompanyComponentsStep />
       </TestWrapper>
     )
 
@@ -115,7 +136,7 @@ describe('CompanyComponentsStep', () => {
   it('shows price intervals section when company component is added', () => {
     render(
       <TestWrapper>
-        <CompanyComponentsStep formData={{}} />
+        <CompanyComponentsStep />
       </TestWrapper>
     )
 
@@ -131,7 +152,7 @@ describe('CompanyComponentsStep', () => {
   it('shows consumption range fields in price intervals', () => {
     render(
       <TestWrapper>
-        <CompanyComponentsStep formData={{}} />
+        <CompanyComponentsStep />
       </TestWrapper>
     )
 
@@ -146,7 +167,7 @@ describe('CompanyComponentsStep', () => {
   it('shows validity period fields in price intervals', () => {
     render(
       <TestWrapper>
-        <CompanyComponentsStep formData={{}} />
+        <CompanyComponentsStep />
       </TestWrapper>
     )
 
@@ -161,7 +182,7 @@ describe('CompanyComponentsStep', () => {
   it('allows adding multiple price intervals', () => {
     render(
       <TestWrapper>
-        <CompanyComponentsStep formData={{}} />
+        <CompanyComponentsStep />
       </TestWrapper>
     )
 
@@ -178,81 +199,82 @@ describe('CompanyComponentsStep', () => {
   it('shows component type options', () => {
     render(
       <TestWrapper>
-        <CompanyComponentsStep formData={{}} />
+        <CompanyComponentsStep />
       </TestWrapper>
     )
 
     const addButton = screen.getByText('Aggiungi Componente Aziendale')
     fireEvent.click(addButton)
 
-    const componentTypeSelect = screen.getByText('Seleziona tipo componente')
+    const componentTypeSelect = screen.getByRole('combobox', { name: /Tipo Componente/ })
     fireEvent.click(componentTypeSelect)
 
-    expect(screen.getByText('STANDARD - Price included')).toBeInTheDocument()
-    expect(screen.getByText('OPTIONAL - Price not included')).toBeInTheDocument()
+    expect(screen.getAllByText('STANDARD - Price included')[0]).toBeInTheDocument()
+    expect(screen.getAllByText('OPTIONAL - Price not included')[0]).toBeInTheDocument()
   })
 
   it('shows macro area options', () => {
     render(
       <TestWrapper>
-        <CompanyComponentsStep formData={{}} />
+        <CompanyComponentsStep />
       </TestWrapper>
     )
 
     const addButton = screen.getByText('Aggiungi Componente Aziendale')
     fireEvent.click(addButton)
 
-    const macroAreaSelect = screen.getByText('Seleziona macroarea')
+    const macroAreaSelect = screen.getByRole('combobox', { name: /Macroarea/ })
     fireEvent.click(macroAreaSelect)
 
-    expect(screen.getByText('Fixed commercialization fee')).toBeInTheDocument()
-    expect(screen.getByText('Energy commercialization fee')).toBeInTheDocument()
-    expect(screen.getByText('Energy price component')).toBeInTheDocument()
+    expect(screen.getAllByText('Fixed commercialization fee')[0]).toBeInTheDocument()
+    expect(screen.getAllByText('Energy commercialization fee')[0]).toBeInTheDocument()
+    expect(screen.getAllByText('Energy price component')[0]).toBeInTheDocument()
   })
 
   it('shows unit of measure options', () => {
     render(
       <TestWrapper>
-        <CompanyComponentsStep formData={{}} />
+        <CompanyComponentsStep />
       </TestWrapper>
     )
 
     const addButton = screen.getByText('Aggiungi Componente Aziendale')
     fireEvent.click(addButton)
 
-    const unitSelect = screen.getByText('Seleziona unità')
+    const unitSelect = screen.getByRole('combobox', { name: /Unità di Misura/ })
     fireEvent.click(unitSelect)
 
-    expect(screen.getByText('€/Year')).toBeInTheDocument()
-    expect(screen.getByText('€/kW')).toBeInTheDocument()
-    expect(screen.getByText('€/kWh')).toBeInTheDocument()
-    expect(screen.getByText('€/Sm³')).toBeInTheDocument()
+    // Use getAllByText to handle multiple elements, then check the first one
+    expect(screen.getAllByText('€/Year')[0]).toBeInTheDocument()
+    expect(screen.getAllByText('€/kW')[0]).toBeInTheDocument()
+    expect(screen.getAllByText('€/kWh')[0]).toBeInTheDocument()
+    expect(screen.getAllByText('€/Sm³')[0]).toBeInTheDocument()
   })
 
   it('shows component time band options', () => {
     render(
       <TestWrapper>
-        <CompanyComponentsStep formData={{}} />
+        <CompanyComponentsStep />
       </TestWrapper>
     )
 
     const addButton = screen.getByText('Aggiungi Componente Aziendale')
     fireEvent.click(addButton)
 
-    const timeBandSelect = screen.getByText('Seleziona fascia (opzionale)')
+    const timeBandSelect = screen.getByRole('combobox', { name: /Fascia Componente/ })
     fireEvent.click(timeBandSelect)
 
-    expect(screen.getByText('Monorario/F1')).toBeInTheDocument()
-    expect(screen.getByText('F2')).toBeInTheDocument()
-    expect(screen.getByText('F3')).toBeInTheDocument()
-    expect(screen.getByText('Peak')).toBeInTheDocument()
-    expect(screen.getByText('OffPeak')).toBeInTheDocument()
+    expect(screen.getAllByText('Monorario/F1')[0]).toBeInTheDocument()
+    expect(screen.getAllByText('F2')[0]).toBeInTheDocument()
+    expect(screen.getAllByText('F3')[0]).toBeInTheDocument()
+    expect(screen.getAllByText('Peak')[0]).toBeInTheDocument()
+    expect(screen.getAllByText('OffPeak')[0]).toBeInTheDocument()
   })
 
   it('allows removing company components when multiple exist', () => {
     render(
       <TestWrapper>
-        <CompanyComponentsStep formData={{}} />
+        <CompanyComponentsStep />
       </TestWrapper>
     )
 
@@ -279,7 +301,7 @@ describe('CompanyComponentsStep', () => {
   it('allows removing price intervals when multiple exist', () => {
     render(
       <TestWrapper>
-        <CompanyComponentsStep formData={{}} />
+        <CompanyComponentsStep />
       </TestWrapper>
     )
 
@@ -308,7 +330,7 @@ describe('CompanyComponentsStep', () => {
   it('shows validation help text', () => {
     render(
       <TestWrapper>
-        <CompanyComponentsStep formData={{}} />
+        <CompanyComponentsStep />
       </TestWrapper>
     )
 
@@ -328,7 +350,7 @@ describe('CompanyComponentsStep', () => {
 
     render(
       <TestWrapper formData={formData}>
-        <CompanyComponentsStep formData={formData} />
+        <CompanyComponentsStep />
       </TestWrapper>
     )
 
@@ -341,7 +363,7 @@ describe('CompanyComponentsStep', () => {
   it('handles form input changes', () => {
     render(
       <TestWrapper>
-        <CompanyComponentsStep formData={{}} />
+        <CompanyComponentsStep />
       </TestWrapper>
     )
 

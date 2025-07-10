@@ -35,3 +35,8 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
   unobserve: vi.fn(),
   disconnect: vi.fn(),
 }))
+
+// Mock useFormStates hook to avoid nuqs dependency in tests
+vi.mock('@/hooks/use-form-states', () => ({
+  useFormStates: vi.fn(() => [{}, vi.fn()])
+}))

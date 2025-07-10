@@ -29,6 +29,7 @@ import {
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
+import { useFormStates } from '@/hooks/use-form-states'
 import {
   COMPONENT_TIME_BAND_LABELS,
   COMPONENT_TYPE_LABELS,
@@ -39,7 +40,6 @@ import {
   UNIT_OF_MEASURE_LABELS,
 } from '@/lib/xml-generator/constants'
 import type { CompanyComponentsFormValues } from '@/lib/xml-generator/schemas'
-import { useFormStates } from '@/hooks/use-form-states'
 
 export function CompanyComponentsStep() {
   const form = useFormContext<CompanyComponentsFormValues>()
