@@ -1,7 +1,7 @@
+import { createFormStateParsers } from '@/lib/xml-generator/nuqs-parsers'
 import { useQueryStates } from 'nuqs'
-import { createFormStateSchema } from '@/providers/form-provider'
 
 export function useFormStates() {
-  const [formStates, setFormStates] = useQueryStates(createFormStateSchema())
+  const [formStates, setFormStates] = useQueryStates(createFormStateParsers())
   return [formStates, setFormStates] as const
 }

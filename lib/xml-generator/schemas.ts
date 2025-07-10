@@ -327,136 +327,143 @@ export const pricingConfigSchema = z
   )
 
 // Company Components Schema - matching SII specification
-export const companyComponentsSchema = z.object({
-  // Regulated Components (ComponentiRegolate)
-  // Optional section - regulated components by market type
-  regulatedComponents: z
-    .array(
-      z.enum([
-        '01', // PCV
-        '02', // PPE
-        '03', // CCR
-        '04', // CPR
-        '05', // GRAD
-        '06', // QTint
-        '07', // QTpsv
-        '09', // QVD_fissa
-        '10', // QVD_Variabile
-      ]),
-    )
-    .optional(),
+export const companyComponentsSchema = z
+  .object({
+    // Regulated Components (ComponentiRegolate)
+    // Optional section - regulated components by market type
+    regulatedComponents: z
+      .array(
+        z.enum([
+          '01', // PCV
+          '02', // PPE
+          '03', // CCR
+          '04', // CPR
+          '05', // GRAD
+          '06', // QTint
+          '07', // QTpsv
+          '09', // QVD_fissa
+          '10', // QVD_Variabile
+        ]),
+      )
+      .optional(),
 
-  // Company Components (ComponenteImpresa)
-  // Optional section - can have multiple company components
-  companyComponents: z
-    .array(
-      z.object({
-        // Component name (NOME) - mandatory
-        name: z
-          .string()
-          .min(1, 'Il nome del componente è obbligatorio')
-          .max(255, 'Il nome del componente non può superare i 255 caratteri'),
+    // Company Components (ComponenteImpresa)
+    // Optional section - can have multiple company components
+    companyComponents: z
+      .array(
+        z.object({
+          // Component name (NOME) - mandatory
+          name: z
+            .string()
+            .min(1, 'Il nome del componente è obbligatorio')
+            .max(
+              255,
+              'Il nome del componente non può superare i 255 caratteri',
+            ),
 
-        // Component description (DESCRIZIONE) - mandatory
-        description: z
-          .string()
-          .min(1, 'La descrizione del componente è obbligatoria')
-          .max(3000, 'La descrizione non può superare i 3000 caratteri'),
+          // Component description (DESCRIZIONE) - mandatory
+          description: z
+            .string()
+            .min(1, 'La descrizione del componente è obbligatoria')
+            .max(3000, 'La descrizione non può superare i 3000 caratteri'),
 
-        // Component type (TIPOLOGIA) - mandatory
-        componentType: z.enum(['01', '02'], {
-          required_error: 'Seleziona il tipo di componente',
-        }),
+          // Component type (TIPOLOGIA) - mandatory
+          componentType: z.enum(['01', '02'], {
+            required_error: 'Seleziona il tipo di componente',
+          }),
 
-        // Macro area (MACROAREA) - mandatory
-        macroArea: z.enum(['01', '02', '04', '05', '06'], {
-          required_error: 'Seleziona la macroarea',
-        }),
+          // Macro area (MACROAREA) - mandatory
+          macroArea: z.enum(['01', '02', '04', '05', '06'], {
+            required_error: 'Seleziona la macroarea',
+          }),
 
-        // Price intervals (IntervalloPrezzi) - mandatory, at least one
-        priceIntervals: z
-          .array(
-            z.object({
-              // Component time band (FASCIA_COMPONENTE) - optional
-              componentTimeBand: z
-                .enum([
-                  '01', // Monorario/F1
-                  '02', // F2
-                  '03', // F3
-                  '04', // F4
-                  '05', // F5
-                  '06', // F6
-                  '07', // Peak
-                  '08', // OffPeak
-                  '91', // F2+F3
-                  '92', // F1+F3
-                  '93', // F1+F2
-                ])
-                .optional(),
+          // Price intervals (IntervalloPrezzi) - mandatory, at least one
+          priceIntervals: z
+            .array(
+              z.object({
+                // Component time band (FASCIA_COMPONENTE) - optional
+                componentTimeBand: z
+                  .enum([
+                    '01', // Monorario/F1
+                    '02', // F2
+                    '03', // F3
+                    '04', // F4
+                    '05', // F5
+                    '06', // F6
+                    '07', // Peak
+                    '08', // OffPeak
+                    '91', // F2+F3
+                    '92', // F1+F3
+                    '93', // F1+F2
+                  ])
+                  .optional(),
 
-              // Consumption range from (CONSUMO_DA) - optional
-              consumptionFrom: z
-                .number()
-                .int()
-                .min(0, 'Il consumo da deve essere maggiore o uguale a 0')
-                .max(999_999_999, 'Il consumo da non può superare 999999999')
-                .optional(),
+                // Consumption range from (CONSUMO_DA) - optional
+                consumptionFrom: z
+                  .number()
+                  .int()
+                  .min(0, 'Il consumo da deve essere maggiore o uguale a 0')
+                  .max(999_999_999, 'Il consumo da non può superare 999999999')
+                  .optional(),
 
-              // Consumption range to (CONSUMO_A) - optional
-              consumptionTo: z
-                .number()
-                .int()
-                .min(0, 'Il consumo a deve essere maggiore o uguale a 0')
-                .max(999_999_999, 'Il consumo a non può superare 999999999')
-                .optional(),
+                // Consumption range to (CONSUMO_A) - optional
+                consumptionTo: z
+                  .number()
+                  .int()
+                  .min(0, 'Il consumo a deve essere maggiore o uguale a 0')
+                  .max(999_999_999, 'Il consumo a non può superare 999999999')
+                  .optional(),
 
-              // Price (PREZZO) - mandatory
-              price: z
-                .number()
-                .min(0, 'Il prezzo deve essere maggiore o uguale a 0')
-                .max(999_999_999.99, 'Il prezzo non può superare 999999999.99'),
+                // Price (PREZZO) - mandatory
+                price: z
+                  .number()
+                  .min(0, 'Il prezzo deve essere maggiore o uguale a 0')
+                  .max(
+                    999_999_999.99,
+                    'Il prezzo non può superare 999999999.99',
+                  ),
 
-              // Unit of measure (UNITA_MISURA) - mandatory
-              unitOfMeasure: z.enum(['01', '02', '03', '04', '05', '06'], {
-                required_error: 'Seleziona l\'unità di misura',
+                // Unit of measure (UNITA_MISURA) - mandatory
+                unitOfMeasure: z.enum(['01', '02', '03', '04', '05', '06'], {
+                  required_error: "Seleziona l'unità di misura",
+                }),
+
+                // Validity period (PeriodoValidita) - optional
+                validityPeriod: z
+                  .object({
+                    // From date (DATA_INIZIO) - format: gg/mm/aaaa
+                    fromDate: z
+                      .string()
+                      .regex(
+                        /^\d{2}\/\d{2}\/\d{4}$/,
+                        'Formato data non valido (gg/mm/aaaa)',
+                      )
+                      .optional(),
+
+                    // To date (DATA_FINE) - format: gg/mm/aaaa
+                    toDate: z
+                      .string()
+                      .regex(
+                        /^\d{2}\/\d{2}\/\d{4}$/,
+                        'Formato data non valido (gg/mm/aaaa)',
+                      )
+                      .optional(),
+                  })
+                  .optional(),
               }),
-
-              // Validity period (PeriodoValidita) - optional
-              validityPeriod: z
-                .object({
-                  // From date (DATA_INIZIO) - format: gg/mm/aaaa
-                  fromDate: z
-                    .string()
-                    .regex(
-                      /^\d{2}\/\d{2}\/\d{4}$/,
-                      'Formato data non valido (gg/mm/aaaa)',
-                    )
-                    .optional(),
-
-                  // To date (DATA_FINE) - format: gg/mm/aaaa
-                  toDate: z
-                    .string()
-                    .regex(
-                      /^\d{2}\/\d{2}\/\d{4}$/,
-                      'Formato data non valido (gg/mm/aaaa)',
-                    )
-                    .optional(),
-                })
-                .optional(),
-            }),
-          )
-          .min(1, 'È richiesto almeno un intervallo di prezzo'),
-      }),
-    )
-    .optional(),
-})
+            )
+            .min(1, 'È richiesto almeno un intervallo di prezzo'),
+        }),
+      )
+      .optional(),
+  })
   .refine(
     (data) => {
       // Check consumption range consistency in price intervals
       if (!data.companyComponents) {
         return true
       }
-      
+
       for (const component of data.companyComponents) {
         for (const interval of component.priceIntervals) {
           const { consumptionFrom, consumptionTo } = interval
@@ -482,7 +489,7 @@ export const companyComponentsSchema = z.object({
       if (!data.companyComponents) {
         return true
       }
-      
+
       for (const component of data.companyComponents) {
         for (const interval of component.priceIntervals) {
           const validityPeriod = interval.validityPeriod
@@ -492,14 +499,14 @@ export const companyComponentsSchema = z.object({
           if (!validityPeriod?.toDate) {
             continue
           }
-          
+
           const fromDate = new Date(
             validityPeriod.fromDate.split('/').reverse().join('-'),
           )
           const toDate = new Date(
             validityPeriod.toDate.split('/').reverse().join('-'),
           )
-          
+
           if (fromDate >= toDate) {
             return false
           }
@@ -545,3 +552,16 @@ export type AdditionalFeaturesFormValues = z.infer<
   typeof additionalFeaturesSchema
 >
 export type ValidityReviewFormValues = z.infer<typeof validityReviewSchema>
+
+export const schemaMap = {
+  basicInfo: basicInfoSchema,
+  offerDetails: offerDetailsSchema,
+  activationContacts: activationContactsSchema,
+  pricingConfig: pricingConfigSchema,
+  companyComponents: companyComponentsSchema,
+  paymentConditions: paymentConditionsSchema,
+  additionalFeatures: additionalFeaturesSchema,
+  validityReview: validityReviewSchema,
+} as const
+
+export type SchemaMap = typeof schemaMap
