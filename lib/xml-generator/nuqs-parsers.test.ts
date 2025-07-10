@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { z } from 'zod'
-import { parseAsFormData, createFormStateParsers, formSearchParams } from './nuqs-parsers'
+import {
+  createFormStateParsers,
+  formSearchParams,
+  parseAsFormData,
+} from './nuqs-parsers'
 import { basicInfoSchema, offerDetailsSchema } from './schemas'
 
 describe('parseAsFormData', () => {
@@ -216,9 +220,9 @@ describe('createFormStateParsers', () => {
 
     expect(parsers).toBeDefined()
     expect(typeof parsers).toBe('object')
-    
+
     // Check that parsers have the expected structure
-    for (const [key, parser] of Object.entries(parsers)) {
+    for (const [, parser] of Object.entries(parsers)) {
       expect(parser).toBeDefined()
       expect(typeof parser.parse).toBe('function')
       expect(typeof parser.serialize).toBe('function')
@@ -230,10 +234,10 @@ describe('formSearchParams', () => {
   it('should include currentStep parser and form state parsers', () => {
     expect(formSearchParams).toBeDefined()
     expect(formSearchParams.currentStep).toBeDefined()
-    
+
     // Check that it includes parsers for different steps
     expect(typeof formSearchParams).toBe('object')
-    
+
     // Verify currentStep parser functionality
     expect(typeof formSearchParams.currentStep.parse).toBe('function')
     expect(typeof formSearchParams.currentStep.serialize).toBe('function')
