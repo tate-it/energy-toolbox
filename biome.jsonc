@@ -9,12 +9,6 @@
     }
   },
   "files": {
-    "includes": [
-      "**",
-      "!**/*.test.tsx",
-      "!vitest.setup.mjs",
-      "!components/ui/**",
-      "!**/*.css"
-    ]
+    "includes": ["**", "!vitest.setup.mjs", "!components/ui/**", "!**/*.css"]
   }
 }
