@@ -53,8 +53,11 @@ export const createFormStateParsers = () => {
   return createParsersFromSchemaMap(schemaMap)
 }
 
+export const currentStepParser = parseAsStringLiteral(steps).withDefault(
+  steps[0],
+)
 export const formSearchParams = {
-  currentStep: parseAsStringLiteral(steps).withDefault(steps[0]),
+  currentStep: currentStepParser,
   ...createFormStateParsers(),
 }
 
