@@ -1,13 +1,22 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { FormProvider, useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
+import {
+  type ActivationContactsFormValues,
+  activationContactsSchema,
+} from '@/lib/xml-generator/schemas'
 import { ActivationContactsStep } from './activation-contacts-step'
-import { activationContactsSchema, type ActivationContactsFormValues } from '@/lib/xml-generator/schemas'
 
 // Test wrapper component with form provider
-function TestWrapper({ children, defaultValues }: { children: React.ReactNode; defaultValues?: Partial<ActivationContactsFormValues> }) {
+function TestWrapper({
+  children,
+  defaultValues,
+}: {
+  children: React.ReactNode
+  defaultValues?: Partial<ActivationContactsFormValues>
+}) {
   const methods = useForm<ActivationContactsFormValues>({
     resolver: zodResolver(activationContactsSchema),
     defaultValues: {
@@ -20,11 +29,7 @@ function TestWrapper({ children, defaultValues }: { children: React.ReactNode; d
     },
   })
 
-  return (
-    <FormProvider {...methods}>
-      {children}
-    </FormProvider>
-  )
+  return <FormProvider {...methods}>{children}</FormProvider>
 }
 
 describe('ActivationContactsStep', () => {
@@ -32,11 +37,15 @@ describe('ActivationContactsStep', () => {
     render(
       <TestWrapper>
         <ActivationContactsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('Attivazione e Contatti')).toBeInTheDocument()
-    expect(screen.getByText('Configura i metodi di attivazione e le informazioni di contatto per l\'offerta')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        "Configura i metodi di attivazione e le informazioni di contatto per l'offerta",
+      ),
+    ).toBeInTheDocument()
     expect(screen.getByText('Metodi di Attivazione')).toBeInTheDocument()
     expect(screen.getByText('Informazioni di Contatto')).toBeInTheDocument()
   })
@@ -45,7 +54,7 @@ describe('ActivationContactsStep', () => {
     render(
       <TestWrapper>
         <ActivationContactsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('Attivazione solo web')).toBeInTheDocument()
@@ -60,25 +69,29 @@ describe('ActivationContactsStep', () => {
     render(
       <TestWrapper>
         <ActivationContactsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('Numero di Telefono')).toBeInTheDocument()
     expect(screen.getByText('Sito Web del Venditore')).toBeInTheDocument()
-    expect(screen.getByText('URL dell\'Offerta')).toBeInTheDocument()
+    expect(screen.getByText("URL dell'Offerta")).toBeInTheDocument()
   })
 
   it('allows selecting multiple activation methods', async () => {
     const user = userEvent.setup()
-    
+
     render(
       <TestWrapper>
         <ActivationContactsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    const webOnlyCheckbox = screen.getByRole('checkbox', { name: /attivazione solo web/i })
-    const anyChannelCheckbox = screen.getByRole('checkbox', { name: /attivazione qualsiasi canale/i })
+    const webOnlyCheckbox = screen.getByRole('checkbox', {
+      name: /attivazione solo web/i,
+    })
+    const anyChannelCheckbox = screen.getByRole('checkbox', {
+      name: /attivazione qualsiasi canale/i,
+    })
 
     await user.click(webOnlyCheckbox)
     await user.click(anyChannelCheckbox)
@@ -89,47 +102,57 @@ describe('ActivationContactsStep', () => {
 
   it('shows activation description field when "Altro" is selected', async () => {
     const user = userEvent.setup()
-    
+
     render(
       <TestWrapper>
         <ActivationContactsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const otherCheckbox = screen.getByRole('checkbox', { name: /altro/i })
     await user.click(otherCheckbox)
 
-    expect(screen.getByText('Descrizione Metodo Attivazione')).toBeInTheDocument()
-    expect(screen.getByPlaceholderText('Descrivi il metodo di attivazione alternativo...')).toBeInTheDocument()
+    expect(
+      screen.getByText('Descrizione Metodo Attivazione'),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByPlaceholderText(
+        'Descrivi il metodo di attivazione alternativo...',
+      ),
+    ).toBeInTheDocument()
   })
 
   it('hides activation description field when "Altro" is deselected', async () => {
     const user = userEvent.setup()
-    
+
     render(
       <TestWrapper>
         <ActivationContactsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const otherCheckbox = screen.getByRole('checkbox', { name: /altro/i })
-    
+
     // Select "Altro"
     await user.click(otherCheckbox)
-    expect(screen.getByText('Descrizione Metodo Attivazione')).toBeInTheDocument()
+    expect(
+      screen.getByText('Descrizione Metodo Attivazione'),
+    ).toBeInTheDocument()
 
     // Deselect "Altro"
     await user.click(otherCheckbox)
-    expect(screen.queryByText('Descrizione Metodo Attivazione')).not.toBeInTheDocument()
+    expect(
+      screen.queryByText('Descrizione Metodo Attivazione'),
+    ).not.toBeInTheDocument()
   })
 
   it('accepts valid phone number input', async () => {
     const user = userEvent.setup()
-    
+
     render(
       <TestWrapper>
         <ActivationContactsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const phoneInput = screen.getByLabelText(/numero di telefono/i)
@@ -140,11 +163,11 @@ describe('ActivationContactsStep', () => {
 
   it('accepts valid URL inputs for vendor website and offer URL', async () => {
     const user = userEvent.setup()
-    
+
     render(
       <TestWrapper>
         <ActivationContactsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const vendorWebsiteInput = screen.getByLabelText(/sito web del venditore/i)
@@ -161,7 +184,7 @@ describe('ActivationContactsStep', () => {
     render(
       <TestWrapper>
         <ActivationContactsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Check for required asterisks
@@ -173,12 +196,24 @@ describe('ActivationContactsStep', () => {
     render(
       <TestWrapper>
         <ActivationContactsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    expect(screen.getByText('Numero di telefono per il supporto clienti (massimo 15 caratteri)')).toBeInTheDocument()
-    expect(screen.getByText('URL del sito web aziendale (opzionale, massimo 100 caratteri)')).toBeInTheDocument()
-    expect(screen.getByText('URL specifico dell\'offerta (opzionale, massimo 100 caratteri)')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Numero di telefono per il supporto clienti (massimo 15 caratteri)',
+      ),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'URL del sito web aziendale (opzionale, massimo 100 caratteri)',
+      ),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        "URL specifico dell'offerta (opzionale, massimo 100 caratteri)",
+      ),
+    ).toBeInTheDocument()
   })
 
   it('renders with pre-filled values when provided', () => {
@@ -192,11 +227,15 @@ describe('ActivationContactsStep', () => {
     render(
       <TestWrapper defaultValues={defaultValues}>
         <ActivationContactsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    const webOnlyCheckbox = screen.getByRole('checkbox', { name: /attivazione solo web/i })
-    const pointOfSaleCheckbox = screen.getByRole('checkbox', { name: /punto vendita/i })
+    const webOnlyCheckbox = screen.getByRole('checkbox', {
+      name: /attivazione solo web/i,
+    })
+    const pointOfSaleCheckbox = screen.getByRole('checkbox', {
+      name: /punto vendita/i,
+    })
     const phoneInput = screen.getByLabelText(/numero di telefono/i)
     const vendorWebsiteInput = screen.getByLabelText(/sito web del venditore/i)
     const offerUrlInput = screen.getByLabelText(/url dell'offerta/i)
@@ -217,16 +256,20 @@ describe('ActivationContactsStep', () => {
     render(
       <TestWrapper defaultValues={defaultValues}>
         <ActivationContactsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    expect(screen.getByText('Descrizione Metodo Attivazione')).toBeInTheDocument()
-    expect(screen.getByDisplayValue('Custom activation method')).toBeInTheDocument()
+    expect(
+      screen.getByText('Descrizione Metodo Attivazione'),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByDisplayValue('Custom activation method'),
+    ).toBeInTheDocument()
   })
 
   it('allows deselecting activation methods', async () => {
     const user = userEvent.setup()
-    
+
     const defaultValues: Partial<ActivationContactsFormValues> = {
       activationMethods: ['01', '02'],
     }
@@ -234,11 +277,15 @@ describe('ActivationContactsStep', () => {
     render(
       <TestWrapper defaultValues={defaultValues}>
         <ActivationContactsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    const webOnlyCheckbox = screen.getByRole('checkbox', { name: /attivazione solo web/i })
-    const anyChannelCheckbox = screen.getByRole('checkbox', { name: /attivazione qualsiasi canale/i })
+    const webOnlyCheckbox = screen.getByRole('checkbox', {
+      name: /attivazione solo web/i,
+    })
+    const anyChannelCheckbox = screen.getByRole('checkbox', {
+      name: /attivazione qualsiasi canale/i,
+    })
 
     expect(webOnlyCheckbox).toBeChecked()
     expect(anyChannelCheckbox).toBeChecked()
@@ -252,12 +299,12 @@ describe('ActivationContactsStep', () => {
     render(
       <TestWrapper>
         <ActivationContactsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Check that checkboxes have proper labels
     const checkboxes = screen.getAllByRole('checkbox')
-    checkboxes.forEach(checkbox => {
+    checkboxes.forEach((checkbox) => {
       expect(checkbox).toHaveAccessibleName()
     })
 
@@ -270,4 +317,4 @@ describe('ActivationContactsStep', () => {
     expect(vendorWebsiteInput).toHaveAccessibleName()
     expect(offerUrlInput).toHaveAccessibleName()
   })
-}) 
+})

@@ -1,22 +1,27 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { FormProvider, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { describe, it, expect, beforeEach } from 'vitest'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { FormProvider, useForm } from 'react-hook-form'
+import { beforeEach, describe, expect, it } from 'vitest'
+import {
+  type OfferDetailsFormValues,
+  offerDetailsSchema,
+} from '@/lib/xml-generator/schemas'
 import { OfferDetailsStep } from './offer-details-step'
-import { offerDetailsSchema, type OfferDetailsFormValues } from '@/lib/xml-generator/schemas'
 
 // Wrapper component for testing
-function TestWrapper({ children, defaultValues }: { children: React.ReactNode; defaultValues?: Partial<OfferDetailsFormValues> }) {
+function TestWrapper({
+  children,
+  defaultValues,
+}: {
+  children: React.ReactNode
+  defaultValues?: Partial<OfferDetailsFormValues>
+}) {
   const methods = useForm<OfferDetailsFormValues>({
     resolver: zodResolver(offerDetailsSchema),
     defaultValues,
   })
 
-  return (
-    <FormProvider {...methods}>
-      {children}
-    </FormProvider>
-  )
+  return <FormProvider {...methods}>{children}</FormProvider>
 }
 
 describe('OfferDetailsStep', () => {
@@ -28,16 +33,18 @@ describe('OfferDetailsStep', () => {
     render(
       <TestWrapper>
         <OfferDetailsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Check that all required fields are present
     expect(screen.getByText('Tipo di Mercato *')).toBeInTheDocument()
     expect(screen.getByText('Tipo di Cliente *')).toBeInTheDocument()
     expect(screen.getByText('Tipo di Offerta *')).toBeInTheDocument()
-    expect(screen.getByText('Tipologie di Attivazione Contratto *')).toBeInTheDocument()
-    expect(screen.getByText('Nome dell\'Offerta *')).toBeInTheDocument()
-    expect(screen.getByText('Descrizione dell\'Offerta *')).toBeInTheDocument()
+    expect(
+      screen.getByText('Tipologie di Attivazione Contratto *'),
+    ).toBeInTheDocument()
+    expect(screen.getByText("Nome dell'Offerta *")).toBeInTheDocument()
+    expect(screen.getByText("Descrizione dell'Offerta *")).toBeInTheDocument()
     expect(screen.getByText('Durata (mesi) *')).toBeInTheDocument()
     expect(screen.getByText('Garanzie *')).toBeInTheDocument()
   })
@@ -46,14 +53,16 @@ describe('OfferDetailsStep', () => {
     render(
       <TestWrapper>
         <OfferDetailsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Select electricity market type by finding the combobox near the label
     const marketTypeLabel = screen.getByText('Tipo di Mercato *')
-    const marketTypeSelect = marketTypeLabel.parentElement?.querySelector('[role="combobox"]') as HTMLElement
+    const marketTypeSelect = marketTypeLabel.parentElement?.querySelector(
+      '[role="combobox"]',
+    ) as HTMLElement
     fireEvent.click(marketTypeSelect)
-    
+
     const electricityOption = screen.getByText('Elettrico')
     fireEvent.click(electricityOption)
 
@@ -67,14 +76,16 @@ describe('OfferDetailsStep', () => {
     render(
       <TestWrapper>
         <OfferDetailsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Select dual fuel market type by finding the combobox near the label
     const marketTypeLabel = screen.getByText('Tipo di Mercato *')
-    const marketTypeSelect = marketTypeLabel.parentElement?.querySelector('[role="combobox"]') as HTMLElement
+    const marketTypeSelect = marketTypeLabel.parentElement?.querySelector(
+      '[role="combobox"]',
+    ) as HTMLElement
     fireEvent.click(marketTypeSelect)
-    
+
     const dualFuelOption = screen.getByText('Dual Fuel')
     fireEvent.click(dualFuelOption)
 
@@ -88,14 +99,16 @@ describe('OfferDetailsStep', () => {
     render(
       <TestWrapper>
         <OfferDetailsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Select domestic client type by finding the combobox near the label
     const clientTypeLabel = screen.getByText('Tipo di Cliente *')
-    const clientTypeSelect = clientTypeLabel.parentElement?.querySelector('[role="combobox"]') as HTMLElement
+    const clientTypeSelect = clientTypeLabel.parentElement?.querySelector(
+      '[role="combobox"]',
+    ) as HTMLElement
     fireEvent.click(clientTypeSelect)
-    
+
     const domesticOption = screen.getByText('Domestico')
     fireEvent.click(domesticOption)
 
@@ -109,14 +122,16 @@ describe('OfferDetailsStep', () => {
     render(
       <TestWrapper>
         <OfferDetailsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Select other uses client type by finding the combobox near the label
     const clientTypeLabel = screen.getByText('Tipo di Cliente *')
-    const clientTypeSelect = clientTypeLabel.parentElement?.querySelector('[role="combobox"]') as HTMLElement
+    const clientTypeSelect = clientTypeLabel.parentElement?.querySelector(
+      '[role="combobox"]',
+    ) as HTMLElement
     fireEvent.click(clientTypeSelect)
-    
+
     const otherUsesOption = screen.getByText('Altri Usi')
     fireEvent.click(otherUsesOption)
 
@@ -130,12 +145,16 @@ describe('OfferDetailsStep', () => {
     render(
       <TestWrapper>
         <OfferDetailsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Select multiple contract activation types
-    const supplierChangeCheckbox = screen.getByRole('checkbox', { name: /cambio fornitore/i })
-    const firstActivationCheckbox = screen.getByRole('checkbox', { name: /prima attivazione/i })
+    const supplierChangeCheckbox = screen.getByRole('checkbox', {
+      name: /cambio fornitore/i,
+    })
+    const firstActivationCheckbox = screen.getByRole('checkbox', {
+      name: /prima attivazione/i,
+    })
 
     fireEvent.click(supplierChangeCheckbox)
     fireEvent.click(firstActivationCheckbox)
@@ -149,14 +168,22 @@ describe('OfferDetailsStep', () => {
     render(
       <TestWrapper>
         <OfferDetailsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Check that required fields are marked as required
-    const offerNameInput = screen.getByPlaceholderText('Inserisci il nome dell\'offerta')
-    const offerDescriptionInput = screen.getByPlaceholderText('Inserisci una descrizione dettagliata dell\'offerta')
-    const durationInput = screen.getByPlaceholderText(/inserisci -1 per durata indeterminata/i)
-    const guaranteesInput = screen.getByPlaceholderText(/inserisci 'no' se non sono richieste garanzie/i)
+    const offerNameInput = screen.getByPlaceholderText(
+      "Inserisci il nome dell'offerta",
+    )
+    const offerDescriptionInput = screen.getByPlaceholderText(
+      "Inserisci una descrizione dettagliata dell'offerta",
+    )
+    const durationInput = screen.getByPlaceholderText(
+      /inserisci -1 per durata indeterminata/i,
+    )
+    const guaranteesInput = screen.getByPlaceholderText(
+      /inserisci 'no' se non sono richieste garanzie/i,
+    )
 
     // Check that the inputs exist and are properly configured
     expect(offerNameInput).toBeInTheDocument()
@@ -182,7 +209,7 @@ describe('OfferDetailsStep', () => {
     render(
       <TestWrapper defaultValues={defaultValues}>
         <OfferDetailsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Check that form is populated with default values
@@ -196,11 +223,13 @@ describe('OfferDetailsStep', () => {
     render(
       <TestWrapper>
         <OfferDetailsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    const durationInput = screen.getByPlaceholderText(/inserisci -1 per durata indeterminata/i)
-    
+    const durationInput = screen.getByPlaceholderText(
+      /inserisci -1 per durata indeterminata/i,
+    )
+
     // Test entering -1 for indeterminate duration
     fireEvent.change(durationInput, { target: { value: '-1' } })
     expect(durationInput).toHaveValue(-1)
@@ -214,38 +243,52 @@ describe('OfferDetailsStep', () => {
     render(
       <TestWrapper>
         <OfferDetailsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    expect(screen.getByText('Inserisci -1 per durata indeterminata o un valore da 1 a 99 mesi')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Inserisci -1 per durata indeterminata o un valore da 1 a 99 mesi',
+      ),
+    ).toBeInTheDocument()
   })
 
   it('shows help text for guarantees field', () => {
     render(
       <TestWrapper>
         <OfferDetailsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    expect(screen.getByText('Inserisci "NO" se non sono richieste garanzie, altrimenti descrivi le garanzie richieste come cauzioni o domiciliazioni')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Inserisci "NO" se non sono richieste garanzie, altrimenti descrivi le garanzie richieste come cauzioni o domiciliazioni',
+      ),
+    ).toBeInTheDocument()
   })
 
   it('validates text field lengths', async () => {
     render(
       <TestWrapper>
         <OfferDetailsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    const offerNameInput = screen.getByPlaceholderText('Inserisci il nome dell\'offerta')
-    const offerDescriptionInput = screen.getByPlaceholderText('Inserisci una descrizione dettagliata dell\'offerta')
+    const offerNameInput = screen.getByPlaceholderText(
+      "Inserisci il nome dell'offerta",
+    )
+    const offerDescriptionInput = screen.getByPlaceholderText(
+      "Inserisci una descrizione dettagliata dell'offerta",
+    )
 
     // Test that inputs accept valid values
     const validName = 'Valid Offer Name'
     const validDescription = 'Valid offer description'
 
     fireEvent.change(offerNameInput, { target: { value: validName } })
-    fireEvent.change(offerDescriptionInput, { target: { value: validDescription } })
+    fireEvent.change(offerDescriptionInput, {
+      target: { value: validDescription },
+    })
 
     // The inputs should have the values we set
     expect(offerNameInput).toHaveValue(validName)
@@ -256,10 +299,12 @@ describe('OfferDetailsStep', () => {
     render(
       <TestWrapper>
         <OfferDetailsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    const durationInput = screen.getByPlaceholderText(/inserisci -1 per durata indeterminata/i)
+    const durationInput = screen.getByPlaceholderText(
+      /inserisci -1 per durata indeterminata/i,
+    )
 
     // Test valid duration values
     fireEvent.change(durationInput, { target: { value: '-1' } })
@@ -271,4 +316,4 @@ describe('OfferDetailsStep', () => {
     fireEvent.change(durationInput, { target: { value: '99' } })
     expect(durationInput).toHaveValue(99)
   })
-}) 
+})

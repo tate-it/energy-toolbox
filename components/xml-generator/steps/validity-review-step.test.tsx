@@ -1,10 +1,13 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { useForm, FormProvider } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { ValidityReviewStep } from './validity-review-step'
-import { validityReviewSchema, type ValidityReviewFormValues } from '@/lib/xml-generator/schemas'
+import { fireEvent, render, screen } from '@testing-library/react'
+import { FormProvider, useForm } from 'react-hook-form'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useFormStates } from '@/hooks/use-form-states'
+import {
+  type ValidityReviewFormValues,
+  validityReviewSchema,
+} from '@/lib/xml-generator/schemas'
+import { ValidityReviewStep } from './validity-review-step'
 
 // Mock useFormStates hook
 vi.mock('@/hooks/use-form-states')
@@ -95,7 +98,13 @@ const mockFormData = {
 }
 
 // Test wrapper component that provides form context
-function TestWrapper({ children, defaultValues }: { children: React.ReactNode; defaultValues?: ValidityReviewFormValues }) {
+function TestWrapper({
+  children,
+  defaultValues,
+}: {
+  children: React.ReactNode
+  defaultValues?: ValidityReviewFormValues
+}) {
   const form = useForm<ValidityReviewFormValues>({
     resolver: zodResolver(validityReviewSchema),
     defaultValues: defaultValues || {
@@ -121,12 +130,12 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Check main title
     expect(screen.getByText('Validità e Revisione Finale')).toBeInTheDocument()
-    
+
     // Check all section titles
     expect(screen.getByText('Stato Completamento')).toBeInTheDocument()
     expect(screen.getByText('Periodo di Validità')).toBeInTheDocument()
@@ -139,7 +148,7 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Should show completion progress
@@ -151,7 +160,7 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Check form fields
@@ -164,7 +173,7 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Check that form data is displayed
@@ -178,10 +187,12 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    const checkbox = screen.getByRole('checkbox', { name: /Confermo di aver revisionato/ })
+    const checkbox = screen.getByRole('checkbox', {
+      name: /Confermo di aver revisionato/,
+    })
     expect(checkbox).toBeInTheDocument()
     expect(checkbox).not.toBeChecked()
   })
@@ -190,7 +201,7 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const textarea = screen.getByLabelText(/Note Aggiuntive/)
@@ -202,7 +213,7 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const startDateInput = screen.getByLabelText(/Data di Inizio/)
@@ -214,7 +225,7 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const endDateInput = screen.getByLabelText(/Data di Fine/)
@@ -226,10 +237,12 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    const checkbox = screen.getByRole('checkbox', { name: /Confermo di aver revisionato/ })
+    const checkbox = screen.getByRole('checkbox', {
+      name: /Confermo di aver revisionato/,
+    })
     fireEvent.click(checkbox)
     expect(checkbox).toBeChecked()
   })
@@ -238,7 +251,7 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const textarea = screen.getByLabelText(/Note Aggiuntive/)
@@ -267,7 +280,7 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getAllByText('Non specificata')).toHaveLength(2)
@@ -295,7 +308,7 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Should show lower completion percentage when data is missing
@@ -306,7 +319,7 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Should translate market type code to label
@@ -317,33 +330,40 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('Anteprima XML')).toBeInTheDocument()
-    expect(screen.getByText(/La funzionalità di anteprima e generazione XML sarà implementata/)).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        /La funzionalità di anteprima e generazione XML sarà implementata/,
+      ),
+    ).toBeInTheDocument()
   })
 
   it('handles missing form states gracefully', () => {
-    vi.mocked(useFormStates).mockReturnValue([{
-      basicInfo: {},
-      offerDetails: {},
-      activationContacts: {},
-      pricingConfig: {},
-      companyComponents: {},
-      paymentConditions: {},
-      additionalFeatures: {},
-      validityReview: {
-        validityPeriod: { startDate: '', endDate: '' },
-        reviewConfirmed: false,
-        notes: '',
+    vi.mocked(useFormStates).mockReturnValue([
+      {
+        basicInfo: {},
+        offerDetails: {},
+        activationContacts: {},
+        pricingConfig: {},
+        companyComponents: {},
+        paymentConditions: {},
+        additionalFeatures: {},
+        validityReview: {
+          validityPeriod: { startDate: '', endDate: '' },
+          reviewConfirmed: false,
+          notes: '',
+        },
       },
-    }, vi.fn()])
+      vi.fn(),
+    ])
 
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Should not crash and show default values
@@ -354,7 +374,7 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Check summary cards show counts (using getAllByText for multiple matching elements)
@@ -367,7 +387,7 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('12 mesi')).toBeInTheDocument()
@@ -377,7 +397,7 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('2 metodi selezionati')).toBeInTheDocument()
@@ -387,16 +407,18 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Check that form fields have proper labels
     expect(screen.getByLabelText(/Data di Inizio/)).toBeInTheDocument()
     expect(screen.getByLabelText(/Data di Fine/)).toBeInTheDocument()
     expect(screen.getByLabelText(/Note Aggiuntive/)).toBeInTheDocument()
-    
+
     // Check checkbox has proper label
-    expect(screen.getByRole('checkbox', { name: /Confermo di aver revisionato/ })).toBeInTheDocument()
+    expect(
+      screen.getByRole('checkbox', { name: /Confermo di aver revisionato/ }),
+    ).toBeInTheDocument()
   })
 
   it('renders with default form values', () => {
@@ -412,28 +434,32 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper defaultValues={defaultValues}>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByDisplayValue('01/01/2024')).toBeInTheDocument()
     expect(screen.getByDisplayValue('31/12/2024')).toBeInTheDocument()
     expect(screen.getByDisplayValue('Test notes')).toBeInTheDocument()
-    expect(screen.getByRole('checkbox', { name: /Confermo di aver revisionato/ })).toBeChecked()
+    expect(
+      screen.getByRole('checkbox', { name: /Confermo di aver revisionato/ }),
+    ).toBeChecked()
   })
 
   it('displays progress bar with correct styling', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Check for the presence of progress text and percentage display
     expect(screen.getByText('Progresso completamento')).toBeInTheDocument()
     expect(screen.getByText(/\d+%/)).toBeInTheDocument()
-    
+
     // Check that progress bar container exists
-    const progressContainer = screen.getByText('Progresso completamento').closest('div')
+    const progressContainer = screen
+      .getByText('Progresso completamento')
+      .closest('div')
     expect(progressContainer).toBeInTheDocument()
   })
 
@@ -441,11 +467,11 @@ describe('ValidityReviewStep', () => {
     render(
       <TestWrapper>
         <ValidityReviewStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const badge = screen.getByText(/\d+\/7 sezioni/)
     expect(badge).toBeInTheDocument()
     expect(badge).toHaveClass('inline-flex') // Badge styling
   })
-}) 
+})

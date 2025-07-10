@@ -1,17 +1,17 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { FormProvider, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { fireEvent, render, screen } from '@testing-library/react'
+import { FormProvider, useForm } from 'react-hook-form'
 import { vi } from 'vitest'
-import { CompanyComponentsStep } from './company-components-step'
-import { companyComponentsSchema } from '@/lib/xml-generator/schemas'
-import type { CompanyComponentsFormValues } from '@/lib/xml-generator/schemas'
-import { MARKET_TYPES } from '@/lib/xml-generator/constants'
 import { useFormStates } from '@/hooks/use-form-states'
+import { MARKET_TYPES } from '@/lib/xml-generator/constants'
+import type { CompanyComponentsFormValues } from '@/lib/xml-generator/schemas'
+import { companyComponentsSchema } from '@/lib/xml-generator/schemas'
+import { CompanyComponentsStep } from './company-components-step'
 
-const TestWrapper = ({ 
-  children, 
-  formData = {} 
-}: { 
+const TestWrapper = ({
+  children,
+  formData = {},
+}: {
   children: React.ReactNode
   formData?: any
 }) => {
@@ -32,7 +32,7 @@ const TestWrapper = ({
     },
     ...formData,
   }
-  
+
   // Reset the mock for each test to avoid interference
   vi.mocked(useFormStates).mockClear()
   vi.mocked(useFormStates).mockReturnValue([mockFormStates, vi.fn()])
@@ -45,22 +45,26 @@ describe('CompanyComponentsStep', () => {
     render(
       <TestWrapper>
         <CompanyComponentsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('Componenti Impresa')).toBeInTheDocument()
-    expect(screen.getByText(/Definisci i componenti regolati/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Definisci i componenti regolati/),
+    ).toBeInTheDocument()
   })
 
   it('renders regulated components section', () => {
     render(
       <TestWrapper>
         <CompanyComponentsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('Componenti Regolate')).toBeInTheDocument()
-    expect(screen.getByText(/Seleziona i componenti regolati/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Seleziona i componenti regolati/),
+    ).toBeInTheDocument()
   })
 
   it('shows electricity components for electricity market type', () => {
@@ -73,7 +77,7 @@ describe('CompanyComponentsStep', () => {
     render(
       <TestWrapper formData={formData}>
         <CompanyComponentsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     // Debug: log what's actually rendered
@@ -82,7 +86,11 @@ describe('CompanyComponentsStep', () => {
     expect(screen.getByText('PCV (01)')).toBeInTheDocument()
     expect(screen.getByText('PPE (02)')).toBeInTheDocument()
     // Use a more specific text matcher to find the CardDescription
-    expect(screen.getByText(/Seleziona i componenti regolati in base al tipo di mercato \(Elettricità\)/)).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        /Seleziona i componenti regolati in base al tipo di mercato \(Elettricità\)/,
+      ),
+    ).toBeInTheDocument()
   })
 
   it('shows gas components for gas market type', () => {
@@ -95,32 +103,38 @@ describe('CompanyComponentsStep', () => {
     render(
       <TestWrapper formData={formData}>
         <CompanyComponentsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('CCR (03)')).toBeInTheDocument()
     expect(screen.getByText('CPR (04)')).toBeInTheDocument()
     expect(screen.getByText('GRAD (05)')).toBeInTheDocument()
     // Use a more specific text matcher to find the CardDescription
-    expect(screen.getByText(/Seleziona i componenti regolati in base al tipo di mercato \(Gas\)/)).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        /Seleziona i componenti regolati in base al tipo di mercato \(Gas\)/,
+      ),
+    ).toBeInTheDocument()
   })
 
   it('renders company components section', () => {
     render(
       <TestWrapper>
         <CompanyComponentsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('Componenti Aziendali')).toBeInTheDocument()
-    expect(screen.getByText(/Aggiungi i componenti aziendali/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Aggiungi i componenti aziendali/),
+    ).toBeInTheDocument()
   })
 
   it('allows adding new company components', () => {
     render(
       <TestWrapper>
         <CompanyComponentsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addButton = screen.getByText('Aggiungi Componente Aziendale')
@@ -137,7 +151,7 @@ describe('CompanyComponentsStep', () => {
     render(
       <TestWrapper>
         <CompanyComponentsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addButton = screen.getByText('Aggiungi Componente Aziendale')
@@ -153,7 +167,7 @@ describe('CompanyComponentsStep', () => {
     render(
       <TestWrapper>
         <CompanyComponentsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addButton = screen.getByText('Aggiungi Componente Aziendale')
@@ -168,7 +182,7 @@ describe('CompanyComponentsStep', () => {
     render(
       <TestWrapper>
         <CompanyComponentsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addButton = screen.getByText('Aggiungi Componente Aziendale')
@@ -183,7 +197,7 @@ describe('CompanyComponentsStep', () => {
     render(
       <TestWrapper>
         <CompanyComponentsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addComponentButton = screen.getByText('Aggiungi Componente Aziendale')
@@ -200,24 +214,30 @@ describe('CompanyComponentsStep', () => {
     render(
       <TestWrapper>
         <CompanyComponentsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addButton = screen.getByText('Aggiungi Componente Aziendale')
     fireEvent.click(addButton)
 
-    const componentTypeSelect = screen.getByRole('combobox', { name: /Tipo Componente/ })
+    const componentTypeSelect = screen.getByRole('combobox', {
+      name: /Tipo Componente/,
+    })
     fireEvent.click(componentTypeSelect)
 
-    expect(screen.getAllByText('STANDARD - Price included')[0]).toBeInTheDocument()
-    expect(screen.getAllByText('OPTIONAL - Price not included')[0]).toBeInTheDocument()
+    expect(
+      screen.getAllByText('STANDARD - Price included')[0],
+    ).toBeInTheDocument()
+    expect(
+      screen.getAllByText('OPTIONAL - Price not included')[0],
+    ).toBeInTheDocument()
   })
 
   it('shows macro area options', () => {
     render(
       <TestWrapper>
         <CompanyComponentsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addButton = screen.getByText('Aggiungi Componente Aziendale')
@@ -226,8 +246,12 @@ describe('CompanyComponentsStep', () => {
     const macroAreaSelect = screen.getByRole('combobox', { name: /Macroarea/ })
     fireEvent.click(macroAreaSelect)
 
-    expect(screen.getAllByText('Fixed commercialization fee')[0]).toBeInTheDocument()
-    expect(screen.getAllByText('Energy commercialization fee')[0]).toBeInTheDocument()
+    expect(
+      screen.getAllByText('Fixed commercialization fee')[0],
+    ).toBeInTheDocument()
+    expect(
+      screen.getAllByText('Energy commercialization fee')[0],
+    ).toBeInTheDocument()
     expect(screen.getAllByText('Energy price component')[0]).toBeInTheDocument()
   })
 
@@ -235,7 +259,7 @@ describe('CompanyComponentsStep', () => {
     render(
       <TestWrapper>
         <CompanyComponentsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addButton = screen.getByText('Aggiungi Componente Aziendale')
@@ -255,13 +279,15 @@ describe('CompanyComponentsStep', () => {
     render(
       <TestWrapper>
         <CompanyComponentsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addButton = screen.getByText('Aggiungi Componente Aziendale')
     fireEvent.click(addButton)
 
-    const timeBandSelect = screen.getByRole('combobox', { name: /Fascia Componente/ })
+    const timeBandSelect = screen.getByRole('combobox', {
+      name: /Fascia Componente/,
+    })
     fireEvent.click(timeBandSelect)
 
     expect(screen.getAllByText('Monorario/F1')[0]).toBeInTheDocument()
@@ -275,7 +301,7 @@ describe('CompanyComponentsStep', () => {
     render(
       <TestWrapper>
         <CompanyComponentsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addButton = screen.getByText('Aggiungi Componente Aziendale')
@@ -286,10 +312,10 @@ describe('CompanyComponentsStep', () => {
     expect(screen.getByText('Componente 2')).toBeInTheDocument()
 
     const removeButtons = screen.getAllByRole('button', { name: '' })
-    const removeButton = removeButtons.find(button => 
-      button.querySelector('svg')?.getAttribute('class')?.includes('h-4 w-4')
+    const removeButton = removeButtons.find((button) =>
+      button.querySelector('svg')?.getAttribute('class')?.includes('h-4 w-4'),
     )
-    
+
     if (removeButton) {
       fireEvent.click(removeButton)
     }
@@ -302,7 +328,7 @@ describe('CompanyComponentsStep', () => {
     render(
       <TestWrapper>
         <CompanyComponentsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addComponentButton = screen.getByText('Aggiungi Componente Aziendale')
@@ -315,10 +341,10 @@ describe('CompanyComponentsStep', () => {
     expect(screen.getByText('Intervallo 2')).toBeInTheDocument()
 
     const removeButtons = screen.getAllByRole('button', { name: '' })
-    const removeButton = removeButtons.find(button => 
-      button.querySelector('svg')?.getAttribute('class')?.includes('h-3 w-3')
+    const removeButton = removeButtons.find((button) =>
+      button.querySelector('svg')?.getAttribute('class')?.includes('h-3 w-3'),
     )
-    
+
     if (removeButton) {
       fireEvent.click(removeButton)
     }
@@ -331,7 +357,7 @@ describe('CompanyComponentsStep', () => {
     render(
       <TestWrapper>
         <CompanyComponentsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addButton = screen.getByText('Aggiungi Componente Aziendale')
@@ -351,7 +377,7 @@ describe('CompanyComponentsStep', () => {
     render(
       <TestWrapper formData={formData}>
         <CompanyComponentsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const pcvCheckbox = screen.getByRole('checkbox', { name: /PCV \(01\)/ })
@@ -364,19 +390,25 @@ describe('CompanyComponentsStep', () => {
     render(
       <TestWrapper>
         <CompanyComponentsStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addButton = screen.getByText('Aggiungi Componente Aziendale')
     fireEvent.click(addButton)
 
-    const nameInput = screen.getByPlaceholderText('Inserisci il nome del componente')
+    const nameInput = screen.getByPlaceholderText(
+      'Inserisci il nome del componente',
+    )
     fireEvent.change(nameInput, { target: { value: 'Test Component' } })
 
     expect(nameInput).toHaveValue('Test Component')
 
-    const descriptionInput = screen.getByPlaceholderText('Inserisci la descrizione del componente')
-    fireEvent.change(descriptionInput, { target: { value: 'Test Description' } })
+    const descriptionInput = screen.getByPlaceholderText(
+      'Inserisci la descrizione del componente',
+    )
+    fireEvent.change(descriptionInput, {
+      target: { value: 'Test Description' },
+    })
 
     expect(descriptionInput).toHaveValue('Test Description')
 
@@ -385,4 +417,4 @@ describe('CompanyComponentsStep', () => {
 
     expect(priceInput).toHaveValue(10.5)
   })
-}) 
+})

@@ -1,25 +1,25 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { FormProvider, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { fireEvent, render, screen } from '@testing-library/react'
+import { FormProvider, useForm } from 'react-hook-form'
 import { vi } from 'vitest'
-import { PricingConfigStep } from './pricing-config-step'
-import { pricingConfigSchema } from '@/lib/xml-generator/schemas'
-import type { PricingConfigFormValues } from '@/lib/xml-generator/schemas'
-import { 
-  MARKET_TYPES, 
-  OFFER_TYPES, 
+import { useFormStates } from '@/hooks/use-form-states'
+import {
   ENERGY_PRICE_INDICES,
+  MARKET_TYPES,
+  OFFER_TYPES,
   TIME_BAND_CONFIGURATIONS,
 } from '@/lib/xml-generator/constants'
-import { useFormStates } from '@/hooks/use-form-states'
+import type { PricingConfigFormValues } from '@/lib/xml-generator/schemas'
+import { pricingConfigSchema } from '@/lib/xml-generator/schemas'
+import { PricingConfigStep } from './pricing-config-step'
 
 // Mock the useFormStates hook
 vi.mock('@/hooks/use-form-states')
 
-const TestWrapper = ({ 
-  children, 
-  formData = {} 
-}: { 
+const TestWrapper = ({
+  children,
+  formData = {},
+}: {
   children: React.ReactNode
   formData?: any
 }) => {
@@ -58,7 +58,7 @@ const TestWrapper = ({
     },
     ...formData,
   }
-  
+
   // Reset the mock for each test to avoid interference
   vi.mocked(useFormStates).mockClear()
   vi.mocked(useFormStates).mockReturnValue([mockFormStates, vi.fn()])
@@ -71,23 +71,29 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('Configurazione Prezzi')).toBeInTheDocument()
-    expect(screen.getByText(/Configura i prezzi dell'energia/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Configura i prezzi dell'energia/),
+    ).toBeInTheDocument()
   })
 
   it('renders help information section', () => {
     render(
       <TestWrapper>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('Informazioni di Aiuto')).toBeInTheDocument()
-    expect(screen.getByText(/Obbligatorio solo per offerte a prezzo variabile/)).toBeInTheDocument()
-    expect(screen.getAllByText(/Obbligatorio per il mercato elettrico/)).toHaveLength(2)
+    expect(
+      screen.getByText(/Obbligatorio solo per offerte a prezzo variabile/),
+    ).toBeInTheDocument()
+    expect(
+      screen.getAllByText(/Obbligatorio per il mercato elettrico/),
+    ).toHaveLength(2)
   })
 
   it('shows energy price references section for variable offer types', () => {
@@ -100,12 +106,14 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('Riferimenti Prezzo Energia')).toBeInTheDocument()
     expect(screen.getByText('Indice Prezzo Energia')).toBeInTheDocument()
-    expect(screen.getByText(/Indice di prezzo per le offerte a prezzo variabile/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Indice di prezzo per le offerte a prezzo variabile/),
+    ).toBeInTheDocument()
   })
 
   it('does not show energy price references section for fixed offer types', () => {
@@ -118,10 +126,12 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    expect(screen.queryByText('Riferimenti Prezzo Energia')).not.toBeInTheDocument()
+    expect(
+      screen.queryByText('Riferimenti Prezzo Energia'),
+    ).not.toBeInTheDocument()
     expect(screen.queryByText('Indice Prezzo Energia')).not.toBeInTheDocument()
   })
 
@@ -138,11 +148,15 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    expect(screen.getByText('Descrizione Indice Alternativo')).toBeInTheDocument()
-    expect(screen.getByText(/Descrizione dell'indice alternativo/)).toBeInTheDocument()
+    expect(
+      screen.getByText('Descrizione Indice Alternativo'),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(/Descrizione dell'indice alternativo/),
+    ).toBeInTheDocument()
   })
 
   it('shows time band configuration section for electricity market non-flat offers', () => {
@@ -156,12 +170,14 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('Configurazione Fasce Orarie')).toBeInTheDocument()
     expect(screen.getByText('Tipologia Fasce')).toBeInTheDocument()
-    expect(screen.getByText(/Tipo di configurazione delle fasce orarie/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Tipo di configurazione delle fasce orarie/),
+    ).toBeInTheDocument()
   })
 
   it('does not show time band configuration section for gas market', () => {
@@ -175,10 +191,12 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    expect(screen.queryByText('Configurazione Fasce Orarie')).not.toBeInTheDocument()
+    expect(
+      screen.queryByText('Configurazione Fasce Orarie'),
+    ).not.toBeInTheDocument()
     expect(screen.queryByText('Tipologia Fasce')).not.toBeInTheDocument()
   })
 
@@ -193,10 +211,12 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    expect(screen.queryByText('Configurazione Fasce Orarie')).not.toBeInTheDocument()
+    expect(
+      screen.queryByText('Configurazione Fasce Orarie'),
+    ).not.toBeInTheDocument()
   })
 
   it('shows weekly time bands section when appropriate time band configuration is selected', () => {
@@ -213,7 +233,7 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('Fasce Orarie Settimanali')).toBeInTheDocument()
@@ -237,12 +257,18 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('Dispacciamento')).toBeInTheDocument()
-    expect(screen.getByText(/Componenti di dispacciamento per le offerte elettriche/)).toBeInTheDocument()
-    expect(screen.getByText('Aggiungi Componente Dispacciamento')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        /Componenti di dispacciamento per le offerte elettriche/,
+      ),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText('Aggiungi Componente Dispacciamento'),
+    ).toBeInTheDocument()
   })
 
   it('does not show dispatching section for gas market', () => {
@@ -255,11 +281,13 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.queryByText('Dispacciamento')).not.toBeInTheDocument()
-    expect(screen.queryByText('Aggiungi Componente Dispacciamento')).not.toBeInTheDocument()
+    expect(
+      screen.queryByText('Aggiungi Componente Dispacciamento'),
+    ).not.toBeInTheDocument()
   })
 
   it('shows empty state message when no dispatching components are added', () => {
@@ -272,10 +300,12 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    expect(screen.getByText(/Nessun componente di dispacciamento aggiunto/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Nessun componente di dispacciamento aggiunto/),
+    ).toBeInTheDocument()
     expect(screen.getByText('Aggiungi il primo componente')).toBeInTheDocument()
   })
 
@@ -289,7 +319,7 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addButton = screen.getByText('Aggiungi Componente Dispacciamento')
@@ -298,7 +328,9 @@ describe('PricingConfigStep', () => {
     expect(screen.getByText('Componente Dispacciamento 1')).toBeInTheDocument()
     expect(screen.getByText('Tipo Dispacciamento')).toBeInTheDocument()
     expect(screen.getByText('Nome Componente')).toBeInTheDocument()
-    expect(screen.getByText('Descrizione Componente (Opzionale)')).toBeInTheDocument()
+    expect(
+      screen.getByText('Descrizione Componente (Opzionale)'),
+    ).toBeInTheDocument()
   })
 
   it('shows dispatching value field when OTHER dispatching type is selected', () => {
@@ -311,13 +343,15 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addButton = screen.getByText('Aggiungi Componente Dispacciamento')
     fireEvent.click(addButton)
 
-    const dispatchingTypeSelect = screen.getByRole('combobox', { name: /Tipo Dispacciamento/ })
+    const dispatchingTypeSelect = screen.getByRole('combobox', {
+      name: /Tipo Dispacciamento/,
+    })
     fireEvent.click(dispatchingTypeSelect)
 
     // Select "Other" option
@@ -325,7 +359,9 @@ describe('PricingConfigStep', () => {
     fireEvent.click(otherOption)
 
     expect(screen.getByText('Valore Dispacciamento')).toBeInTheDocument()
-    expect(screen.getByText(/Valore numerico con separatore decimale/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Valore numerico con separatore decimale/),
+    ).toBeInTheDocument()
   })
 
   it('allows removing dispatching components', () => {
@@ -338,7 +374,7 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addButton = screen.getByText('Aggiungi Componente Dispacciamento')
@@ -349,7 +385,9 @@ describe('PricingConfigStep', () => {
     const removeButton = screen.getByRole('button', { name: '' })
     fireEvent.click(removeButton)
 
-    expect(screen.queryByText('Componente Dispacciamento 1')).not.toBeInTheDocument()
+    expect(
+      screen.queryByText('Componente Dispacciamento 1'),
+    ).not.toBeInTheDocument()
   })
 
   it('shows energy price index options', () => {
@@ -362,15 +400,19 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    const energyPriceSelect = screen.getByRole('combobox', { name: /Indice Prezzo Energia/ })
+    const energyPriceSelect = screen.getByRole('combobox', {
+      name: /Indice Prezzo Energia/,
+    })
     fireEvent.click(energyPriceSelect)
 
     expect(screen.getByText('PUN (Quarterly)')).toBeInTheDocument()
     expect(screen.getByText('TTF (Quarterly)')).toBeInTheDocument()
-    expect(screen.getByText('Other (Not managed by Portal)')).toBeInTheDocument()
+    expect(
+      screen.getByText('Other (Not managed by Portal)'),
+    ).toBeInTheDocument()
   })
 
   it('shows time band configuration options', () => {
@@ -384,10 +426,12 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    const timeBandSelect = screen.getByRole('combobox', { name: /Tipologia Fasce/ })
+    const timeBandSelect = screen.getByRole('combobox', {
+      name: /Tipologia Fasce/,
+    })
     fireEvent.click(timeBandSelect)
 
     expect(screen.getByText('Monorario')).toBeInTheDocument()
@@ -405,13 +449,15 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addButton = screen.getByText('Aggiungi Componente Dispacciamento')
     fireEvent.click(addButton)
 
-    const dispatchingTypeSelect = screen.getByRole('combobox', { name: /Tipo Dispacciamento/ })
+    const dispatchingTypeSelect = screen.getByRole('combobox', {
+      name: /Tipo Dispacciamento/,
+    })
     fireEvent.click(dispatchingTypeSelect)
 
     expect(screen.getByText('Disp. del.111/06')).toBeInTheDocument()
@@ -429,19 +475,27 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addButton = screen.getByText('Aggiungi Componente Dispacciamento')
     fireEvent.click(addButton)
 
-    const componentNameInput = screen.getByPlaceholderText('Nome del componente...')
-    fireEvent.change(componentNameInput, { target: { value: 'Test Component' } })
+    const componentNameInput = screen.getByPlaceholderText(
+      'Nome del componente...',
+    )
+    fireEvent.change(componentNameInput, {
+      target: { value: 'Test Component' },
+    })
 
     expect(componentNameInput).toHaveValue('Test Component')
 
-    const descriptionInput = screen.getByPlaceholderText('Descrizione del componente...')
-    fireEvent.change(descriptionInput, { target: { value: 'Test Description' } })
+    const descriptionInput = screen.getByPlaceholderText(
+      'Descrizione del componente...',
+    )
+    fireEvent.change(descriptionInput, {
+      target: { value: 'Test Description' },
+    })
 
     expect(descriptionInput).toHaveValue('Test Description')
   })
@@ -460,11 +514,15 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    const mondayInput = screen.getAllByPlaceholderText('es. 28-3,32-2,76-1,92-2,96-3')[0]
-    fireEvent.change(mondayInput, { target: { value: '28-3,32-2,76-1,92-2,96-3' } })
+    const mondayInput = screen.getAllByPlaceholderText(
+      'es. 28-3,32-2,76-1,92-2,96-3',
+    )[0]
+    fireEvent.change(mondayInput, {
+      target: { value: '28-3,32-2,76-1,92-2,96-3' },
+    })
 
     expect(mondayInput).toHaveValue('28-3,32-2,76-1,92-2,96-3')
   })
@@ -482,11 +540,15 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
-    const descriptionInput = screen.getByPlaceholderText('Descrivi l\'indice alternativo...')
-    fireEvent.change(descriptionInput, { target: { value: 'Alternative index description' } })
+    const descriptionInput = screen.getByPlaceholderText(
+      "Descrivi l'indice alternativo...",
+    )
+    fireEvent.change(descriptionInput, {
+      target: { value: 'Alternative index description' },
+    })
 
     expect(descriptionInput).toHaveValue('Alternative index description')
   })
@@ -501,13 +563,15 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addButton = screen.getByText('Aggiungi Componente Dispacciamento')
     fireEvent.click(addButton)
 
-    const dispatchingTypeSelect = screen.getByRole('combobox', { name: /Tipo Dispacciamento/ })
+    const dispatchingTypeSelect = screen.getByRole('combobox', {
+      name: /Tipo Dispacciamento/,
+    })
     fireEvent.click(dispatchingTypeSelect)
 
     const otherOption = screen.getByText('Altro')
@@ -516,7 +580,7 @@ describe('PricingConfigStep', () => {
     const dispatchingValueInput = screen.getByPlaceholderText('0.000000')
     fireEvent.change(dispatchingValueInput, { target: { value: '10.123456' } })
 
-    expect(dispatchingValueInput).toHaveValue(10.123456)
+    expect(dispatchingValueInput).toHaveValue(10.123_456)
   })
 
   it('allows adding multiple dispatching components', () => {
@@ -529,7 +593,7 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addButton = screen.getByText('Aggiungi Componente Dispacciamento')
@@ -550,21 +614,29 @@ describe('PricingConfigStep', () => {
     render(
       <TestWrapper formData={formData}>
         <PricingConfigStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     const addButton = screen.getByText('Aggiungi Componente Dispacciamento')
     fireEvent.click(addButton)
 
-    expect(screen.getByText(/Descrizione opzionale del componente \(max 255 caratteri\)/)).toBeInTheDocument()
-    
+    expect(
+      screen.getByText(
+        /Descrizione opzionale del componente \(max 255 caratteri\)/,
+      ),
+    ).toBeInTheDocument()
+
     // Select "Other" dispatching type to show the dispatching value field
-    const dispatchingTypeSelect = screen.getByRole('combobox', { name: /Tipo Dispacciamento/ })
+    const dispatchingTypeSelect = screen.getByRole('combobox', {
+      name: /Tipo Dispacciamento/,
+    })
     fireEvent.click(dispatchingTypeSelect)
-    
+
     const otherOption = screen.getByText('Altro')
     fireEvent.click(otherOption)
-    
-    expect(screen.getByText(/Valore numerico con separatore decimale/)).toBeInTheDocument()
+
+    expect(
+      screen.getByText(/Valore numerico con separatore decimale/),
+    ).toBeInTheDocument()
   })
-}) 
+})

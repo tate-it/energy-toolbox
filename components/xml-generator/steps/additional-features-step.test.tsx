@@ -1,10 +1,10 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { FormProvider, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { fireEvent, render, screen } from '@testing-library/react'
+import { FormProvider, useForm } from 'react-hook-form'
 import { vi } from 'vitest'
-import { AdditionalFeaturesStep } from './additional-features-step'
-import { additionalFeaturesSchema } from '@/lib/xml-generator/schemas'
 import type { AdditionalFeaturesFormValues } from '@/lib/xml-generator/schemas'
+import { additionalFeaturesSchema } from '@/lib/xml-generator/schemas'
+import { AdditionalFeaturesStep } from './additional-features-step'
 
 // Mock the useFormStates hook
 const mockUseFormStates = vi.fn()
@@ -12,12 +12,12 @@ vi.mock('@/hooks/use-form-states', () => ({
   useFormStates: () => mockUseFormStates(),
 }))
 
-const TestWrapper = ({ 
-  children, 
+const TestWrapper = ({
+  children,
   formData = {},
   marketType = '01',
-  offerType = '01'
-}: { 
+  offerType = '01',
+}: {
   children: React.ReactNode
   formData?: Partial<AdditionalFeaturesFormValues>
   marketType?: string
@@ -36,18 +36,16 @@ const TestWrapper = ({
   })
 
   // Mock the form states to return the market and offer types
-  mockUseFormStates.mockReturnValue([{
-    offerDetails: {
-      marketType,
-      offerType,
-    }
-  }])
+  mockUseFormStates.mockReturnValue([
+    {
+      offerDetails: {
+        marketType,
+        offerType,
+      },
+    },
+  ])
 
-  return (
-    <FormProvider {...form}>
-      {children}
-    </FormProvider>
-  )
+  return <FormProvider {...form}>{children}</FormProvider>
 }
 
 describe('AdditionalFeaturesStep', () => {
@@ -59,92 +57,128 @@ describe('AdditionalFeaturesStep', () => {
     render(
       <TestWrapper>
         <AdditionalFeaturesStep />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('Funzionalità Aggiuntive')).toBeInTheDocument()
-    expect(screen.getByText(/Configura caratteristiche dell'offerta/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Configura caratteristiche dell'offerta/),
+    ).toBeInTheDocument()
   })
 
   describe('Offer Characteristics Section', () => {
     it('shows consumption fields for FLAT offers', () => {
       render(
-        <TestWrapper offerType="03"> {/* FLAT offer */}
+        <TestWrapper offerType="03">
+          {' '}
+          {/* FLAT offer */}
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
-      expect(screen.getByText('Caratteristiche dell\'Offerta')).toBeInTheDocument()
-      expect(screen.getByText('Consumo Minimo * (kWh/anno o Sm³/anno)')).toBeInTheDocument()
-      expect(screen.getByText('Consumo Massimo * (kWh/anno o Sm³/anno)')).toBeInTheDocument()
+      expect(
+        screen.getByText("Caratteristiche dell'Offerta"),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText('Consumo Minimo * (kWh/anno o Sm³/anno)'),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText('Consumo Massimo * (kWh/anno o Sm³/anno)'),
+      ).toBeInTheDocument()
     })
 
     it('shows power fields for electricity offers', () => {
       render(
-        <TestWrapper marketType="01" offerType="01"> {/* Electricity market */}
+        <TestWrapper marketType="01" offerType="01">
+          {' '}
+          {/* Electricity market */}
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
-      expect(screen.getByText('Caratteristiche dell\'Offerta')).toBeInTheDocument()
+      expect(
+        screen.getByText("Caratteristiche dell'Offerta"),
+      ).toBeInTheDocument()
       expect(screen.getByText('Potenza Minima (kW)')).toBeInTheDocument()
       expect(screen.getByText('Potenza Massima (kW)')).toBeInTheDocument()
     })
 
     it('does not show offer characteristics for gas variable offers', () => {
       render(
-        <TestWrapper marketType="02" offerType="02"> {/* Gas market, Variable offer */}
+        <TestWrapper marketType="02" offerType="02">
+          {' '}
+          {/* Gas market, Variable offer */}
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
-      expect(screen.queryByText('Caratteristiche dell\'Offerta')).not.toBeInTheDocument()
+      expect(
+        screen.queryByText("Caratteristiche dell'Offerta"),
+      ).not.toBeInTheDocument()
     })
   })
 
   describe('Dual Offer Section', () => {
     it('shows dual offer section for dual fuel market', () => {
       render(
-        <TestWrapper marketType="03"> {/* Dual Fuel market */}
+        <TestWrapper marketType="03">
+          {' '}
+          {/* Dual Fuel market */}
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
-      expect(screen.getByText('Offerte Congiunte (Dual Fuel)')).toBeInTheDocument()
-      expect(screen.getByText('Offerte Elettriche Congiunte *')).toBeInTheDocument()
+      expect(
+        screen.getByText('Offerte Congiunte (Dual Fuel)'),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText('Offerte Elettriche Congiunte *'),
+      ).toBeInTheDocument()
       expect(screen.getByText('Offerte Gas Congiunte *')).toBeInTheDocument()
     })
 
     it('does not show dual offer section for single fuel markets', () => {
       render(
-        <TestWrapper marketType="01"> {/* Electricity only */}
+        <TestWrapper marketType="01">
+          {' '}
+          {/* Electricity only */}
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
-      expect(screen.queryByText('Offerte Congiunte (Dual Fuel)')).not.toBeInTheDocument()
+      expect(
+        screen.queryByText('Offerte Congiunte (Dual Fuel)'),
+      ).not.toBeInTheDocument()
     })
 
     it('allows adding electricity joint offers', async () => {
       render(
         <TestWrapper marketType="03">
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
-      const addElectricityButton = screen.getByRole('button', { name: /Aggiungi Offerta Elettrica/ })
-      
+      const addElectricityButton = screen.getByRole('button', {
+        name: /Aggiungi Offerta Elettrica/,
+      })
+
       // Initially no electricity inputs should be present
-      expect(screen.queryAllByPlaceholderText('Codice offerta elettrica')).toHaveLength(0)
-      
+      expect(
+        screen.queryAllByPlaceholderText('Codice offerta elettrica'),
+      ).toHaveLength(0)
+
       fireEvent.click(addElectricityButton)
 
       // Should have one input after adding the first item
-      const electricityInputs = await screen.findAllByPlaceholderText('Codice offerta elettrica')
+      const electricityInputs = await screen.findAllByPlaceholderText(
+        'Codice offerta elettrica',
+      )
       expect(electricityInputs).toHaveLength(1)
-      
+
       // Verify we can type in the input
-      fireEvent.change(electricityInputs[0], { target: { value: 'TEST_ELECTRIC_01' } })
+      fireEvent.change(electricityInputs[0], {
+        target: { value: 'TEST_ELECTRIC_01' },
+      })
       expect(electricityInputs[0]).toHaveValue('TEST_ELECTRIC_01')
     })
   })
@@ -154,10 +188,10 @@ describe('AdditionalFeaturesStep', () => {
       render(
         <TestWrapper>
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
-      expect(screen.getByText('Zone dell\'Offerta')).toBeInTheDocument()
+      expect(screen.getByText("Zone dell'Offerta")).toBeInTheDocument()
       expect(screen.getByText('Regioni')).toBeInTheDocument()
       expect(screen.getByText('Province')).toBeInTheDocument()
       expect(screen.getByText('Comuni')).toBeInTheDocument()
@@ -167,13 +201,17 @@ describe('AdditionalFeaturesStep', () => {
       render(
         <TestWrapper>
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
-      const addRegionButton = screen.getByRole('button', { name: /Aggiungi Regione/ })
+      const addRegionButton = screen.getByRole('button', {
+        name: /Aggiungi Regione/,
+      })
       fireEvent.click(addRegionButton)
 
-      const regionInput = screen.getByPlaceholderText('Codice regione (2 cifre)')
+      const regionInput = screen.getByPlaceholderText(
+        'Codice regione (2 cifre)',
+      )
       expect(regionInput).toBeInTheDocument()
       expect(regionInput).toHaveAttribute('maxLength', '2')
     })
@@ -182,13 +220,17 @@ describe('AdditionalFeaturesStep', () => {
       render(
         <TestWrapper>
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
-      const addProvinceButton = screen.getByRole('button', { name: /Aggiungi Provincia/ })
+      const addProvinceButton = screen.getByRole('button', {
+        name: /Aggiungi Provincia/,
+      })
       fireEvent.click(addProvinceButton)
 
-      const provinceInput = screen.getByPlaceholderText('Codice provincia (3 cifre)')
+      const provinceInput = screen.getByPlaceholderText(
+        'Codice provincia (3 cifre)',
+      )
       expect(provinceInput).toBeInTheDocument()
       expect(provinceInput).toHaveAttribute('maxLength', '3')
     })
@@ -197,13 +239,17 @@ describe('AdditionalFeaturesStep', () => {
       render(
         <TestWrapper>
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
-      const addMunicipalityButton = screen.getByRole('button', { name: /Aggiungi Comune/ })
+      const addMunicipalityButton = screen.getByRole('button', {
+        name: /Aggiungi Comune/,
+      })
       fireEvent.click(addMunicipalityButton)
 
-      const municipalityInput = screen.getByPlaceholderText('Codice comune (6 cifre)')
+      const municipalityInput = screen.getByPlaceholderText(
+        'Codice comune (6 cifre)',
+      )
       expect(municipalityInput).toBeInTheDocument()
       expect(municipalityInput).toHaveAttribute('maxLength', '6')
     })
@@ -214,21 +260,25 @@ describe('AdditionalFeaturesStep', () => {
       render(
         <TestWrapper>
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
       expect(screen.getByText('Sconti')).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /Aggiungi Sconto/ })).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /Aggiungi Sconto/ }),
+      ).toBeInTheDocument()
     })
 
     it('allows adding a new discount', () => {
       render(
         <TestWrapper>
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
-      const addDiscountButton = screen.getByRole('button', { name: /Aggiungi Sconto/ })
+      const addDiscountButton = screen.getByRole('button', {
+        name: /Aggiungi Sconto/,
+      })
       fireEvent.click(addDiscountButton)
 
       expect(screen.getByText('Sconto 1')).toBeInTheDocument()
@@ -241,15 +291,19 @@ describe('AdditionalFeaturesStep', () => {
       render(
         <TestWrapper>
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
       // Add a discount first
-      const addDiscountButton = screen.getByRole('button', { name: /Aggiungi Sconto/ })
+      const addDiscountButton = screen.getByRole('button', {
+        name: /Aggiungi Sconto/,
+      })
       fireEvent.click(addDiscountButton)
 
       // Find and click the condition select
-      const conditionSelect = screen.getByRole('combobox', { name: /Condizione/ })
+      const conditionSelect = screen.getByRole('combobox', {
+        name: /Condizione/,
+      })
       fireEvent.click(conditionSelect)
 
       // Select "Other" option
@@ -264,15 +318,19 @@ describe('AdditionalFeaturesStep', () => {
       render(
         <TestWrapper>
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
       // Add a discount first
-      const addDiscountButton = screen.getByRole('button', { name: /Aggiungi Sconto/ })
+      const addDiscountButton = screen.getByRole('button', {
+        name: /Aggiungi Sconto/,
+      })
       fireEvent.click(addDiscountButton)
 
       // Add a new price
-      const addPriceButton = screen.getByRole('button', { name: /Aggiungi Prezzo/ })
+      const addPriceButton = screen.getByRole('button', {
+        name: /Aggiungi Prezzo/,
+      })
       fireEvent.click(addPriceButton)
 
       const priceCards = screen.getAllByText(/Prezzo \d+/)
@@ -285,42 +343,54 @@ describe('AdditionalFeaturesStep', () => {
       render(
         <TestWrapper>
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
-      expect(screen.getByText('Prodotti e Servizi Aggiuntivi')).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /Aggiungi Prodotto\/Servizio/ })).toBeInTheDocument()
+      expect(
+        screen.getByText('Prodotti e Servizi Aggiuntivi'),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /Aggiungi Prodotto\/Servizio/ }),
+      ).toBeInTheDocument()
     })
 
     it('allows adding a new product', () => {
       render(
         <TestWrapper>
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
-      const addProductButton = screen.getByRole('button', { name: /Aggiungi Prodotto\/Servizio/ })
+      const addProductButton = screen.getByRole('button', {
+        name: /Aggiungi Prodotto\/Servizio/,
+      })
       fireEvent.click(addProductButton)
 
       expect(screen.getByText('Prodotto/Servizio 1')).toBeInTheDocument()
       expect(screen.getByText('Nome Prodotto/Servizio *')).toBeInTheDocument()
       expect(screen.getByText('Macroarea')).toBeInTheDocument()
-      expect(screen.getByText('Dettagli Prodotto/Servizio *')).toBeInTheDocument()
+      expect(
+        screen.getByText('Dettagli Prodotto/Servizio *'),
+      ).toBeInTheDocument()
     })
 
     it('shows macro area details field when "Other" macro area is selected', async () => {
       render(
         <TestWrapper>
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
       // Add a product first
-      const addProductButton = screen.getByRole('button', { name: /Aggiungi Prodotto\/Servizio/ })
+      const addProductButton = screen.getByRole('button', {
+        name: /Aggiungi Prodotto\/Servizio/,
+      })
       fireEvent.click(addProductButton)
 
       // Find and click the macro area select
-      const macroAreaSelect = screen.getByRole('combobox', { name: /Macroarea/ })
+      const macroAreaSelect = screen.getByRole('combobox', {
+        name: /Macroarea/,
+      })
       fireEvent.click(macroAreaSelect)
 
       // Select "Other" option
@@ -335,11 +405,13 @@ describe('AdditionalFeaturesStep', () => {
       render(
         <TestWrapper>
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
       // Add a product first
-      const addProductButton = screen.getByRole('button', { name: /Aggiungi Prodotto\/Servizio/ })
+      const addProductButton = screen.getByRole('button', {
+        name: /Aggiungi Prodotto\/Servizio/,
+      })
       fireEvent.click(addProductButton)
 
       // Should show remove button
@@ -358,11 +430,13 @@ describe('AdditionalFeaturesStep', () => {
       render(
         <TestWrapper>
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
       // Add a discount
-      const addDiscountButton = screen.getByRole('button', { name: /Aggiungi Sconto/ })
+      const addDiscountButton = screen.getByRole('button', {
+        name: /Aggiungi Sconto/,
+      })
       fireEvent.click(addDiscountButton)
 
       // Try to submit without filling required fields
@@ -375,9 +449,11 @@ describe('AdditionalFeaturesStep', () => {
 
     it('validates consumption range consistency', async () => {
       render(
-        <TestWrapper offerType="03"> {/* FLAT offer */}
+        <TestWrapper offerType="03">
+          {' '}
+          {/* FLAT offer */}
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
       const minInput = screen.getByLabelText(/Consumo Minimo/)
@@ -392,9 +468,11 @@ describe('AdditionalFeaturesStep', () => {
 
     it('validates power range consistency', async () => {
       render(
-        <TestWrapper marketType="01" offerType="01"> {/* Electricity */}
+        <TestWrapper marketType="01" offerType="01">
+          {' '}
+          {/* Electricity */}
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
       const minPowerInput = screen.getByLabelText(/Potenza Minima/)
@@ -413,22 +491,28 @@ describe('AdditionalFeaturesStep', () => {
       const { rerender } = render(
         <TestWrapper marketType="01" offerType="01">
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
       // Should show electricity power fields
       expect(screen.getByText('Potenza Minima (kW)')).toBeInTheDocument()
-      expect(screen.queryByText('Offerte Congiunte (Dual Fuel)')).not.toBeInTheDocument()
+      expect(
+        screen.queryByText('Offerte Congiunte (Dual Fuel)'),
+      ).not.toBeInTheDocument()
 
       rerender(
         <TestWrapper marketType="03" offerType="03">
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
       // Should show dual fuel and consumption fields
-      expect(screen.getByText('Offerte Congiunte (Dual Fuel)')).toBeInTheDocument()
-      expect(screen.getByText('Consumo Minimo * (kWh/anno o Sm³/anno)')).toBeInTheDocument()
+      expect(
+        screen.getByText('Offerte Congiunte (Dual Fuel)'),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText('Consumo Minimo * (kWh/anno o Sm³/anno)'),
+      ).toBeInTheDocument()
     })
   })
 
@@ -437,24 +521,30 @@ describe('AdditionalFeaturesStep', () => {
       render(
         <TestWrapper>
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
       // Check for proper button roles
-      expect(screen.getByRole('button', { name: /Aggiungi Sconto/ })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /Aggiungi Prodotto\/Servizio/ })).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /Aggiungi Sconto/ }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /Aggiungi Prodotto\/Servizio/ }),
+      ).toBeInTheDocument()
     })
 
     it('supports keyboard navigation', () => {
       render(
         <TestWrapper>
           <AdditionalFeaturesStep />
-        </TestWrapper>
+        </TestWrapper>,
       )
 
-      const addDiscountButton = screen.getByRole('button', { name: /Aggiungi Sconto/ })
+      const addDiscountButton = screen.getByRole('button', {
+        name: /Aggiungi Sconto/,
+      })
       addDiscountButton.focus()
       expect(addDiscountButton).toHaveFocus()
     })
   })
-}) 
+})
