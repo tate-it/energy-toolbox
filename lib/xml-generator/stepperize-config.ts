@@ -1,10 +1,12 @@
 import { defineStepper } from '@/components/stepper'
-import { PlaceholderComponent } from '@/components/xml-generator'
 import { ActivationContactsStep } from '@/components/xml-generator/steps/activation-contacts-step'
+import { AdditionalFeaturesStep } from '@/components/xml-generator/steps/additional-features-step'
 import { BasicInfoStep } from '@/components/xml-generator/steps/basic-info-step'
 import { CompanyComponentsStep } from '@/components/xml-generator/steps/company-components-step'
 import { OfferDetailsStep } from '@/components/xml-generator/steps/offer-details-step'
+import { PaymentConditionsStep } from '@/components/xml-generator/steps/payment-conditions-step'
 import { PricingConfigStep } from '@/components/xml-generator/steps/pricing-config-step'
+import { ValidityReviewStep } from '@/components/xml-generator/steps/validity-review-step'
 import {
   activationContactsSchema,
   additionalFeaturesSchema,
@@ -34,9 +36,9 @@ const componentMap = {
   activationContacts: ActivationContactsStep,
   pricingConfig: PricingConfigStep,
   companyComponents: CompanyComponentsStep,
-  paymentConditions: PlaceholderComponent,
-  additionalFeatures: PlaceholderComponent,
-  validityReview: PlaceholderComponent,
+  paymentConditions: PaymentConditionsStep,
+  additionalFeatures: AdditionalFeaturesStep,
+  validityReview: ValidityReviewStep,
 } as const
 
 export const xmlFormStepper = defineStepper(

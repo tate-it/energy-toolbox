@@ -281,7 +281,7 @@ import {
   'basic-info': () => <BasicInfoComponent />,
   'offer-details': () => <OfferDetailsComponent />,
   'activation-contacts': () => <ActivationContactsComponent />, // Update this line
-  'pricing-config': () => <PlaceholderComponent title="Pricing Configuration" />,
+  'pricing-config': () => <PlaceholderComponent>,
   // ... other steps
 })}
 ```

@@ -14,10 +14,10 @@
 - `components/xml-generator/steps/PricingConfigStep.test.tsx` - Unit tests for pricing config
 - `components/xml-generator/steps/CompanyComponentsStep.tsx` - Company components step
 - `components/xml-generator/steps/CompanyComponentsStep.test.tsx` - Unit tests for company components
-- `components/xml-generator/steps/PaymentConditionsStep.tsx` - Payment methods and conditions step
-- `components/xml-generator/steps/PaymentConditionsStep.test.tsx` - Unit tests for payment/conditions
-- `components/xml-generator/steps/AdditionalFeaturesStep.tsx` - Additional features step
-- `components/xml-generator/steps/AdditionalFeaturesStep.test.tsx` - Unit tests for additional features
+- `components/xml-generator/steps/payment-conditions-step.tsx` - Payment methods and conditions step - COMPLETED
+- `components/xml-generator/steps/payment-conditions-step.test.tsx` - Unit tests for payment/conditions - COMPLETED
+- `components/xml-generator/steps/additional-features-step.tsx` - Additional features step - COMPLETED
+- `components/xml-generator/steps/additional-features-step.test.tsx` - Unit tests for additional features - COMPLETED
 - `components/xml-generator/steps/ValidityReviewStep.tsx` - Final validity and review step
 - `components/xml-generator/steps/ValidityReviewStep.test.tsx` - Unit tests for validity/review
 - `lib/xml-generator/schemas/index.ts` - Main Zod schema definitions for all form fields
@@ -63,9 +63,9 @@
   - [x] 2.4 Implement ActivationContactsStep with activation methods and contact information fields
   - [x] 2.5 Implement PricingConfigStep with energy price references, time bands, and dispatching
   - [x] 2.6 Implement CompanyComponentsStep with dynamic component addition and price intervals
-  - [ ] 2.7 Implement PaymentConditionsStep with payment methods and contractual conditions
-  - [ ] 2.8 Implement AdditionalFeaturesStep with discounts, zones, and additional products
-  - [ ] 2.9 Implement ValidityReviewStep with date selection and final review summary
+  - [x] 2.7 Implement PaymentConditionsStep with payment methods and contractual conditions
+  - [x] 2.8 Implement AdditionalFeaturesStep with discounts, zones, and additional products
+  - [x] 2.9 Implement ValidityReviewStep with date selection and final review summary
 - [ ] 3.0 Create XML Generation and Export Functionality
   - [ ] 3.1 Implement XML builder in lib/xml-generator/xml-builder.ts using fast-xml-parser
   - [ ] 3.2 Create XML structure matching the exact SII specification hierarchy and element ordering

@@ -520,20 +520,605 @@ export const companyComponentsSchema = z
     },
   )
 
-// Payment & Conditions Schema (placeholder for now)
-export const paymentConditionsSchema = z.object({
-  // TODO: Add fields when implementing this step
-})
+// Payment & Conditions Schema - matching SII specification
+export const paymentConditionsSchema = z
+  .object({
+    // Payment methods (MetodoPagamento) - mandatory, at least one required
+    paymentMethods: z
+      .array(
+        z.object({
+          // Payment method type (MODALITA_PAGAMENTO) - mandatory
+          paymentMethodType: z.enum(['01', '02', '03', '04', '99'], {
+            required_error: 'Seleziona un metodo di pagamento',
+          }),
 
-// Additional Features Schema (placeholder for now)
-export const additionalFeaturesSchema = z.object({
-  // TODO: Add fields when implementing this step
-})
+          // Description (DESCRIZIONE) - mandatory when paymentMethodType = '99'
+          description: z
+            .string()
+            .max(3000, 'La descrizione non può superare i 3000 caratteri')
+            .optional(),
+        }),
+      )
+      .min(1, 'È richiesto almeno un metodo di pagamento'),
 
-// Validity & Review Schema (placeholder for now)
-export const validityReviewSchema = z.object({
-  // TODO: Add fields when implementing this step
-})
+    // Contractual conditions (CondizioniContrattuali) - optional, can be multiple
+    contractualConditions: z
+      .array(
+        z.object({
+          // Condition type (TIPOLOGIA_CONDIZIONE) - mandatory
+          conditionType: z.enum(['01', '02', '03', '04', '05', '99'], {
+            required_error: 'Seleziona un tipo di condizione',
+          }),
+
+          // Alternative description (ALTRO) - mandatory when conditionType = '99'
+          alternativeDescription: z
+            .string()
+            .max(
+              3000,
+              'La descrizione alternativa non può superare i 3000 caratteri',
+            )
+            .optional(),
+
+          // Condition description (DESCRIZIONE) - mandatory
+          description: z
+            .string()
+            .min(1, 'La descrizione della condizione è obbligatoria')
+            .max(3000, 'La descrizione non può superare i 3000 caratteri'),
+
+          // Is limiting (LIMITANTE) - mandatory
+          isLimiting: z.enum(['01', '02'], {
+            required_error: 'Specifica se la condizione è limitante',
+          }),
+        }),
+      )
+      .optional(),
+  })
+  .refine(
+    (data) => {
+      // description is mandatory when paymentMethodType = '99'
+      for (const paymentMethod of data.paymentMethods) {
+        if (
+          paymentMethod.paymentMethodType === '99' &&
+          (!paymentMethod.description ||
+            paymentMethod.description.trim() === '')
+        ) {
+          return false
+        }
+      }
+      return true
+    },
+    {
+      message:
+        'La descrizione del metodo di pagamento è obbligatoria quando si seleziona "Altro"',
+      path: ['paymentMethods'],
+    },
+  )
+  .refine(
+    (data) => {
+      // alternativeDescription is mandatory when conditionType = '99'
+      if (data.contractualConditions) {
+        for (const condition of data.contractualConditions) {
+          if (
+            condition.conditionType === '99' &&
+            (!condition.alternativeDescription ||
+              condition.alternativeDescription.trim() === '')
+          ) {
+            return false
+          }
+        }
+      }
+      return true
+    },
+    {
+      message:
+        'La descrizione alternativa è obbligatoria quando si seleziona "Altro"',
+      path: ['contractualConditions'],
+    },
+  )
+
+// Additional Features Schema - matching SII specification
+export const additionalFeaturesSchema = z
+  .object({
+    // Offer Characteristics (CaratteristicheOfferta)
+    // Mandatory if TIPO_OFFERTA = "03" (FLAT)
+    offerCharacteristics: z
+      .object({
+        // Minimum consumption (CONSUMO_MIN) - mandatory if TIPO_OFFERTA = "03"
+        consumptionMin: z
+          .number()
+          .int()
+          .min(0, 'Il consumo minimo deve essere maggiore o uguale a 0')
+          .max(999_999_999, 'Il consumo minimo non può superare 999999999')
+          .optional(),
+
+        // Maximum consumption (CONSUMO_MAX) - mandatory if TIPO_OFFERTA = "03"
+        consumptionMax: z
+          .number()
+          .int()
+          .min(0, 'Il consumo massimo deve essere maggiore o uguale a 0')
+          .max(999_999_999, 'Il consumo massimo non può superare 999999999')
+          .optional(),
+
+        // Minimum power (POTENZA_MIN) - optional, for electricity offers
+        powerMin: z
+          .number()
+          .min(0, 'La potenza minima deve essere maggiore o uguale a 0')
+          .max(
+            999_999_999.99,
+            'La potenza minima non può superare 999999999.99',
+          )
+          .optional(),
+
+        // Maximum power (POTENZA_MAX) - optional, for electricity offers
+        powerMax: z
+          .number()
+          .min(0, 'La potenza massima deve essere maggiore o uguale a 0')
+          .max(
+            999_999_999.99,
+            'La potenza massima non può superare 999999999.99',
+          )
+          .optional(),
+      })
+      .optional(),
+
+    // Dual Offer (OffertaDUAL)
+    // Mandatory if TIPO_MERCATO = "03" (Dual Fuel)
+    dualOffer: z
+      .object({
+        // Electricity joint offers (OFFERTE_CONGIUNTE_EE) - mandatory if TIPO_MERCATO = "03"
+        electricityJointOffers: z
+          .array(
+            z
+              .string()
+              .min(1, 'Il codice offerta elettrica è obbligatorio')
+              .max(32, 'Il codice offerta non può superare i 32 caratteri'),
+          )
+          .min(1, 'È richiesta almeno una offerta elettrica congiunta')
+          .optional(),
+
+        // Gas joint offers (OFFERTE_CONGIUNTE_GAS) - mandatory if TIPO_MERCATO = "03"
+        gasJointOffers: z
+          .array(
+            z
+              .string()
+              .min(1, 'Il codice offerta gas è obbligatorio')
+              .max(32, 'Il codice offerta non può superare i 32 caratteri'),
+          )
+          .min(1, 'È richiesta almeno una offerta gas congiunta')
+          .optional(),
+      })
+      .optional(),
+
+    // Zone Offers (ZoneOfferta) - optional
+    zoneOffers: z
+      .object({
+        // Regions (REGIONE) - optional
+        regions: z
+          .array(
+            z
+              .string()
+              .length(2, 'Il codice regione deve essere di 2 caratteri')
+              .regex(/^\d{2}$/, 'Il codice regione deve contenere solo numeri'),
+          )
+          .optional(),
+
+        // Provinces (PROVINCIA) - optional
+        provinces: z
+          .array(
+            z
+              .string()
+              .length(3, 'Il codice provincia deve essere di 3 caratteri')
+              .regex(
+                /^\d{3}$/,
+                'Il codice provincia deve contenere solo numeri',
+              ),
+          )
+          .optional(),
+
+        // Municipalities (COMUNE) - optional
+        municipalities: z
+          .array(
+            z
+              .string()
+              .length(6, 'Il codice comune deve essere di 6 caratteri')
+              .regex(/^\d{6}$/, 'Il codice comune deve contenere solo numeri'),
+          )
+          .optional(),
+      })
+      .optional(),
+
+    // Discounts (Sconto) - optional, can be multiple
+    discounts: z
+      .array(
+        z.object({
+          // Discount name (NOME) - mandatory
+          name: z
+            .string()
+            .min(1, 'Il nome dello sconto è obbligatorio')
+            .max(255, 'Il nome dello sconto non può superare i 255 caratteri'),
+
+          // Discount description (DESCRIZIONE) - mandatory
+          description: z
+            .string()
+            .min(1, 'La descrizione dello sconto è obbligatoria')
+            .max(3000, 'La descrizione non può superare i 3000 caratteri'),
+
+          // Component/band codes (CODICE_COMPONENTE_FASCIA) - optional
+          componentBandCodes: z
+            .array(
+              z.enum([
+                // Components
+                '01',
+                '02',
+                '03',
+                '04',
+                '05',
+                '06',
+                '07',
+                '09',
+                '10',
+                // Bands
+                '11',
+                '12',
+                '13',
+                '14',
+                '15',
+                '16',
+                '17',
+                '18',
+                // Combined bands
+                '91',
+                '92',
+                '93',
+              ]),
+            )
+            .optional(),
+
+          // Discount validity (VALIDITA) - mandatory if PeriodoValidita is not populated
+          validity: z.enum(['01', '02', '03']).optional(),
+
+          // VAT applicability (IVA_SCONTO) - mandatory
+          vatApplicability: z.enum(['01', '02'], {
+            required_error: "Specifica l'applicabilità IVA",
+          }),
+
+          // Validity period (PeriodoValidita) - optional
+          validityPeriod: z
+            .object({
+              // Duration (DURATA) - optional
+              duration: z
+                .number()
+                .int()
+                .min(1, 'La durata deve essere maggiore di 0')
+                .max(99, 'La durata non può superare 99')
+                .optional(),
+
+              // Valid until (VALIDO_FINO) - format: MM/AAAA
+              validUntil: z
+                .string()
+                .regex(/^\d{2}\/\d{4}$/, 'Formato non valido (MM/AAAA)')
+                .optional(),
+
+              // Valid months (MESE_VALIDITA) - optional
+              validMonths: z
+                .array(
+                  z.enum([
+                    '01',
+                    '02',
+                    '03',
+                    '04',
+                    '05',
+                    '06',
+                    '07',
+                    '08',
+                    '09',
+                    '10',
+                    '11',
+                    '12',
+                  ]),
+                )
+                .optional(),
+            })
+            .optional(),
+
+          // Discount condition (Condizione) - mandatory
+          condition: z.object({
+            // Application condition (CONDIZIONE_APPLICAZIONE) - mandatory
+            applicationCondition: z.enum(['00', '01', '02', '03', '99'], {
+              required_error: 'Seleziona la condizione di applicazione',
+            }),
+
+            // Condition description (DESCRIZIONE_CONDIZIONE) - mandatory if CONDIZIONE_APPLICAZIONE = "99"
+            conditionDescription: z
+              .string()
+              .max(3000, 'La descrizione non può superare i 3000 caratteri')
+              .optional(),
+          }),
+
+          // Discount prices (PREZZISconto) - mandatory, at least one
+          discountPrices: z
+            .array(
+              z.object({
+                // Discount type (TIPOLOGIA) - mandatory
+                discountType: z.enum(['01', '02', '03', '04'], {
+                  required_error: 'Seleziona il tipo di sconto',
+                }),
+
+                // Valid from (VALIDO_DA) - optional
+                validFrom: z
+                  .number()
+                  .int()
+                  .min(0, 'Il valore deve essere maggiore o uguale a 0')
+                  .max(999_999_999, 'Il valore non può superare 999999999')
+                  .optional(),
+
+                // Valid to (VALIDO_FINO) - optional
+                validTo: z
+                  .number()
+                  .int()
+                  .min(0, 'Il valore deve essere maggiore o uguale a 0')
+                  .max(999_999_999, 'Il valore non può superare 999999999')
+                  .optional(),
+
+                // Unit of measure (UNITA_MISURA) - mandatory
+                unitOfMeasure: z.enum(['01', '02', '03', '04', '05', '06'], {
+                  required_error: "Seleziona l'unità di misura",
+                }),
+
+                // Price (PREZZO) - mandatory
+                price: z
+                  .number()
+                  .min(0, 'Il prezzo deve essere maggiore o uguale a 0')
+                  .max(
+                    999_999_999.99,
+                    'Il prezzo non può superare 999999999.99',
+                  ),
+              }),
+            )
+            .min(1, 'È richiesto almeno un prezzo di sconto'),
+        }),
+      )
+      .optional(),
+
+    // Additional Products/Services (ProdottiServiziAggiuntivi) - optional, can be multiple
+    additionalProducts: z
+      .array(
+        z.object({
+          // Product name (NOME) - mandatory
+          name: z
+            .string()
+            .min(1, 'Il nome del prodotto è obbligatorio')
+            .max(255, 'Il nome del prodotto non può superare i 255 caratteri'),
+
+          // Product details (DETTAGLIO) - mandatory
+          details: z
+            .string()
+            .min(1, 'I dettagli del prodotto sono obbligatori')
+            .max(3000, 'I dettagli non possono superare i 3000 caratteri'),
+
+          // Macro area (MACROAREA) - optional
+          macroArea: z
+            .enum(['01', '02', '03', '04', '05', '06', '99'])
+            .optional(),
+
+          // Macro area details (DETTAGLI_MACROAREA) - mandatory if MACROAREA = "99"
+          macroAreaDetails: z
+            .string()
+            .max(
+              3000,
+              'I dettagli della macroarea non possono superare i 3000 caratteri',
+            )
+            .optional(),
+        }),
+      )
+      .optional(),
+  })
+  .refine(
+    (data) => {
+      // Validate consumption range consistency
+      if (
+        data.offerCharacteristics?.consumptionMin &&
+        data.offerCharacteristics?.consumptionMax
+      ) {
+        return (
+          data.offerCharacteristics.consumptionMin <=
+          data.offerCharacteristics.consumptionMax
+        )
+      }
+      return true
+    },
+    {
+      message:
+        'Il consumo minimo deve essere inferiore o uguale al consumo massimo',
+      path: ['offerCharacteristics', 'consumptionMax'],
+    },
+  )
+  .refine(
+    (data) => {
+      // Validate power range consistency
+      if (
+        data.offerCharacteristics?.powerMin &&
+        data.offerCharacteristics?.powerMax
+      ) {
+        return (
+          data.offerCharacteristics.powerMin <=
+          data.offerCharacteristics.powerMax
+        )
+      }
+      return true
+    },
+    {
+      message:
+        'La potenza minima deve essere inferiore o uguale alla potenza massima',
+      path: ['offerCharacteristics', 'powerMax'],
+    },
+  )
+  .refine(
+    (data) => {
+      // Validate discount condition description when "Other" is selected
+      if (data.discounts) {
+        for (const discount of data.discounts) {
+          if (
+            discount.condition.applicationCondition === '99' &&
+            (!discount.condition.conditionDescription ||
+              discount.condition.conditionDescription.trim() === '')
+          ) {
+            return false
+          }
+        }
+      }
+      return true
+    },
+    {
+      message:
+        'La descrizione della condizione è obbligatoria quando si seleziona "Altro"',
+      path: ['discounts'],
+    },
+  )
+  .refine(
+    (data) => {
+      // Validate discount validity: either validity or validityPeriod must be specified
+      if (data.discounts) {
+        for (const discount of data.discounts) {
+          if (!(discount.validity || discount.validityPeriod)) {
+            return false
+          }
+        }
+      }
+      return true
+    },
+    {
+      message:
+        'È necessario specificare la validità dello sconto o il periodo di validità',
+      path: ['discounts'],
+    },
+  )
+  .refine(
+    (data) => {
+      // Validate additional products macro area details when "Other" is selected
+      if (data.additionalProducts) {
+        for (const product of data.additionalProducts) {
+          if (
+            product.macroArea === '99' &&
+            (!product.macroAreaDetails ||
+              product.macroAreaDetails.trim() === '')
+          ) {
+            return false
+          }
+        }
+      }
+      return true
+    },
+    {
+      message:
+        'I dettagli della macroarea sono obbligatori quando si seleziona "Altro"',
+      path: ['additionalProducts'],
+    },
+  )
+  .refine(
+    (data) => {
+      // Validate discount price ranges
+      if (data.discounts) {
+        for (const discount of data.discounts) {
+          for (const price of discount.discountPrices) {
+            if (
+              price.validFrom !== undefined &&
+              price.validTo !== undefined &&
+              price.validFrom >= price.validTo
+            ) {
+              return false
+            }
+          }
+        }
+      }
+      return true
+    },
+    {
+      message:
+        'Il valore "Valido Da" deve essere inferiore al valore "Valido Fino"',
+      path: ['discounts'],
+    },
+  )
+
+// Validity & Review Schema - matching SII specification
+export const validityReviewSchema = z
+  .object({
+    // Validity period (PeriodoValidita) - mandatory for offer validity
+    validityPeriod: z.object({
+      // Start date (DATA_INIZIO) - format: gg/mm/aaaa - mandatory
+      startDate: z
+        .string()
+        .min(1, 'La data di inizio è obbligatoria')
+        .regex(/^\d{2}\/\d{2}\/\d{4}$/, 'Formato data non valido (gg/mm/aaaa)'),
+
+      // End date (DATA_FINE) - format: gg/mm/aaaa - optional (null means indefinite)
+      endDate: z
+        .string()
+        .regex(/^\d{2}\/\d{2}\/\d{4}$/, 'Formato data non valido (gg/mm/aaaa)')
+        .optional()
+        .or(z.literal('')),
+    }),
+
+    // Review confirmation - to ensure user has reviewed all data
+    reviewConfirmed: z.boolean().refine((val) => val === true, {
+      message: 'È necessario confermare la revisione prima di procedere',
+    }),
+
+    // Optional notes for internal use
+    notes: z
+      .string()
+      .max(3000, 'Le note non possono superare i 3000 caratteri')
+      .optional(),
+  })
+  .refine(
+    (data) => {
+      // Validate date range if both dates are provided
+      if (data.validityPeriod.endDate && data.validityPeriod.endDate !== '') {
+        const startParts = data.validityPeriod.startDate.split('/')
+        const endParts = data.validityPeriod.endDate.split('/')
+
+        const startDate = new Date(
+          Number.parseInt(startParts[2], 10), // year
+          Number.parseInt(startParts[1], 10) - 1, // month (0-indexed)
+          Number.parseInt(startParts[0], 10), // day
+        )
+
+        const endDate = new Date(
+          Number.parseInt(endParts[2], 10), // year
+          Number.parseInt(endParts[1], 10) - 1, // month (0-indexed)
+          Number.parseInt(endParts[0], 10), // day
+        )
+
+        return startDate <= endDate
+      }
+      return true
+    },
+    {
+      message:
+        'La data di fine deve essere successiva o uguale alla data di inizio',
+      path: ['validityPeriod', 'endDate'],
+    },
+  )
+  .refine(
+    (data) => {
+      // Validate that start date is not in the past (at least today)
+      const startParts = data.validityPeriod.startDate.split('/')
+      const startDate = new Date(
+        Number.parseInt(startParts[2], 10), // year
+        Number.parseInt(startParts[1], 10) - 1, // month (0-indexed)
+        Number.parseInt(startParts[0], 10), // day
+      )
+
+      const today = new Date()
+      today.setHours(0, 0, 0, 0) // Reset time to start of day
+
+      return startDate >= today
+    },
+    {
+      message: 'La data di inizio non può essere precedente alla data odierna',
+      path: ['validityPeriod', 'startDate'],
+    },
+  )
 
 // Type exports for use in components
 export type BasicInfoFormValues = z.infer<typeof basicInfoSchema>
