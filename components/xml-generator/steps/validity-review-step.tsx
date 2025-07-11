@@ -5,11 +5,16 @@ import {
   Calendar,
   CheckCircle2,
   Database,
+  Download,
+  Eye,
   FileText,
 } from 'lucide-react'
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { type UseFormReturn, useFormContext } from 'react-hook-form'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -36,6 +41,11 @@ import {
   OFFER_TYPE_LABELS,
 } from '@/lib/xml-generator/constants'
 import type { ValidityReviewFormValues } from '@/lib/xml-generator/schemas'
+import {
+  buildXML,
+  downloadXML,
+  generateXMLFilename,
+} from '@/lib/xml-generator/xml-builder'
 import { ValidityReviewSkeleton } from './skeletons/validity-review-skeleton'
 
 // Helper function to get label from labels object
@@ -455,18 +465,274 @@ function ReviewConfirmationCard({
   )
 }
 
-function XmlPreviewCard() {
+function XmlPreviewCard({ formStates }: { formStates: FormStates }) {
+  const [showPreview, setShowPreview] = useState(false)
+  const [xmlContent, setXmlContent] = useState<string>('')
+  const [error, setError] = useState<string | null>(null)
+
+  const handleGeneratePreview = () => {
+    try {
+      // Convert form states to the format expected by buildXML
+      const formData = {
+        basicInfo: {
+          pivaUtente: formStates.basicInfo?.pivaUtente || '',
+          codOfferta: formStates.basicInfo?.codOfferta || '',
+        },
+        offerDetails: {
+          tipoMercato: formStates.offerDetails?.marketType || '',
+          offertaSingola: formStates.offerDetails?.singleOffer,
+          tipoCliente: formStates.offerDetails?.clientType || '',
+          domesticoResidente: formStates.offerDetails?.residentialStatus,
+          tipoOfferta: formStates.offerDetails?.offerType || '',
+          tipologiaAttContr:
+            formStates.offerDetails?.contractActivationTypes || [],
+          nomeOfferta: formStates.offerDetails?.offerName || '',
+          descrizione: formStates.offerDetails?.offerDescription || '',
+          durata: formStates.offerDetails?.duration || 0,
+          garanzie: formStates.offerDetails?.guarantees || '',
+        },
+        activationContacts: {
+          modalita: formStates.activationContacts?.activationMethods || [],
+          descrizioneModalita:
+            formStates.activationContacts?.activationDescription,
+          telefono: formStates.activationContacts?.phone || '',
+          urlSitoVenditore: formStates.activationContacts?.vendorWebsite,
+          urlOfferta: formStates.activationContacts?.offerUrl,
+        },
+        pricingConfig: {
+          riferimentiPrezzoEnergia: formStates.pricingConfig?.energyPriceIndex
+            ? {
+                idxPrezzoEnergia:
+                  formStates.pricingConfig.energyPriceIndex || '',
+                altro: formStates.pricingConfig.alternativeIndexDescription,
+              }
+            : undefined,
+          tipoPrezzo: formStates.pricingConfig?.timeBandConfiguration
+            ? {
+                tipologiaFasce:
+                  formStates.pricingConfig.timeBandConfiguration || '',
+              }
+            : undefined,
+          fasceOrarieSettimanale: formStates.pricingConfig?.weeklyTimeBands
+            ? {
+                fLunedi: formStates.pricingConfig.weeklyTimeBands.monday,
+                fMartedi: formStates.pricingConfig.weeklyTimeBands.tuesday,
+                fMercoledi: formStates.pricingConfig.weeklyTimeBands.wednesday,
+                fGiovedi: formStates.pricingConfig.weeklyTimeBands.thursday,
+                fVenerdi: formStates.pricingConfig.weeklyTimeBands.friday,
+                fSabato: formStates.pricingConfig.weeklyTimeBands.saturday,
+                fDomenica: formStates.pricingConfig.weeklyTimeBands.sunday,
+                fFestivita: formStates.pricingConfig.weeklyTimeBands.holidays,
+              }
+            : undefined,
+          dispacciamento: formStates.pricingConfig?.dispatching?.map(
+            (disp) => ({
+              tipoDispacciamento: disp.dispatchingType,
+              valoreDisp: disp.dispatchingValue,
+              nome: disp.componentName,
+              descrizione: disp.componentDescription,
+            }),
+          ),
+        },
+        companyComponents: {
+          componentiRegolate: formStates.companyComponents?.regulatedComponents
+            ? {
+                codice: formStates.companyComponents.regulatedComponents || [],
+              }
+            : undefined,
+          componenteImpresa:
+            formStates.companyComponents?.companyComponents?.map((comp) => ({
+              nome: comp.name,
+              descrizione: comp.description,
+              tipologia: comp.componentType,
+              macroArea: comp.macroArea,
+              intervalloPrezzi:
+                comp.priceIntervals?.map((interval) => ({
+                  fasciaComponente: interval.componentTimeBand,
+                  consumoDa: interval.consumptionFrom,
+                  consumoA: interval.consumptionTo,
+                  prezzo: interval.price,
+                  unitaMisura: interval.unitOfMeasure,
+                  periodoValidita: interval.validityPeriod,
+                })) || [],
+            })),
+        },
+        paymentConditions: {
+          metodoPagamento:
+            formStates.paymentConditions?.paymentMethods?.map((method) => ({
+              modalitaPagamento: method.paymentMethodType,
+              descrizione: method.description,
+            })) || [],
+          condizioniContrattuali:
+            formStates.paymentConditions?.contractualConditions?.map(
+              (cond) => ({
+                tipologiaCondizione: cond.conditionType,
+                altro: cond.alternativeDescription,
+                descrizione: cond.description,
+                limitante: cond.isLimiting,
+              }),
+            ),
+        },
+        additionalFeatures: {
+          caratteristicheOfferta: formStates.additionalFeatures
+            ?.offerCharacteristics
+            ? {
+                consumoMin:
+                  formStates.additionalFeatures.offerCharacteristics
+                    .consumptionMin,
+                consumoMax:
+                  formStates.additionalFeatures.offerCharacteristics
+                    .consumptionMax,
+                potenzaMin:
+                  formStates.additionalFeatures.offerCharacteristics.powerMin,
+                potenzaMax:
+                  formStates.additionalFeatures.offerCharacteristics.powerMax,
+              }
+            : undefined,
+          offertaDUAL: formStates.additionalFeatures?.dualOffer
+            ? {
+                offerteCongiungeEE:
+                  formStates.additionalFeatures.dualOffer
+                    .electricityJointOffers || [],
+                offerteCongiungeGas:
+                  formStates.additionalFeatures.dualOffer.gasJointOffers || [],
+              }
+            : undefined,
+          zoneOfferta: formStates.additionalFeatures?.zoneOffers
+            ? {
+                regione: formStates.additionalFeatures.zoneOffers.regions,
+                provincia: formStates.additionalFeatures.zoneOffers.provinces,
+                comune: formStates.additionalFeatures.zoneOffers.municipalities,
+              }
+            : undefined,
+          sconto: formStates.additionalFeatures?.discounts?.map((discount) => ({
+            nome: discount.name,
+            descrizione: discount.description,
+            codiceComponenteFascia: discount.componentBandCodes,
+            validita: discount.validity,
+            ivaSconto: discount.vatApplicability,
+            periodoValidita: discount.validityPeriod,
+            scontoCondizione: {
+              condizioneApplicazione: discount.condition.applicationCondition,
+              descrizioneCondizione: discount.condition.conditionDescription,
+            },
+            prezziSconto:
+              discount.discountPrices?.map((price) => ({
+                tipologia: price.discountType,
+                validoDa: price.validFrom,
+                validoFino: price.validTo,
+                unitaMisura: price.unitOfMeasure,
+                prezzo: price.price,
+              })) || [],
+          })),
+          prodottiServiziAggiuntivi:
+            formStates.additionalFeatures?.additionalProducts?.map((prod) => ({
+              nome: prod.name,
+              dettaglio: prod.details,
+              macroArea: prod.macroArea,
+              dettagliMacroArea: prod.macroAreaDetails,
+            })),
+        },
+        validityReview: {
+          validitaOfferta: {
+            dataInizio:
+              formStates.validityReview?.validityPeriod?.startDate || '',
+            dataFine: formStates.validityReview?.validityPeriod?.endDate || '',
+          },
+        },
+      }
+
+      const xml = buildXML(formData)
+      setXmlContent(xml)
+      setError(null)
+      setShowPreview(true)
+    } catch (err) {
+      setError('Errore nella generazione del XML. Verifica i dati inseriti.')
+      // Error details: err
+    }
+  }
+
+  const handleDownload = () => {
+    if (xmlContent) {
+      const filename = generateXMLFilename(
+        formStates.basicInfo?.pivaUtente || 'IT00000000000',
+        formStates.offerDetails?.offerName || 'OFFERTA',
+      )
+      downloadXML(xmlContent, filename)
+    }
+  }
+
+  if (showPreview && xmlContent) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <span className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-purple-600" />
+              Anteprima XML
+            </span>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setShowPreview(false)}
+                size="sm"
+                variant="outline"
+              >
+                <Eye className="mr-2 h-4 w-4" />
+                Nascondi
+              </Button>
+              <Button onClick={handleDownload} size="sm" variant="default">
+                <Download className="mr-2 h-4 w-4" />
+                Scarica XML
+              </Button>
+            </div>
+          </CardTitle>
+          <CardDescription>
+            Anteprima del file XML che verrà generato per l&apos;invio al SII
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="relative max-h-[600px] overflow-auto rounded-lg border">
+            <SyntaxHighlighter
+              customStyle={{
+                margin: 0,
+                borderRadius: '0.5rem',
+                fontSize: '0.875rem',
+              }}
+              language="xml"
+              showLineNumbers
+              style={vscDarkPlus}
+            >
+              {xmlContent}
+            </SyntaxHighlighter>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
-    <Card className="border-gray-300 border-dashed">
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <FileText className="h-5 w-5 text-purple-600" />
+          Anteprima XML
+        </CardTitle>
+        <CardDescription>
+          Genera un&apos;anteprima del file XML per verificare i dati prima del
+          download
+        </CardDescription>
+      </CardHeader>
       <CardContent className="py-8 text-center">
-        <div className="mb-2 text-gray-400">
-          <FileText className="mx-auto mb-3 h-12 w-12" />
-        </div>
-        <h4 className="mb-2 font-medium text-gray-600">Anteprima XML</h4>
-        <p className="text-gray-500 text-sm">
-          La funzionalità di anteprima e generazione XML sarà implementata nelle
-          prossime versioni
-        </p>
+        {error ? (
+          <div className="mb-4 rounded-lg bg-red-50 p-4 text-red-600">
+            <AlertCircle className="mb-2 inline-block h-5 w-5" />
+            <p className="text-sm">{error}</p>
+          </div>
+        ) : null}
+        <Button onClick={handleGeneratePreview} size="lg">
+          <Eye className="mr-2 h-5 w-5" />
+          Genera Anteprima XML
+        </Button>
       </CardContent>
     </Card>
   )
@@ -493,7 +759,7 @@ export function ValidityReviewStepComponent() {
       <ValidityPeriodCard form={form} />
       <FormSummaryCard formStates={formStates} />
       <ReviewConfirmationCard form={form} />
-      <XmlPreviewCard />
+      <XmlPreviewCard formStates={formStates} />
     </div>
   )
 }

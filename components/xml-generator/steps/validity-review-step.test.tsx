@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { FormProvider, useForm } from 'react-hook-form'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useFormStates } from '@/hooks/use-form-states'
@@ -12,15 +13,58 @@ import { ValidityReviewStepComponent as ValidityReviewStep } from './validity-re
 // Mock useFormStates hook
 vi.mock('@/hooks/use-form-states')
 
+// Mock XML builder functions
+vi.mock('@/lib/xml-generator/xml-builder', () => ({
+  buildXML: vi.fn(
+    () => `<?xml version="1.0" encoding="UTF-8"?>
+<Offerta>
+    <IdentificativiOfferta>
+        <PIVA_UTENTE>IT12345678901</PIVA_UTENTE>
+        <COD_OFFERTA>TESTOFFERTA123</COD_OFFERTA>
+    </IdentificativiOfferta>
+    <DettaglioOfferta>
+        <TIPO_MERCATO>01</TIPO_MERCATO>
+        <TIPO_CLIENTE>01</TIPO_CLIENTE>
+        <TIPO_OFFERTA>01</TIPO_OFFERTA>
+        <NOME_OFFERTA>Test Offer</NOME_OFFERTA>
+    </DettaglioOfferta>
+</Offerta>`,
+  ),
+  downloadXML: vi.fn(),
+  generateXMLFilename: vi.fn(() => 'IT12345678901_INSERIMENTO_TEST_OFFER.XML'),
+}))
+
+// Mock react-syntax-highlighter
+vi.mock('react-syntax-highlighter', () => ({
+  Prism: ({ children, ...props }: { children: string }) => (
+    <pre data-testid="syntax-highlighter" {...props}>
+      <code>{children}</code>
+    </pre>
+  ),
+}))
+
+vi.mock('react-syntax-highlighter/dist/esm/styles/prism', () => ({
+  vscDarkPlus: {},
+}))
+
 // Regex patterns for testing
 const PERCENTAGE_REGEX = /\d+%/
 const SECTIONS_REGEX = /\d+\/7 sezioni/
-const START_DATE_REGEX = /Data di Inizio/
-const END_DATE_REGEX = /Data di Fine/
-const REVIEW_CONFIRMATION_REGEX = /Confermo di aver revisionato/
-const NOTES_REGEX = /Note Aggiuntive/
-const XML_PREVIEW_REGEX =
-  /La funzionalità di anteprima e generazione XML sarà implementata/
+const REVIEW_TITLE_REGEX = /Validità e Revisione Finale/i
+const COMPLETION_STATUS_REGEX = /Stato Completamento/i
+const VALIDITY_PERIOD_REGEX = /Periodo di Validità/i
+const START_DATE_REGEX = /Data di Inizio \*/i
+const END_DATE_REGEX = /Data di Fine/i
+const DATA_SUMMARY_REGEX = /Riepilogo Dati Inseriti/i
+const REVIEW_CONFIRMATION_REGEX = /Conferma Revisione/i
+const CHECKBOX_LABEL_REGEX =
+  /Confermo di aver revisionato tutti i dati inseriti/i
+const NOTES_LABEL_REGEX = /Note Aggiuntive \(Opzionale\)/i
+const XML_PREVIEW_REGEX = /Anteprima XML/i
+const GENERATE_PREVIEW_REGEX = /genera anteprima xml/i
+const XML_FILE_PREVIEW_REGEX = /anteprima del file xml/i
+const HIDE_REGEX = /nascondi/i
+const DOWNLOAD_XML_REGEX = /scarica xml/i
 
 // Mock form data for testing
 const mockFormData = {
@@ -144,14 +188,16 @@ describe('ValidityReviewStep', () => {
     )
 
     // Check main title
-    expect(screen.getByText('Validità e Revisione Finale')).toBeInTheDocument()
+    expect(screen.getByText(REVIEW_TITLE_REGEX)).toBeInTheDocument()
 
     // Check all section titles
-    expect(screen.getByText('Stato Completamento')).toBeInTheDocument()
-    expect(screen.getByText('Periodo di Validità')).toBeInTheDocument()
-    expect(screen.getByText('Riepilogo Dati Inseriti')).toBeInTheDocument()
-    expect(screen.getByText('Conferma Revisione')).toBeInTheDocument()
-    expect(screen.getByText('Anteprima XML')).toBeInTheDocument()
+    expect(screen.getByText(COMPLETION_STATUS_REGEX)).toBeInTheDocument()
+    expect(screen.getByText(VALIDITY_PERIOD_REGEX)).toBeInTheDocument()
+    expect(screen.getByText(DATA_SUMMARY_REGEX)).toBeInTheDocument()
+    expect(screen.getByText(REVIEW_CONFIRMATION_REGEX)).toBeInTheDocument()
+    // Use getAllByText for XML Preview since it appears multiple times
+    const xmlPreviewElements = screen.getAllByText(XML_PREVIEW_REGEX)
+    expect(xmlPreviewElements.length).toBeGreaterThan(0)
   })
 
   it('displays completion status correctly', () => {
@@ -201,7 +247,7 @@ describe('ValidityReviewStep', () => {
     )
 
     const checkbox = screen.getByRole('checkbox', {
-      name: REVIEW_CONFIRMATION_REGEX,
+      name: CHECKBOX_LABEL_REGEX,
     })
     expect(checkbox).toBeInTheDocument()
     expect(checkbox).not.toBeChecked()
@@ -214,7 +260,7 @@ describe('ValidityReviewStep', () => {
       </TestWrapper>,
     )
 
-    const textarea = screen.getByLabelText(NOTES_REGEX)
+    const textarea = screen.getByLabelText(NOTES_LABEL_REGEX)
     expect(textarea).toBeInTheDocument()
     expect(textarea).toBeInstanceOf(HTMLTextAreaElement)
   })
@@ -251,7 +297,7 @@ describe('ValidityReviewStep', () => {
     )
 
     const checkbox = screen.getByRole('checkbox', {
-      name: REVIEW_CONFIRMATION_REGEX,
+      name: CHECKBOX_LABEL_REGEX,
     })
     fireEvent.click(checkbox)
     expect(checkbox).toBeChecked()
@@ -264,7 +310,7 @@ describe('ValidityReviewStep', () => {
       </TestWrapper>,
     )
 
-    const textarea = screen.getByLabelText(NOTES_REGEX)
+    const textarea = screen.getByLabelText(NOTES_LABEL_REGEX)
     fireEvent.change(textarea, { target: { value: 'Test notes' } })
     expect(textarea).toHaveValue('Test notes')
   })
@@ -343,8 +389,9 @@ describe('ValidityReviewStep', () => {
       </TestWrapper>,
     )
 
-    expect(screen.getByText('Anteprima XML')).toBeInTheDocument()
-    expect(screen.getByText(XML_PREVIEW_REGEX)).toBeInTheDocument()
+    // Use getAllByText for XML Preview since it appears multiple times
+    const xmlPreviewElements = screen.getAllByText(XML_PREVIEW_REGEX)
+    expect(xmlPreviewElements.length).toBeGreaterThan(0)
   })
 
   it('handles missing form states gracefully', () => {
@@ -419,11 +466,11 @@ describe('ValidityReviewStep', () => {
     // Check that form fields have proper labels
     expect(screen.getByLabelText(START_DATE_REGEX)).toBeInTheDocument()
     expect(screen.getByLabelText(END_DATE_REGEX)).toBeInTheDocument()
-    expect(screen.getByLabelText(NOTES_REGEX)).toBeInTheDocument()
+    expect(screen.getByLabelText(NOTES_LABEL_REGEX)).toBeInTheDocument()
 
     // Check checkbox has proper label
     expect(
-      screen.getByRole('checkbox', { name: REVIEW_CONFIRMATION_REGEX }),
+      screen.getByRole('checkbox', { name: CHECKBOX_LABEL_REGEX }),
     ).toBeInTheDocument()
   })
 
@@ -447,7 +494,7 @@ describe('ValidityReviewStep', () => {
     expect(screen.getByDisplayValue('31/12/2024')).toBeInTheDocument()
     expect(screen.getByDisplayValue('Test notes')).toBeInTheDocument()
     expect(
-      screen.getByRole('checkbox', { name: REVIEW_CONFIRMATION_REGEX }),
+      screen.getByRole('checkbox', { name: CHECKBOX_LABEL_REGEX }),
     ).toBeChecked()
   })
 
@@ -479,5 +526,112 @@ describe('ValidityReviewStep', () => {
     const badge = screen.getByText(SECTIONS_REGEX)
     expect(badge).toBeInTheDocument()
     expect(badge).toHaveClass('inline-flex') // Badge styling
+  })
+
+  it('mostra il pulsante per generare anteprima XML', () => {
+    render(
+      <TestWrapper>
+        <ValidityReviewStep />
+      </TestWrapper>,
+    )
+
+    const previewButton = screen.getByRole('button', {
+      name: GENERATE_PREVIEW_REGEX,
+    })
+    expect(previewButton).toBeInTheDocument()
+  })
+
+  it('genera e mostra anteprima XML quando si clicca il pulsante', async () => {
+    const user = userEvent.setup()
+
+    render(
+      <TestWrapper>
+        <ValidityReviewStep />
+      </TestWrapper>,
+    )
+
+    const previewButton = screen.getByRole('button', {
+      name: GENERATE_PREVIEW_REGEX,
+    })
+
+    await user.click(previewButton)
+
+    // Verifica che l'anteprima sia mostrata
+    await waitFor(() => {
+      expect(screen.getByText(XML_FILE_PREVIEW_REGEX)).toBeInTheDocument()
+    })
+
+    // Verifica che ci siano i pulsanti di azione
+    expect(screen.getByRole('button', { name: HIDE_REGEX })).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: DOWNLOAD_XML_REGEX }),
+    ).toBeInTheDocument()
+  })
+
+  it('nasconde anteprima XML quando si clicca Nascondi', async () => {
+    const user = userEvent.setup()
+
+    render(
+      <TestWrapper>
+        <ValidityReviewStep />
+      </TestWrapper>,
+    )
+
+    const previewButton = screen.getByRole('button', {
+      name: GENERATE_PREVIEW_REGEX,
+    })
+
+    await user.click(previewButton)
+
+    await waitFor(() => {
+      expect(screen.getByText(XML_FILE_PREVIEW_REGEX)).toBeInTheDocument()
+    })
+
+    const hideButton = screen.getByRole('button', { name: HIDE_REGEX })
+    await user.click(hideButton)
+
+    // L'anteprima dovrebbe essere nascosta e il pulsante genera dovrebbe riapparire
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: GENERATE_PREVIEW_REGEX }),
+      ).toBeInTheDocument()
+    })
+  })
+
+  it('mostra errore se la generazione XML fallisce', async () => {
+    const user = userEvent.setup()
+
+    // Import the mocked module and set it to throw an error
+    const { buildXML } = await import('@/lib/xml-generator/xml-builder')
+    vi.mocked(buildXML).mockImplementationOnce(() => {
+      throw new Error('XML generation failed')
+    })
+
+    render(
+      <TestWrapper>
+        <ValidityReviewStep />
+      </TestWrapper>,
+    )
+
+    const previewButton = screen.getByRole('button', {
+      name: GENERATE_PREVIEW_REGEX,
+    })
+
+    await user.click(previewButton)
+
+    // The button should still be visible if there was an error
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: GENERATE_PREVIEW_REGEX }),
+      ).toBeInTheDocument()
+    })
+
+    // Check that we're not showing the preview content
+    expect(
+      screen.queryByRole('button', { name: HIDE_REGEX }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: DOWNLOAD_XML_REGEX }),
+    ).not.toBeInTheDocument()
   })
 })
