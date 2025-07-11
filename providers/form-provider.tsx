@@ -1,10 +1,10 @@
 'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import type { z } from 'zod'
 import { Form } from '@/components/ui/form'
 import { useFormStates } from '@/hooks/use-form-states'
+import { dynamicResolver } from '@/lib/utils'
 import { xmlFormStepper } from '@/lib/xml-generator/stepperize-config'
 
 const { useStepper } = xmlFormStepper
@@ -21,7 +21,7 @@ export function FormProvider({ children }: { children: React.ReactNode }) {
   }
   const form = useForm({
     mode: 'onTouched',
-    resolver: zodResolver(methods.current.schema),
+    resolver: dynamicResolver(methods.current.schema),
     // Initialize form with data from URL state for current step
     defaultValues: formStates[methods.current.id] || {},
   })

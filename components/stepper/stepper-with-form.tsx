@@ -1,26 +1,17 @@
 'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod'
 import { parseAsString, useQueryState } from 'nuqs'
 import { Suspense, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import type { ZodTypeAny } from 'zod'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useFormStates } from '@/hooks/use-form-states'
+import { dynamicResolver } from '@/lib/utils'
 import {
   stepRegistry,
   xmlFormStepper,
 } from '@/lib/xml-generator/stepperize-config'
 
 const { useStepper } = xmlFormStepper
-
-// Type-erasing resolver so we can supply varying schemas per step while
-// keeping a single union value type for the form.
-function dynamicResolver(schema: ZodTypeAny) {
-  // zodResolver returns a Resolver with its own generic; we cast to our union.
-  // This is safe because schema validation still happens at runtime.
-  return zodResolver(schema)
-}
 
 function StepperWithFormContent() {
   const methods = useStepper()
