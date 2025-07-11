@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
@@ -21,8 +22,9 @@ import {
   SINGLE_OFFER_LABELS,
 } from '@/lib/xml-generator/constants'
 import type { OfferDetailsFormValues } from '@/lib/xml-generator/schemas'
+import { OfferDetailsSkeleton } from './skeletons/offer-details-skeleton'
 
-export function OfferDetailsStep() {
+export function OfferDetailsStepComponent() {
   const {
     register,
     formState: { errors },
@@ -349,5 +351,13 @@ export function OfferDetailsStep() {
         )}
       </div>
     </div>
+  )
+}
+
+export const OfferDetailsStep = () => {
+  return (
+    <Suspense fallback={<OfferDetailsSkeleton />}>
+      <OfferDetailsStepComponent />
+    </Suspense>
   )
 }

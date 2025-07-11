@@ -1,6 +1,7 @@
 'use client'
 
 import { Plus, PlusCircle, Trash2 } from 'lucide-react'
+import { Suspense } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import {
@@ -40,8 +41,9 @@ import {
   UNIT_OF_MEASURE_LABELS,
 } from '@/lib/xml-generator/constants'
 import type { CompanyComponentsFormValues } from '@/lib/xml-generator/schemas'
+import { CompanyComponentsSkeleton } from './skeletons/company-components-skeleton'
 
-export function CompanyComponentsStep() {
+export function CompanyComponentsStepComponent() {
   const form = useFormContext<CompanyComponentsFormValues>()
   const [formStates] = useFormStates()
 
@@ -184,6 +186,14 @@ export function CompanyComponentsStep() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export const CompanyComponentsStep = () => {
+  return (
+    <Suspense fallback={<CompanyComponentsSkeleton />}>
+      <CompanyComponentsStepComponent />
+    </Suspense>
   )
 }
 

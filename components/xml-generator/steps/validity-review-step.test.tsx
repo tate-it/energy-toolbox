@@ -7,7 +7,7 @@ import {
   type ValidityReviewFormValues,
   validityReviewSchema,
 } from '@/lib/xml-generator/schemas'
-import { ValidityReviewStep } from './validity-review-step'
+import { ValidityReviewStepComponent as ValidityReviewStep } from './validity-review-step'
 
 // Mock useFormStates hook
 vi.mock('@/hooks/use-form-states')

@@ -11,7 +11,7 @@ import {
 } from '@/lib/xml-generator/constants'
 import type { PricingConfigFormValues } from '@/lib/xml-generator/schemas'
 import { pricingConfigSchema } from '@/lib/xml-generator/schemas'
-import { PricingConfigStep } from './pricing-config-step'
+import { PricingConfigStepComponent as PricingConfigStep } from './pricing-config-step'
 
 // Mock the useFormStates hook
 vi.mock('@/hooks/use-form-states')

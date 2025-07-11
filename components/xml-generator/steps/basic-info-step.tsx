@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
   Card,
@@ -11,8 +12,9 @@ import {
 import { Input } from '@/components/ui/input'
 import type { BasicInfoFormValues } from '@/lib/xml-generator/schemas'
 import { xmlFormStepper } from '@/lib/xml-generator/stepperize-config'
+import { BasicInfoSkeleton } from './skeletons/basic-info-skeleton'
 
-export function BasicInfoStep() {
+export function BasicInfoStepComponent() {
   const { Stepper } = xmlFormStepper
   const {
     register,
@@ -112,5 +114,13 @@ export function BasicInfoStep() {
         </CardContent>
       </Card>
     </Stepper.Panel>
+  )
+}
+
+export const BasicInfoStep = () => {
+  return (
+    <Suspense fallback={<BasicInfoSkeleton />}>
+      <BasicInfoStepComponent />
+    </Suspense>
   )
 }

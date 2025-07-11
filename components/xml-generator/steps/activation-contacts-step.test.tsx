@@ -7,7 +7,7 @@ import {
   type ActivationContactsFormValues,
   activationContactsSchema,
 } from '@/lib/xml-generator/schemas'
-import { ActivationContactsStep } from './activation-contacts-step'
+import { ActivationContactsStepComponent as ActivationContactsStep } from './activation-contacts-step'
 
 // Regex patterns defined at top level for performance
 const ACTIVATION_WEB_ONLY_REGEX = /attivazione solo web/i

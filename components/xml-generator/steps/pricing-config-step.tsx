@@ -1,6 +1,7 @@
 'use client'
 
 import { Plus, Trash2 } from 'lucide-react'
+import { Suspense } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import {
@@ -40,12 +41,15 @@ import {
   TIME_BAND_CONFIGURATION_LABELS,
   TIME_BAND_CONFIGURATIONS,
 } from '@/lib/xml-generator/constants'
+import { PricingConfigSkeleton } from './skeletons/pricing-config-skeleton'
 
 interface PricingConfigStepProps {
   className?: string
 }
 
-export function PricingConfigStep({ className }: PricingConfigStepProps) {
+export function PricingConfigStepComponent({
+  className,
+}: PricingConfigStepProps) {
   const { control, watch } = useFormContext()
   const [formStates] = useFormStates()
 
@@ -452,5 +456,13 @@ export function PricingConfigStep({ className }: PricingConfigStepProps) {
         </Card>
       </div>
     </div>
+  )
+}
+
+export const PricingConfigStep = () => {
+  return (
+    <Suspense fallback={<PricingConfigSkeleton />}>
+      <PricingConfigStepComponent />
+    </Suspense>
   )
 }

@@ -2,14 +2,10 @@
 
 import { parseAsString, useQueryState } from 'nuqs'
 import { Suspense, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useFormStates } from '@/hooks/use-form-states'
-import { dynamicResolver } from '@/lib/utils'
-import {
-  stepRegistry,
-  xmlFormStepper,
-} from '@/lib/xml-generator/stepperize-config'
+import { xmlFormStepper } from '@/lib/xml-generator/stepperize-config'
 
 const { useStepper } = xmlFormStepper
 
@@ -21,11 +17,7 @@ function StepperWithFormContent() {
     parseAsString.withDefault('basicInfo'),
   )
 
-  const form = useForm({
-    mode: 'onTouched',
-    resolver: dynamicResolver(stepRegistry[methods.current.id]),
-    defaultValues: formStates[methods.current.id] ?? {},
-  })
+  const form = useFormContext()
 
   // Update form values when step changes
   useEffect(() => {

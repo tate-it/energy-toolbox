@@ -1,15 +1,40 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useForm } from 'react-hook-form'
 import type { z } from 'zod'
 import { Form } from '@/components/ui/form'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useFormStates } from '@/hooks/use-form-states'
 import { dynamicResolver } from '@/lib/utils'
 import { xmlFormStepper } from '@/lib/xml-generator/stepperize-config'
 
 const { useStepper } = xmlFormStepper
 
-export function FormProvider({ children }: { children: React.ReactNode }) {
+const FormProviderSkeleton = () => {
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-32" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-28" />
+        <Skeleton className="h-24 w-full" />
+      </div>
+    </div>
+  )
+}
+
+export function FormProviderComponent({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const [formStates, setFormStates] = useFormStates()
   const methods = useStepper()
 
@@ -32,5 +57,13 @@ export function FormProvider({ children }: { children: React.ReactNode }) {
         {children}
       </form>
     </Form>
+  )
+}
+
+export function FormProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={<FormProviderSkeleton />}>
+      <FormProviderComponent>{children}</FormProviderComponent>
+    </Suspense>
   )
 }

@@ -6,7 +6,7 @@ import {
   type OfferDetailsFormValues,
   offerDetailsSchema,
 } from '@/lib/xml-generator/schemas'
-import { OfferDetailsStep } from './offer-details-step'
+import { OfferDetailsStepComponent as OfferDetailsStep } from './offer-details-step'
 
 // Regex patterns for testing Italian labels
 const SUPPLIER_CHANGE_CHECKBOX_REGEX = /cambio fornitore/i

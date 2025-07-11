@@ -1,6 +1,7 @@
 'use client'
 
 import { Plus, Trash2 } from 'lucide-react'
+import { Suspense } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import {
@@ -32,8 +33,9 @@ import {
   PAYMENT_METHOD_LABELS,
 } from '@/lib/xml-generator/constants'
 import type { PaymentConditionsFormValues } from '@/lib/xml-generator/schemas'
+import { PaymentConditionsSkeleton } from './skeletons/payment-conditions-skeleton'
 
-export function PaymentConditionsStep() {
+export function PaymentConditionsStepComponent() {
   const form = useFormContext<PaymentConditionsFormValues>()
 
   // Field arrays for dynamic sections
@@ -147,6 +149,14 @@ export function PaymentConditionsStep() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export const PaymentConditionsStep = () => {
+  return (
+    <Suspense fallback={<PaymentConditionsSkeleton />}>
+      <PaymentConditionsStepComponent />
+    </Suspense>
   )
 }
 

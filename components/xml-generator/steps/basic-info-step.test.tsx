@@ -6,7 +6,7 @@ import {
   basicInfoSchema,
 } from '@/lib/xml-generator/schemas'
 import { StepperProvider } from '@/providers/stepper-provider'
-import { BasicInfoStep } from './basic-info-step'
+import { BasicInfoStepComponent as BasicInfoStep } from './basic-info-step'
 
 // Regex patterns defined at top level for performance
 const PIVA_UTENTE_REGEX = /PIVA Utente/i
@@ -45,7 +45,7 @@ function TestWrapper({
   })
 
   return (
-    <StepperProvider initialStep="basicInfo" variant="horizontal">
+    <StepperProvider variant="horizontal">
       <FormProvider {...form}>{children}</FormProvider>
     </StepperProvider>
   )

@@ -6,7 +6,7 @@ import { useFormStates } from '@/hooks/use-form-states'
 import { MARKET_TYPES } from '@/lib/xml-generator/constants'
 import type { CompanyComponentsFormValues } from '@/lib/xml-generator/schemas'
 import { companyComponentsSchema } from '@/lib/xml-generator/schemas'
-import { CompanyComponentsStep } from './company-components-step'
+import { CompanyComponentsStepComponent as CompanyComponentsStep } from './company-components-step'
 
 // Define regex patterns at top level for performance
 const COMPONENT_DESCRIPTION_REGEX = /Definisci i componenti regolati/

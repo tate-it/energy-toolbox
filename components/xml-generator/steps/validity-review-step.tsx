@@ -7,6 +7,7 @@ import {
   Database,
   FileText,
 } from 'lucide-react'
+import { Suspense } from 'react'
 import { type UseFormReturn, useFormContext } from 'react-hook-form'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -35,6 +36,7 @@ import {
   OFFER_TYPE_LABELS,
 } from '@/lib/xml-generator/constants'
 import type { ValidityReviewFormValues } from '@/lib/xml-generator/schemas'
+import { ValidityReviewSkeleton } from './skeletons/validity-review-skeleton'
 
 // Helper function to get label from labels object
 const getLabelFromLabels = (
@@ -470,7 +472,7 @@ function XmlPreviewCard() {
   )
 }
 
-export function ValidityReviewStep() {
+export function ValidityReviewStepComponent() {
   const form = useFormContext<ValidityReviewFormValues>()
   const [formStates] = useFormStates()
 
@@ -493,5 +495,13 @@ export function ValidityReviewStep() {
       <ReviewConfirmationCard form={form} />
       <XmlPreviewCard />
     </div>
+  )
+}
+
+export const ValidityReviewStep = () => {
+  return (
+    <Suspense fallback={<ValidityReviewSkeleton />}>
+      <ValidityReviewStepComponent />
+    </Suspense>
   )
 }

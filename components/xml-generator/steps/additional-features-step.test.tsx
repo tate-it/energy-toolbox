@@ -4,7 +4,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { vi } from 'vitest'
 import type { AdditionalFeaturesFormValues } from '@/lib/xml-generator/schemas'
 import { additionalFeaturesSchema } from '@/lib/xml-generator/schemas'
-import { AdditionalFeaturesStep } from './additional-features-step'
+import { AdditionalFeaturesStepComponent as AdditionalFeaturesStep } from './additional-features-step'
 
 // Regex patterns defined at top level for performance
 const REGEX_PATTERNS = {

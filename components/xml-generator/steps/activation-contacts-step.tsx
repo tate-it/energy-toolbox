@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
   Card,
@@ -12,10 +13,10 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-
 import type { ActivationContactsFormValues } from '@/lib/xml-generator/schemas'
+import { ActivationContactsSkeleton } from './skeletons/activation-contacts-skeleton'
 
-export function ActivationContactsStep() {
+export function ActivationContactsStepComponent() {
   const {
     register,
     watch,
@@ -193,5 +194,13 @@ export function ActivationContactsStep() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export const ActivationContactsStep = () => {
+  return (
+    <Suspense fallback={<ActivationContactsSkeleton />}>
+      <ActivationContactsStepComponent />
+    </Suspense>
   )
 }

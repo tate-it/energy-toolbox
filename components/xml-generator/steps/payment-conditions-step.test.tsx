@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { FormProvider, useForm } from 'react-hook-form'
 import type { PaymentConditionsFormValues } from '@/lib/xml-generator/schemas'
 import { paymentConditionsSchema } from '@/lib/xml-generator/schemas'
-import { PaymentConditionsStep } from './payment-conditions-step'
+import { PaymentConditionsStepComponent as PaymentConditionsStep } from './payment-conditions-step'
 
 // Regex literals defined at top level to avoid performance issues
 const PAYMENT_METHODS_DESCRIPTION_REGEX =

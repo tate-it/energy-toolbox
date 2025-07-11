@@ -1,6 +1,7 @@
 'use client'
 
 import { Plus, Trash2 } from 'lucide-react'
+import { Suspense } from 'react'
 import {
   type FieldArrayPath,
   useFieldArray,
@@ -43,6 +44,7 @@ import {
   VAT_APPLICABILITY_LABELS,
 } from '@/lib/xml-generator/constants'
 import type { AdditionalFeaturesFormValues } from '@/lib/xml-generator/schemas'
+import { AdditionalFeaturesSkeleton } from './skeletons/additional-features-skeleton'
 
 // Helper to bypass strict type checking for nested field arrays
 function useNestedFieldArray<T extends Record<string, unknown>>(
@@ -55,7 +57,7 @@ function useNestedFieldArray<T extends Record<string, unknown>>(
   }) as ReturnType<typeof useFieldArray>
 }
 
-export function AdditionalFeaturesStep() {
+export function AdditionalFeaturesStepComponent() {
   const [formStates] = useFormStates()
 
   // Get form state to determine conditional requirements
@@ -93,6 +95,14 @@ export function AdditionalFeaturesStep() {
       {/* Additional Products/Services Section */}
       <AdditionalProductsSection />
     </div>
+  )
+}
+
+export const AdditionalFeaturesStep = () => {
+  return (
+    <Suspense fallback={<AdditionalFeaturesSkeleton />}>
+      <AdditionalFeaturesStepComponent />
+    </Suspense>
   )
 }
 
