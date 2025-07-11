@@ -40,3 +40,13 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
 vi.mock('@/hooks/use-form-states', () => ({
   useFormStates: vi.fn(() => [{}, vi.fn()])
 }))
+
+// Mock nuqs to avoid adapter errors in tests
+vi.mock('nuqs', () => ({
+  useQueryState: vi.fn(() => [null, vi.fn()]),
+  parseAsString: vi.fn((defaultValue) => ({
+    defaultValue,
+    parse: (value) => value || defaultValue,
+    serialize: (value) => value,
+  })),
+}))
