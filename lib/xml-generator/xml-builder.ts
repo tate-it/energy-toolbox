@@ -685,16 +685,24 @@ export function generateXMLFilename(
   const piva = pivaUtente.toUpperCase()
 
   // Sanitize description to ensure only safe filename characters
-  const safeDescription = description
-    ? `_${description
-        .toUpperCase()
-        .replace(SPECIAL_CHARS_REGEX, '') // Remove special characters
-        .replace(/\s+/g, '_') // Replace spaces with underscores
-        .replace(MULTIPLE_UNDERSCORES_REGEX, '_') // Remove duplicate underscores
-        .trim()}`
-    : ''
+  if (!description || description.trim().length === 0) {
+    return `${piva}_INSERIMENTO.XML`
+  }
 
-  return `${piva}_INSERIMENTO${safeDescription}.XML`
+  const sanitized = description
+    .trim() // Trim whitespace first
+    .toUpperCase()
+    .replace(SPECIAL_CHARS_REGEX, '') // Remove special characters
+    .replace(/\s+/g, '_') // Replace spaces with underscores
+    .replace(MULTIPLE_UNDERSCORES_REGEX, '_') // Remove duplicate underscores
+    .replace(/^_+|_+$/g, '') // Remove leading/trailing underscores
+
+  // If sanitization results in empty string, return without description
+  if (sanitized.length === 0) {
+    return `${piva}_INSERIMENTO.XML`
+  }
+
+  return `${piva}_INSERIMENTO_${sanitized}.XML`
 }
 
 /**
@@ -717,18 +725,64 @@ export function createXMLBlob(xmlString: string): Blob {
  * Trigger XML download
  * @param xmlString - XML string to download
  * @param filename - Filename for the download
+ * @returns Object with success status and optional error message
  */
-export function downloadXML(xmlString: string, filename: string): void {
-  const blob = createXMLBlob(xmlString)
-  const url = URL.createObjectURL(blob)
+export function downloadXML(
+  xmlString: string,
+  filename: string,
+): { success: boolean; error?: string } {
+  try {
+    // Validate inputs
+    if (!xmlString || xmlString.trim().length === 0) {
+      return { success: false, error: 'Il contenuto XML è vuoto' }
+    }
 
-  const link = document.createElement('a')
-  link.href = url
-  link.download = filename
-  link.click()
+    if (!filename || filename.trim().length === 0) {
+      return { success: false, error: 'Il nome del file non è valido' }
+    }
 
-  // Clean up
-  URL.revokeObjectURL(url)
+    // Check browser compatibility
+    if (!window.Blob) {
+      return {
+        success: false,
+        error: 'Il browser non supporta il download di file',
+      }
+    }
+
+    const blob = createXMLBlob(xmlString)
+    const url = URL.createObjectURL(blob)
+
+    // Create download link
+    const link = document.createElement('a')
+    link.href = url
+
+    // Check if download attribute is supported
+    try {
+      if ('download' in link) {
+        // Modern browsers
+        link.download = filename
+        link.click()
+      } else {
+        // Fallback for older browsers - open in new window
+        window.open(url, '_blank')
+      }
+    } catch {
+      // If anything goes wrong, try the fallback
+      window.open(url, '_blank')
+    }
+
+    // Clean up
+    setTimeout(() => {
+      URL.revokeObjectURL(url)
+    }, 100) // Small delay to ensure download starts
+
+    return { success: true }
+  } catch {
+    return {
+      success: false,
+      error: 'Si è verificato un errore durante il download del file',
+    }
+  }
 }
 
 /**

@@ -13,6 +13,7 @@ import { Suspense, useState } from 'react'
 import { type UseFormReturn, useFormContext } from 'react-hook-form'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -690,7 +691,17 @@ function XmlPreviewCard({ formStates }: { formStates: FormStates }) {
         formStates.basicInfo?.pivaUtente || 'IT00000000000',
         formStates.offerDetails?.offerName || 'OFFERTA',
       )
-      downloadXML(xmlContent, filename)
+      const result = downloadXML(xmlContent, filename)
+
+      if (result.success) {
+        toast.success('File XML scaricato con successo', {
+          description: `File salvato come ${filename}`,
+        })
+      } else {
+        toast.error('Errore durante il download', {
+          description: result.error || 'Si è verificato un errore imprevisto',
+        })
+      }
     }
   }
 

@@ -370,8 +370,17 @@ describe('xml-builder', () => {
 
     it('should trim whitespace from description', () => {
       const filename = generateXMLFilename('IT12345678901', '  Test  ')
-      // The function doesn't trim before processing, resulting in underscores from spaces
-      expect(filename).toBe('IT12345678901_INSERIMENTO__TEST_.XML')
+      expect(filename).toBe('IT12345678901_INSERIMENTO_TEST.XML')
+    })
+
+    it('should handle description with only special characters', () => {
+      const filename = generateXMLFilename('IT12345678901', '@#$%^&*()')
+      expect(filename).toBe('IT12345678901_INSERIMENTO.XML')
+    })
+
+    it('should handle description with leading/trailing underscores after sanitization', () => {
+      const filename = generateXMLFilename('IT12345678901', '___Test___')
+      expect(filename).toBe('IT12345678901_INSERIMENTO_TEST.XML')
     })
   })
 
@@ -400,13 +409,16 @@ describe('xml-builder', () => {
   })
 
   describe('downloadXML', () => {
-    it('should trigger download with correct filename', () => {
-      const mockCreateObjectURL = vi.fn().mockReturnValue('blob:mock-url')
-      const mockRevokeObjectURL = vi.fn()
-      const mockClick = vi.fn()
+    const mockCreateObjectURL = vi.fn()
+    const mockRevokeObjectURL = vi.fn()
+    const mockClick = vi.fn()
+    const mockOpen = vi.fn()
 
+    beforeEach(() => {
+      mockCreateObjectURL.mockReturnValue('blob:mock-url')
       global.URL.createObjectURL = mockCreateObjectURL
       global.URL.revokeObjectURL = mockRevokeObjectURL
+      global.window.open = mockOpen
 
       const mockLink = {
         href: '',
@@ -418,17 +430,93 @@ describe('xml-builder', () => {
         mockLink as unknown as HTMLAnchorElement,
       )
 
+      vi.useFakeTimers()
+    })
+
+    afterEach(() => {
+      vi.restoreAllMocks()
+      vi.useRealTimers()
+    })
+
+    it('should trigger download with correct filename and return success', () => {
       const xmlString =
         '<?xml version="1.0" encoding="UTF-8"?>\n<test>content</test>'
       const filename = 'test.xml'
 
-      downloadXML(xmlString, filename)
+      const result = downloadXML(xmlString, filename)
 
+      expect(result).toEqual({ success: true })
       expect(mockCreateObjectURL).toHaveBeenCalledWith(expect.any(Blob))
-      expect(mockLink.href).toBe('blob:mock-url')
-      expect(mockLink.download).toBe(filename)
       expect(mockClick).toHaveBeenCalled()
+
+      // Fast-forward timers to check cleanup
+      vi.advanceTimersByTime(100)
       expect(mockRevokeObjectURL).toHaveBeenCalledWith('blob:mock-url')
+    })
+
+    it('should return error for empty XML content', () => {
+      const result = downloadXML('', 'test.xml')
+
+      expect(result).toEqual({
+        success: false,
+        error: 'Il contenuto XML è vuoto',
+      })
+      expect(mockCreateObjectURL).not.toHaveBeenCalled()
+    })
+
+    it('should return error for empty filename', () => {
+      const result = downloadXML('<test>content</test>', '')
+
+      expect(result).toEqual({
+        success: false,
+        error: 'Il nome del file non è valido',
+      })
+      expect(mockCreateObjectURL).not.toHaveBeenCalled()
+    })
+
+    it('should handle browser without Blob support', () => {
+      const originalBlob = window.Blob
+      // @ts-expect-error - testing edge case
+      window.Blob = undefined
+
+      const result = downloadXML('<test>content</test>', 'test.xml')
+
+      expect(result).toEqual({
+        success: false,
+        error: 'Il browser non supporta il download di file',
+      })
+
+      window.Blob = originalBlob
+    })
+
+    it('should use fallback for browsers without download attribute', () => {
+      const mockLink = {
+        href: '',
+        // Note: 'download' property is intentionally missing
+      }
+
+      vi.spyOn(document, 'createElement').mockReturnValue(
+        mockLink as unknown as HTMLAnchorElement,
+      )
+
+      const result = downloadXML('<test>content</test>', 'test.xml')
+
+      expect(result).toEqual({ success: true })
+      expect(mockOpen).toHaveBeenCalledWith('blob:mock-url', '_blank')
+      expect(mockClick).not.toHaveBeenCalled()
+    })
+
+    it('should handle download errors gracefully', () => {
+      mockCreateObjectURL.mockImplementation(() => {
+        throw new Error('Mock error')
+      })
+
+      const result = downloadXML('<test>content</test>', 'test.xml')
+
+      expect(result).toEqual({
+        success: false,
+        error: 'Si è verificato un errore durante il download del file',
+      })
     })
   })
 

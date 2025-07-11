@@ -15,23 +15,11 @@ vi.mock('@/hooks/use-form-states')
 
 // Mock XML builder functions
 vi.mock('@/lib/xml-generator/xml-builder', () => ({
-  buildXML: vi.fn(
-    () => `<?xml version="1.0" encoding="UTF-8"?>
-<Offerta>
-    <IdentificativiOfferta>
-        <PIVA_UTENTE>IT12345678901</PIVA_UTENTE>
-        <COD_OFFERTA>TESTOFFERTA123</COD_OFFERTA>
-    </IdentificativiOfferta>
-    <DettaglioOfferta>
-        <TIPO_MERCATO>01</TIPO_MERCATO>
-        <TIPO_CLIENTE>01</TIPO_CLIENTE>
-        <TIPO_OFFERTA>01</TIPO_OFFERTA>
-        <NOME_OFFERTA>Test Offer</NOME_OFFERTA>
-    </DettaglioOfferta>
-</Offerta>`,
-  ),
-  downloadXML: vi.fn(),
-  generateXMLFilename: vi.fn(() => 'IT12345678901_INSERIMENTO_TEST_OFFER.XML'),
+  buildXML: vi.fn().mockReturnValue('<xml>Test XML Content</xml>'),
+  downloadXML: vi.fn().mockReturnValue({ success: true }),
+  generateXMLFilename: vi
+    .fn()
+    .mockImplementation((piva, desc) => `${piva}_INSERIMENTO_${desc}.XML`),
 }))
 
 // Mock react-syntax-highlighter
