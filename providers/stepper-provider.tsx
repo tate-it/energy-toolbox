@@ -1,9 +1,9 @@
 'use client'
 
+import { useQueryState } from 'nuqs'
 import type { StepperVariant } from '@/components/stepper'
 import { currentStepParser } from '@/lib/xml-generator/nuqs-parsers'
 import { xmlFormStepper } from '@/lib/xml-generator/stepperize-config'
-import { useQueryState } from 'nuqs'
 
 export function StepperProvider({
   children,
