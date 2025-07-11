@@ -1,7 +1,11 @@
 'use client'
 
 import { Plus, Trash2 } from 'lucide-react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
+import {
+  type FieldArrayPath,
+  useFieldArray,
+  useFormContext,
+} from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -39,6 +43,17 @@ import {
   VAT_APPLICABILITY_LABELS,
 } from '@/lib/xml-generator/constants'
 import type { AdditionalFeaturesFormValues } from '@/lib/xml-generator/schemas'
+
+// Helper to bypass strict type checking for nested field arrays
+function useNestedFieldArray<T extends Record<string, unknown>>(
+  control: Parameters<typeof useFieldArray>[0]['control'],
+  name: string,
+) {
+  return useFieldArray({
+    control,
+    name: name as FieldArrayPath<T>,
+  }) as ReturnType<typeof useFieldArray>
+}
 
 export function AdditionalFeaturesStep() {
   const [formStates] = useFormStates()
@@ -243,19 +258,19 @@ function DualOfferSection() {
     fields: electricityOffersFields,
     append: appendElectricityOffer,
     remove: removeElectricityOffer,
-  } = useFieldArray({
-    control: form.control,
-    name: 'dualOffer.electricityJointOffers',
-  })
+  } = useNestedFieldArray<AdditionalFeaturesFormValues>(
+    form.control,
+    'dualOffer.electricityJointOffers',
+  )
 
   const {
     fields: gasOffersFields,
     append: appendGasOffer,
     remove: removeGasOffer,
-  } = useFieldArray({
-    control: form.control,
-    name: 'dualOffer.gasJointOffers',
-  })
+  } = useNestedFieldArray<AdditionalFeaturesFormValues>(
+    form.control,
+    'dualOffer.gasJointOffers',
+  )
 
   return (
     <Card>
@@ -367,28 +382,28 @@ function ZoneOffersSection() {
     fields: regionsFields,
     append: appendRegion,
     remove: removeRegion,
-  } = useFieldArray({
-    control: form.control,
-    name: 'zoneOffers.regions',
-  })
+  } = useNestedFieldArray<AdditionalFeaturesFormValues>(
+    form.control,
+    'zoneOffers.regions',
+  )
 
   const {
     fields: provincesFields,
     append: appendProvince,
     remove: removeProvince,
-  } = useFieldArray({
-    control: form.control,
-    name: 'zoneOffers.provinces',
-  })
+  } = useNestedFieldArray<AdditionalFeaturesFormValues>(
+    form.control,
+    'zoneOffers.provinces',
+  )
 
   const {
     fields: municipalitiesFields,
     append: appendMunicipality,
     remove: removeMunicipality,
-  } = useFieldArray({
-    control: form.control,
-    name: 'zoneOffers.municipalities',
-  })
+  } = useNestedFieldArray<AdditionalFeaturesFormValues>(
+    form.control,
+    'zoneOffers.municipalities',
+  )
 
   return (
     <Card>
