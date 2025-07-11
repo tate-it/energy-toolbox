@@ -72,7 +72,13 @@
   - [x] 3.3 Implement proper UTF-8 encoding and XML declaration formatting
   - [x] 3.4 Build file naming logic following <PIVA>_INSERIMENTO_<DESCRIPTION>.XML convention
   - [x] 3.5 Create XML validator using the provided XSD schema for pre-download validation
-  - [ ] 3.6 Implement XML preview functionality with syntax highlighting in ValidityReviewStep
+  - [x] 3.6 Implement XML preview functionality in ValidityReviewStep
+        - Added react-syntax-highlighter for code highlighting with VS Code dark theme
+        - Implemented data mapping from form states to XML builder format
+        - Created toggle functionality (show/hide preview)
+        - Added download button with proper XML filename generation
+        - Fixed all tests with proper mocking of external dependencies
+        - Successfully tested in browser with real form data
   - [ ] 3.7 Add download functionality with proper MIME type and filename handling
   - [ ] 3.8 Create comprehensive test suite for XML generation covering all offer types
 - [ ] 4.0 Add User Experience Enhancements and Comprehensive Testing

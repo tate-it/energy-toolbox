@@ -470,169 +470,202 @@ function XmlPreviewCard({ formStates }: { formStates: FormStates }) {
   const [xmlContent, setXmlContent] = useState<string>('')
   const [error, setError] = useState<string | null>(null)
 
+  // Helper functions to transform form sections
+  const transformBasicInfo = (basicInfo: FormStates['basicInfo']) => ({
+    pivaUtente: basicInfo?.pivaUtente || '',
+    codOfferta: basicInfo?.codOfferta || '',
+  })
+
+  const transformOfferDetails = (offerDetails: FormStates['offerDetails']) => ({
+    tipoMercato: offerDetails?.marketType || '',
+    offertaSingola: offerDetails?.singleOffer,
+    tipoCliente: offerDetails?.clientType || '',
+    domesticoResidente: offerDetails?.residentialStatus,
+    tipoOfferta: offerDetails?.offerType || '',
+    tipologiaAttContr: offerDetails?.contractActivationTypes || [],
+    nomeOfferta: offerDetails?.offerName || '',
+    descrizione: offerDetails?.offerDescription || '',
+    durata: offerDetails?.duration || 0,
+    garanzie: offerDetails?.guarantees || '',
+  })
+
+  const transformActivationContacts = (
+    activationContacts: FormStates['activationContacts'],
+  ) => ({
+    modalita: activationContacts?.activationMethods || [],
+    descrizioneModalita: activationContacts?.activationDescription,
+    telefono: activationContacts?.phone || '',
+    urlSitoVenditore: activationContacts?.vendorWebsite,
+    urlOfferta: activationContacts?.offerUrl,
+  })
+
+  const transformPricingConfig = (
+    pricingConfig: FormStates['pricingConfig'],
+  ) => ({
+    riferimentiPrezzoEnergia: pricingConfig?.energyPriceIndex
+      ? {
+          idxPrezzoEnergia: pricingConfig.energyPriceIndex || '',
+          altro: pricingConfig.alternativeIndexDescription,
+        }
+      : undefined,
+    tipoPrezzo: pricingConfig?.timeBandConfiguration
+      ? {
+          tipologiaFasce: pricingConfig.timeBandConfiguration || '',
+        }
+      : undefined,
+    fasceOrarieSettimanale: pricingConfig?.weeklyTimeBands
+      ? {
+          fLunedi: pricingConfig.weeklyTimeBands.monday,
+          fMartedi: pricingConfig.weeklyTimeBands.tuesday,
+          fMercoledi: pricingConfig.weeklyTimeBands.wednesday,
+          fGiovedi: pricingConfig.weeklyTimeBands.thursday,
+          fVenerdi: pricingConfig.weeklyTimeBands.friday,
+          fSabato: pricingConfig.weeklyTimeBands.saturday,
+          fDomenica: pricingConfig.weeklyTimeBands.sunday,
+          fFestivita: pricingConfig.weeklyTimeBands.holidays,
+        }
+      : undefined,
+    dispacciamento: pricingConfig?.dispatching?.map((disp) => ({
+      tipoDispacciamento: disp.dispatchingType,
+      valoreDisp: disp.dispatchingValue,
+      nome: disp.componentName,
+      descrizione: disp.componentDescription,
+    })),
+  })
+
+  const transformCompanyComponents = (
+    companyComponents: FormStates['companyComponents'],
+  ) => ({
+    componentiRegolate: companyComponents?.regulatedComponents
+      ? {
+          codice: companyComponents.regulatedComponents || [],
+        }
+      : undefined,
+    componenteImpresa: companyComponents?.companyComponents?.map((comp) => ({
+      nome: comp.name,
+      descrizione: comp.description,
+      tipologia: comp.componentType as string,
+      macroArea: comp.macroArea as string,
+      intervalloPrezzi:
+        comp.priceIntervals?.map((interval) => ({
+          fasciaComponente: interval.componentTimeBand as string | undefined,
+          consumoDa: interval.consumptionFrom,
+          consumoA: interval.consumptionTo,
+          prezzo: interval.price,
+          unitaMisura: interval.unitOfMeasure as string,
+          periodoValidita: interval.validityPeriod
+            ? {
+                durata: undefined,
+                validoFino: interval.validityPeriod.toDate,
+                meseValidita: undefined,
+              }
+            : undefined,
+        })) || [],
+    })),
+  })
+
+  const transformPaymentConditions = (
+    paymentConditions: FormStates['paymentConditions'],
+  ) => ({
+    metodoPagamento:
+      paymentConditions?.paymentMethods?.map((method) => ({
+        modalitaPagamento: method.paymentMethodType,
+        descrizione: method.description,
+      })) || [],
+    condizioniContrattuali: paymentConditions?.contractualConditions?.map(
+      (cond) => ({
+        tipologiaCondizione: cond.conditionType,
+        altro: cond.alternativeDescription,
+        descrizione: cond.description,
+        limitante: cond.isLimiting,
+      }),
+    ),
+  })
+
+  const transformAdditionalFeatures = (
+    additionalFeatures: FormStates['additionalFeatures'],
+  ) => ({
+    caratteristicheOfferta: additionalFeatures?.offerCharacteristics
+      ? {
+          consumoMin: additionalFeatures.offerCharacteristics.consumptionMin,
+          consumoMax: additionalFeatures.offerCharacteristics.consumptionMax,
+          potenzaMin: additionalFeatures.offerCharacteristics.powerMin,
+          potenzaMax: additionalFeatures.offerCharacteristics.powerMax,
+        }
+      : undefined,
+    offertaDUAL: additionalFeatures?.dualOffer
+      ? {
+          offerteCongiungeEE:
+            additionalFeatures.dualOffer.electricityJointOffers || [],
+          offerteCongiungeGas:
+            additionalFeatures.dualOffer.gasJointOffers || [],
+        }
+      : undefined,
+    zoneOfferta: additionalFeatures?.zoneOffers
+      ? {
+          regione: additionalFeatures.zoneOffers.regions,
+          provincia: additionalFeatures.zoneOffers.provinces,
+          comune: additionalFeatures.zoneOffers.municipalities,
+        }
+      : undefined,
+    sconto: additionalFeatures?.discounts?.map((discount) => ({
+      nome: discount.name,
+      descrizione: discount.description,
+      codiceComponenteFascia: discount.componentBandCodes as
+        | string[]
+        | undefined,
+      validita: discount.validity,
+      ivaSconto: discount.vatApplicability,
+      periodoValidita: discount.validityPeriod
+        ? {
+            durata: discount.validityPeriod.duration,
+            validoFino: discount.validityPeriod.validUntil,
+            meseValidita: discount.validityPeriod.validMonths as
+              | string[]
+              | undefined,
+          }
+        : undefined,
+      scontoCondizione: {
+        condizioneApplicazione: discount.condition.applicationCondition,
+        descrizioneCondizione: discount.condition.conditionDescription,
+      },
+      prezziSconto:
+        discount.discountPrices?.map((price) => ({
+          tipologia: price.discountType,
+          validoDa: price.validFrom,
+          validoFino: price.validTo,
+          unitaMisura: price.unitOfMeasure,
+          prezzo: price.price,
+        })) || [],
+    })),
+    prodottiServiziAggiuntivi: additionalFeatures?.additionalProducts?.map(
+      (prod) => ({
+        nome: prod.name,
+        dettaglio: prod.details,
+        macroArea: prod.macroArea,
+        dettagliMacroArea: prod.macroAreaDetails,
+      }),
+    ),
+  })
+
   const handleGeneratePreview = () => {
     try {
-      // Convert form states to the format expected by buildXML
       const formData = {
-        basicInfo: {
-          pivaUtente: formStates.basicInfo?.pivaUtente || '',
-          codOfferta: formStates.basicInfo?.codOfferta || '',
-        },
-        offerDetails: {
-          tipoMercato: formStates.offerDetails?.marketType || '',
-          offertaSingola: formStates.offerDetails?.singleOffer,
-          tipoCliente: formStates.offerDetails?.clientType || '',
-          domesticoResidente: formStates.offerDetails?.residentialStatus,
-          tipoOfferta: formStates.offerDetails?.offerType || '',
-          tipologiaAttContr:
-            formStates.offerDetails?.contractActivationTypes || [],
-          nomeOfferta: formStates.offerDetails?.offerName || '',
-          descrizione: formStates.offerDetails?.offerDescription || '',
-          durata: formStates.offerDetails?.duration || 0,
-          garanzie: formStates.offerDetails?.guarantees || '',
-        },
-        activationContacts: {
-          modalita: formStates.activationContacts?.activationMethods || [],
-          descrizioneModalita:
-            formStates.activationContacts?.activationDescription,
-          telefono: formStates.activationContacts?.phone || '',
-          urlSitoVenditore: formStates.activationContacts?.vendorWebsite,
-          urlOfferta: formStates.activationContacts?.offerUrl,
-        },
-        pricingConfig: {
-          riferimentiPrezzoEnergia: formStates.pricingConfig?.energyPriceIndex
-            ? {
-                idxPrezzoEnergia:
-                  formStates.pricingConfig.energyPriceIndex || '',
-                altro: formStates.pricingConfig.alternativeIndexDescription,
-              }
-            : undefined,
-          tipoPrezzo: formStates.pricingConfig?.timeBandConfiguration
-            ? {
-                tipologiaFasce:
-                  formStates.pricingConfig.timeBandConfiguration || '',
-              }
-            : undefined,
-          fasceOrarieSettimanale: formStates.pricingConfig?.weeklyTimeBands
-            ? {
-                fLunedi: formStates.pricingConfig.weeklyTimeBands.monday,
-                fMartedi: formStates.pricingConfig.weeklyTimeBands.tuesday,
-                fMercoledi: formStates.pricingConfig.weeklyTimeBands.wednesday,
-                fGiovedi: formStates.pricingConfig.weeklyTimeBands.thursday,
-                fVenerdi: formStates.pricingConfig.weeklyTimeBands.friday,
-                fSabato: formStates.pricingConfig.weeklyTimeBands.saturday,
-                fDomenica: formStates.pricingConfig.weeklyTimeBands.sunday,
-                fFestivita: formStates.pricingConfig.weeklyTimeBands.holidays,
-              }
-            : undefined,
-          dispacciamento: formStates.pricingConfig?.dispatching?.map(
-            (disp) => ({
-              tipoDispacciamento: disp.dispatchingType,
-              valoreDisp: disp.dispatchingValue,
-              nome: disp.componentName,
-              descrizione: disp.componentDescription,
-            }),
-          ),
-        },
-        companyComponents: {
-          componentiRegolate: formStates.companyComponents?.regulatedComponents
-            ? {
-                codice: formStates.companyComponents.regulatedComponents || [],
-              }
-            : undefined,
-          componenteImpresa:
-            formStates.companyComponents?.companyComponents?.map((comp) => ({
-              nome: comp.name,
-              descrizione: comp.description,
-              tipologia: comp.componentType,
-              macroArea: comp.macroArea,
-              intervalloPrezzi:
-                comp.priceIntervals?.map((interval) => ({
-                  fasciaComponente: interval.componentTimeBand,
-                  consumoDa: interval.consumptionFrom,
-                  consumoA: interval.consumptionTo,
-                  prezzo: interval.price,
-                  unitaMisura: interval.unitOfMeasure,
-                  periodoValidita: interval.validityPeriod,
-                })) || [],
-            })),
-        },
-        paymentConditions: {
-          metodoPagamento:
-            formStates.paymentConditions?.paymentMethods?.map((method) => ({
-              modalitaPagamento: method.paymentMethodType,
-              descrizione: method.description,
-            })) || [],
-          condizioniContrattuali:
-            formStates.paymentConditions?.contractualConditions?.map(
-              (cond) => ({
-                tipologiaCondizione: cond.conditionType,
-                altro: cond.alternativeDescription,
-                descrizione: cond.description,
-                limitante: cond.isLimiting,
-              }),
-            ),
-        },
-        additionalFeatures: {
-          caratteristicheOfferta: formStates.additionalFeatures
-            ?.offerCharacteristics
-            ? {
-                consumoMin:
-                  formStates.additionalFeatures.offerCharacteristics
-                    .consumptionMin,
-                consumoMax:
-                  formStates.additionalFeatures.offerCharacteristics
-                    .consumptionMax,
-                potenzaMin:
-                  formStates.additionalFeatures.offerCharacteristics.powerMin,
-                potenzaMax:
-                  formStates.additionalFeatures.offerCharacteristics.powerMax,
-              }
-            : undefined,
-          offertaDUAL: formStates.additionalFeatures?.dualOffer
-            ? {
-                offerteCongiungeEE:
-                  formStates.additionalFeatures.dualOffer
-                    .electricityJointOffers || [],
-                offerteCongiungeGas:
-                  formStates.additionalFeatures.dualOffer.gasJointOffers || [],
-              }
-            : undefined,
-          zoneOfferta: formStates.additionalFeatures?.zoneOffers
-            ? {
-                regione: formStates.additionalFeatures.zoneOffers.regions,
-                provincia: formStates.additionalFeatures.zoneOffers.provinces,
-                comune: formStates.additionalFeatures.zoneOffers.municipalities,
-              }
-            : undefined,
-          sconto: formStates.additionalFeatures?.discounts?.map((discount) => ({
-            nome: discount.name,
-            descrizione: discount.description,
-            codiceComponenteFascia: discount.componentBandCodes,
-            validita: discount.validity,
-            ivaSconto: discount.vatApplicability,
-            periodoValidita: discount.validityPeriod,
-            scontoCondizione: {
-              condizioneApplicazione: discount.condition.applicationCondition,
-              descrizioneCondizione: discount.condition.conditionDescription,
-            },
-            prezziSconto:
-              discount.discountPrices?.map((price) => ({
-                tipologia: price.discountType,
-                validoDa: price.validFrom,
-                validoFino: price.validTo,
-                unitaMisura: price.unitOfMeasure,
-                prezzo: price.price,
-              })) || [],
-          })),
-          prodottiServiziAggiuntivi:
-            formStates.additionalFeatures?.additionalProducts?.map((prod) => ({
-              nome: prod.name,
-              dettaglio: prod.details,
-              macroArea: prod.macroArea,
-              dettagliMacroArea: prod.macroAreaDetails,
-            })),
-        },
+        basicInfo: transformBasicInfo(formStates.basicInfo),
+        offerDetails: transformOfferDetails(formStates.offerDetails),
+        activationContacts: transformActivationContacts(
+          formStates.activationContacts,
+        ),
+        pricingConfig: transformPricingConfig(formStates.pricingConfig),
+        companyComponents: transformCompanyComponents(
+          formStates.companyComponents,
+        ),
+        paymentConditions: transformPaymentConditions(
+          formStates.paymentConditions,
+        ),
+        additionalFeatures: transformAdditionalFeatures(
+          formStates.additionalFeatures,
+        ),
         validityReview: {
           validitaOfferta: {
             dataInizio:
@@ -646,9 +679,8 @@ function XmlPreviewCard({ formStates }: { formStates: FormStates }) {
       setXmlContent(xml)
       setError(null)
       setShowPreview(true)
-    } catch (err) {
+    } catch {
       setError('Errore nella generazione del XML. Verifica i dati inseriti.')
-      // Error details: err
     }
   }
 
