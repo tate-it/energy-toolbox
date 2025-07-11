@@ -1,3 +1,4 @@
+import type { ZodTypeAny } from 'zod'
 import { defineStepper } from '@/components/stepper'
 import { ActivationContactsStep } from '@/components/xml-generator/steps/activation-contacts-step'
 import { AdditionalFeaturesStep } from '@/components/xml-generator/steps/additional-features-step'
@@ -17,6 +18,7 @@ import {
   pricingConfigSchema,
   validityReviewSchema,
 } from './schemas'
+import type { Step } from './stepperize/config'
 import { baseConfig } from './stepperize/config'
 
 const schemaMap = {
@@ -50,3 +52,11 @@ export const xmlFormStepper = defineStepper(
 )
 
 export type XmlFormStep = typeof xmlFormStepper
+
+export const stepRegistry = baseConfig.reduce(
+  (acc, step) => {
+    acc[step.id] = schemaMap[step.id]
+    return acc
+  },
+  {} as Record<Step, ZodTypeAny>,
+)
