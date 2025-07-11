@@ -67,11 +67,11 @@
   - [x] 2.8 Implement AdditionalFeaturesStep with discounts, zones, and additional products
   - [x] 2.9 Implement ValidityReviewStep with date selection and final review summary
 - [ ] 3.0 Create XML Generation and Export Functionality
-  - [ ] 3.1 Implement XML builder in lib/xml-generator/xml-builder.ts using fast-xml-parser
-  - [ ] 3.2 Create XML structure matching the exact SII specification hierarchy and element ordering
-  - [ ] 3.3 Implement proper UTF-8 encoding and XML declaration formatting
-  - [ ] 3.4 Build file naming logic following <PIVA>_INSERIMENTO_<DESCRIPTION>.XML convention
-  - [ ] 3.5 Create XML validator using the provided XSD schema for pre-download validation
+  - [x] 3.1 Implement XML builder in lib/xml-generator/xml-builder.ts using fast-xml-parser
+  - [x] 3.2 Create XML structure matching the exact SII specification hierarchy and element ordering
+  - [x] 3.3 Implement proper UTF-8 encoding and XML declaration formatting
+  - [x] 3.4 Build file naming logic following <PIVA>_INSERIMENTO_<DESCRIPTION>.XML convention
+  - [x] 3.5 Create XML validator using the provided XSD schema for pre-download validation
   - [ ] 3.6 Implement XML preview functionality with syntax highlighting in ValidityReviewStep
   - [ ] 3.7 Add download functionality with proper MIME type and filename handling
   - [ ] 3.8 Create comprehensive test suite for XML generation covering all offer types
