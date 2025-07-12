@@ -30,6 +30,73 @@ const FormProviderSkeleton = () => {
   )
 }
 
+// Default values for each step to prevent uncontrolled to controlled input errors
+const getDefaultValues = (stepId: string) => {
+  switch (stepId) {
+    case 'basicInfo':
+      return {
+        pivaUtente: '',
+        codOfferta: '',
+      }
+    case 'offerDetails':
+      return {
+        marketType: undefined,
+        singleOffer: undefined,
+        clientType: undefined,
+        residentialStatus: undefined,
+        offerType: undefined,
+        contractActivationTypes: [],
+        offerName: '',
+        offerDescription: '',
+        duration: undefined,
+        guarantees: '',
+      }
+    case 'activationContacts':
+      return {
+        activationMethods: [],
+        activationDescription: '',
+        phone: '',
+        vendorWebsite: '',
+        offerUrl: '',
+      }
+    case 'pricingConfig':
+      return {
+        energyPriceIndex: undefined,
+        alternativeIndexDescription: '',
+        timeBandConfiguration: undefined,
+        weeklyTimeBands: {},
+        dispatching: [],
+      }
+    case 'companyComponents':
+      return {
+        regulatedComponents: [],
+        companyComponents: [],
+      }
+    case 'paymentConditions':
+      return {
+        paymentMethods: [],
+        paymentDescription: '',
+        directDebitDetails: '',
+        additionalPaymentInfo: '',
+      }
+    case 'additionalFeatures':
+      return {
+        additionalServices: [],
+        serviceDescription: '',
+        promotionalOffers: [],
+        offerDescription: '',
+      }
+    case 'validityReview':
+      return {
+        validityStartDate: '',
+        validityEndDate: '',
+        reviewNotes: '',
+      }
+    default:
+      return {}
+  }
+}
+
 export function FormProviderComponent({
   children,
 }: {
@@ -44,11 +111,13 @@ export function FormProviderComponent({
       [methods.current.id]: values,
     })
   }
+
   const form = useForm({
     mode: 'onTouched',
     resolver: dynamicResolver(methods.current.schema),
-    // Initialize form with data from URL state for current step
-    defaultValues: formStates[methods.current.id] || {},
+    // Initialize form with data from URL state for current step, with proper defaults
+    defaultValues:
+      formStates[methods.current.id] || getDefaultValues(methods.current.id),
   })
 
   return (
