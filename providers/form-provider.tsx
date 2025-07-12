@@ -40,15 +40,15 @@ const getDefaultValues = (stepId: string) => {
       }
     case 'offerDetails':
       return {
-        marketType: undefined,
-        singleOffer: undefined,
-        clientType: undefined,
-        residentialStatus: undefined,
-        offerType: undefined,
+        marketType: '',
+        singleOffer: '',
+        clientType: '',
+        residentialStatus: '',
+        offerType: '',
         contractActivationTypes: [],
         offerName: '',
         offerDescription: '',
-        duration: undefined,
+        duration: '',
         guarantees: '',
       }
     case 'activationContacts':
@@ -61,9 +61,9 @@ const getDefaultValues = (stepId: string) => {
       }
     case 'pricingConfig':
       return {
-        energyPriceIndex: undefined,
+        energyPriceIndex: '',
         alternativeIndexDescription: '',
-        timeBandConfiguration: undefined,
+        timeBandConfiguration: '',
         weeklyTimeBands: {},
         dispatching: [],
       }
@@ -115,9 +115,11 @@ export function FormProviderComponent({
   const form = useForm({
     mode: 'onTouched',
     resolver: dynamicResolver(methods.current.schema),
-    // Initialize form with data from URL state for current step, with proper defaults
-    defaultValues:
-      formStates[methods.current.id] || getDefaultValues(methods.current.id),
+    // Initialize form with data from URL state for current step, merged with proper defaults
+    defaultValues: {
+      ...getDefaultValues(methods.current.id),
+      ...(formStates[methods.current.id] || {}),
+    },
   })
 
   return (
