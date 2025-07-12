@@ -9,6 +9,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import type { BasicInfoFormValues } from '@/lib/xml-generator/schemas'
 import { xmlFormStepper } from '@/lib/xml-generator/stepperize-config'
@@ -16,103 +24,125 @@ import { BasicInfoSkeleton } from './skeletons/basic-info-skeleton'
 
 export function BasicInfoStepComponent() {
   const { Stepper } = xmlFormStepper
-  const {
-    register,
-    formState: { errors },
-  } = useFormContext<BasicInfoFormValues>()
+  const form = useFormContext<BasicInfoFormValues>()
 
   return (
     <Stepper.Panel>
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>Informazioni di Base</CardTitle>
-          <CardDescription>
+      <div className="space-y-6">
+        <div>
+          <h2 className="font-bold text-2xl">Informazioni di Base</h2>
+          <p className="text-muted-foreground">
             Inserire la partita IVA e il codice offerta come richiesto dalle
             specifiche SII
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* PIVA_UTENTE Field */}
-          <div className="space-y-2">
-            <label
-              className="block font-medium text-primary text-sm"
-              htmlFor="pivaUtente"
-            >
-              PIVA Utente (VAT Number) *
-            </label>
-            <Input
-              id="pivaUtente"
-              {...register('pivaUtente')}
-              className="block w-full uppercase"
-              maxLength={16}
-              placeholder="IT12345678901"
-              style={{ textTransform: 'uppercase' }}
-            />
-            <p className="text-muted-foreground text-xs">
-              Partita IVA italiana (11-16 caratteri alfanumerici). Rappresenta
-              la partita IVA dell&apos;utente accreditato.
-            </p>
-            {errors.pivaUtente && (
-              <span className="text-destructive text-sm">
-                {errors.pivaUtente.message}
-              </span>
-            )}
-          </div>
+          </p>
+        </div>
 
-          {/* COD_OFFERTA Field */}
-          <div className="space-y-2">
-            <label
-              className="block font-medium text-primary text-sm"
-              htmlFor="codOfferta"
-            >
-              Codice Offerta (Offer Code) *
-            </label>
-            <Input
-              id="codOfferta"
-              {...register('codOfferta')}
-              className="block w-full uppercase"
-              maxLength={32}
-              placeholder="OFFER2024001"
-              style={{ textTransform: 'uppercase' }}
+        <Card>
+          <CardHeader>
+            <CardTitle>Dati Identificativi</CardTitle>
+            <CardDescription>
+              Campi obbligatori per l'identificazione dell'utente e dell'offerta
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="pivaUtente"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    PIVA Utente (VAT Number){' '}
+                    <span className="text-destructive">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      className="uppercase"
+                      maxLength={16}
+                      placeholder="IT12345678901"
+                      style={{ textTransform: 'uppercase' }}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Partita IVA italiana (11-16 caratteri alfanumerici).
+                    Rappresenta la partita IVA dell'utente accreditato.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <p className="text-muted-foreground text-xs">
-              Codice offerta univoco (max 32 caratteri alfanumerici). Verrà
-              utilizzato nel campo CODICE CONTRATTO durante la sottoscrizione
-              del cliente.
-            </p>
-            {errors.codOfferta && (
-              <span className="text-destructive text-sm">
-                {errors.codOfferta.message}
-              </span>
-            )}
-          </div>
 
-          {/* Information Box */}
-          <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-            <h4 className="mb-2 font-medium text-blue-900 text-sm">
-              Requisiti Specifiche SII
-            </h4>
-            <ul className="space-y-1 text-blue-800 text-xs">
-              <li>
-                • PIVA_UTENTE: Rappresenta la partita IVA dell&apos;utente
-                accreditato (Alfanumerico, max 16 caratteri)
+            <FormField
+              control={form.control}
+              name="codOfferta"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Codice Offerta (Offer Code){' '}
+                    <span className="text-destructive">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      className="uppercase"
+                      maxLength={32}
+                      placeholder="OFFER2024001"
+                      style={{ textTransform: 'uppercase' }}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Codice offerta univoco (max 32 caratteri alfanumerici).
+                    Verrà utilizzato nel campo CODICE CONTRATTO durante la
+                    sottoscrizione del cliente.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Requisiti Specifiche SII</CardTitle>
+            <CardDescription>
+              Informazioni tecniche sui campi richiesti
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2 text-sm">
+              <li className="flex items-start gap-2">
+                <span className="text-primary">•</span>
+                <span>
+                  <strong>PIVA_UTENTE:</strong> Rappresenta la partita IVA
+                  dell'utente accreditato (Alfanumerico, max 16 caratteri)
+                </span>
               </li>
-              <li>
-                • COD_OFFERTA: Codice univoco utilizzato nel campo CODICE
-                CONTRATTO durante le richieste di switching (Alfanumerico, max
-                32 caratteri)
+              <li className="flex items-start gap-2">
+                <span className="text-primary">•</span>
+                <span>
+                  <strong>COD_OFFERTA:</strong> Codice univoco utilizzato nel
+                  campo CODICE CONTRATTO durante le richieste di switching
+                  (Alfanumerico, max 32 caratteri)
+                </span>
               </li>
-              <li>
-                • Entrambi i campi accettano solo lettere maiuscole e numeri
+              <li className="flex items-start gap-2">
+                <span className="text-primary">•</span>
+                <span>
+                  Entrambi i campi accettano solo lettere maiuscole e numeri
+                </span>
               </li>
-              <li>
-                • Questi identificatori sono obbligatori per tutti i tipi di
-                offerta
+              <li className="flex items-start gap-2">
+                <span className="text-primary">•</span>
+                <span>
+                  Questi identificatori sono obbligatori per tutti i tipi di
+                  offerta
+                </span>
               </li>
             </ul>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </Stepper.Panel>
   )
 }
