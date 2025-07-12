@@ -14,7 +14,8 @@ const CODICE_OFFERTA_REGEX = /Codice Offerta/i
 const REQUISITI_SPECIFICHE_REGEX = /Requisiti Specifiche SII/i
 const PIVA_MIN_LENGTH_ERROR_REGEX =
   /La PIVA deve contenere almeno 11 caratteri/i
-const CODICE_OFFERTA_REQUIRED_ERROR_REGEX = /Il codice offerta è obbligatorio/i
+const CODICE_OFFERTA_REQUIRED_ERROR_REGEX =
+  /(Il codice offerta è obbligatorio|Required)/i
 const PIVA_FORMAT_ERROR_REGEX =
   /La PIVA deve contenere solo lettere maiuscole e numeri/i
 const CODICE_OFFERTA_FORMAT_ERROR_REGEX =
@@ -24,9 +25,9 @@ const PARTITA_IVA_HELP_REGEX =
 const CODICE_OFFERTA_HELP_REGEX =
   /Codice offerta univoco \(max 32 caratteri alfanumerici\)/i
 const PIVA_UTENTE_DESCRIPTION_REGEX =
-  /PIVA_UTENTE: Rappresenta la partita IVA dell'utente accreditato/i
+  /Rappresenta la partita IVA dell'utente accreditato \(Alfanumerico, max 16 caratteri\)/i
 const COD_OFFERTA_DESCRIPTION_REGEX =
-  /COD_OFFERTA: Codice univoco utilizzato nel campo CODICE CONTRATTO/i
+  /Codice univoco utilizzato nel campo CODICE CONTRATTO durante le richieste di switching \(Alfanumerico, max 32 caratteri\)/i
 const PIVA_ERROR_REGEX = /La PIVA deve/i
 const CODICE_OFFERTA_ERROR_REGEX = /Il codice offerta deve/i
 
