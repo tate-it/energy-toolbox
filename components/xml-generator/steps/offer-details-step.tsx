@@ -2,9 +2,23 @@
 
 import { Suspense } from 'react'
 import { useFormContext } from 'react-hook-form'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -13,6 +27,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+
 import {
   CLIENT_TYPE_LABELS,
   CONTRACT_ACTIVATION_LABELS,
@@ -25,331 +40,366 @@ import type { OfferDetailsFormValues } from '@/lib/xml-generator/schemas'
 import { OfferDetailsSkeleton } from './skeletons/offer-details-skeleton'
 
 export function OfferDetailsStepComponent() {
-  const {
-    register,
-    formState: { errors },
-    watch,
-    setValue,
-  } = useFormContext<OfferDetailsFormValues>()
+  const form = useFormContext<OfferDetailsFormValues>()
 
-  const marketType = watch('marketType')
-  const clientType = watch('clientType')
-  const contractActivationTypes = watch('contractActivationTypes') || []
-
-  const handleContractActivationChange = (value: string, checked: boolean) => {
-    const contractActivationType = value as '01' | '02' | '03' | '04' | '99'
-    if (checked) {
-      setValue('contractActivationTypes', [
-        ...contractActivationTypes,
-        contractActivationType,
-      ])
-    } else {
-      setValue(
-        'contractActivationTypes',
-        contractActivationTypes.filter(
-          (type) => type !== contractActivationType,
-        ),
-      )
-    }
-  }
+  const marketType = form.watch('marketType')
+  const clientType = form.watch('clientType')
 
   return (
-    <div className="space-y-6 text-start">
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {/* Market Type */}
-        <div className="space-y-2">
-          <Label
-            className="font-medium text-primary text-sm"
-            htmlFor="marketType"
-          >
-            Tipo di Mercato *
-          </Label>
-          <Select
-            onValueChange={(value) =>
-              setValue('marketType', value as '01' | '02' | '03')
-            }
-            value={watch('marketType')}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Seleziona tipo di mercato" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(MARKET_TYPE_LABELS).map(([value, label]) => (
-                <SelectItem key={value} value={value}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {errors.marketType && (
-            <span className="text-destructive text-sm">
-              {errors.marketType.message}
-            </span>
-          )}
-        </div>
-
-        {/* Single Offer - only shown if not Dual Fuel */}
-        {marketType && marketType !== '03' && (
-          <div className="space-y-2">
-            <Label
-              className="font-medium text-primary text-sm"
-              htmlFor="singleOffer"
-            >
-              Offerta Singola *
-            </Label>
-            <Select
-              onValueChange={(value) =>
-                setValue('singleOffer', value as 'SI' | 'NO')
-              }
-              value={watch('singleOffer')}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleziona se l&apos;offerta può essere sottoscritta singolarmente" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(SINGLE_OFFER_LABELS).map(([value, label]) => (
-                  <SelectItem key={value} value={value}>
-                    {label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {errors.singleOffer && (
-              <span className="text-destructive text-sm">
-                {errors.singleOffer.message}
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Client Type */}
-        <div className="space-y-2">
-          <Label
-            className="font-medium text-primary text-sm"
-            htmlFor="clientType"
-          >
-            Tipo di Cliente *
-          </Label>
-          <Select
-            onValueChange={(value) =>
-              setValue('clientType', value as '01' | '02' | '03')
-            }
-            value={watch('clientType')}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Seleziona tipo di cliente" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(CLIENT_TYPE_LABELS).map(([value, label]) => (
-                <SelectItem key={value} value={value}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {errors.clientType && (
-            <span className="text-destructive text-sm">
-              {errors.clientType.message}
-            </span>
-          )}
-        </div>
-
-        {/* Residential Status - only shown for Domestic clients */}
-        {clientType === '01' && (
-          <div className="space-y-2">
-            <Label
-              className="font-medium text-primary text-sm"
-              htmlFor="residentialStatus"
-            >
-              Stato Residenziale
-            </Label>
-            <Select
-              onValueChange={(value) =>
-                setValue('residentialStatus', value as '01' | '02' | '03')
-              }
-              value={watch('residentialStatus')}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleziona stato residenziale" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(RESIDENTIAL_STATUS_LABELS).map(
-                  ([value, label]) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ),
-                )}
-              </SelectContent>
-            </Select>
-            {errors.residentialStatus && (
-              <span className="text-destructive text-sm">
-                {errors.residentialStatus.message}
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Offer Type */}
-        <div className="space-y-2">
-          <Label
-            className="font-medium text-primary text-sm"
-            htmlFor="offerType"
-          >
-            Tipo di Offerta *
-          </Label>
-          <Select
-            onValueChange={(value) =>
-              setValue('offerType', value as '01' | '02' | '03')
-            }
-            value={watch('offerType')}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Seleziona tipo di offerta" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(OFFER_TYPE_LABELS).map(([value, label]) => (
-                <SelectItem key={value} value={value}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {errors.offerType && (
-            <span className="text-destructive text-sm">
-              {errors.offerType.message}
-            </span>
-          )}
-        </div>
+    <div className="space-y-6">
+      <div>
+        <h2 className="font-bold text-2xl">Dettagli dell'Offerta</h2>
+        <p className="text-muted-foreground">
+          Configura i dettagli principali dell'offerta commerciale
+        </p>
       </div>
 
-      {/* Contract Activation Types */}
-      <div className="space-y-4">
-        <Label className="font-medium text-primary text-sm">
-          Tipologie di Attivazione Contratto *
-        </Label>
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          {Object.entries(CONTRACT_ACTIVATION_LABELS).map(([value, label]) => (
-            <div className="flex items-center space-x-2" key={value}>
-              <Checkbox
-                checked={contractActivationTypes.includes(
-                  value as '01' | '02' | '03' | '04' | '99',
+      <Card>
+        <CardHeader>
+          <CardTitle>Informazioni Base</CardTitle>
+          <CardDescription>
+            Configura le informazioni principali dell'offerta
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="marketType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Tipo di Mercato <span className="text-destructive">*</span>
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value || ''}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleziona tipo di mercato" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Object.entries(MARKET_TYPE_LABELS).map(
+                        ([value, label]) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ),
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Single Offer - only shown if not Dual Fuel */}
+            {marketType && marketType !== '03' && (
+              <FormField
+                control={form.control}
+                name="singleOffer"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Offerta Singola{' '}
+                      <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value || ''}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleziona se l'offerta può essere sottoscritta singolarmente" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {Object.entries(SINGLE_OFFER_LABELS).map(
+                          ([value, label]) => (
+                            <SelectItem key={value} value={value}>
+                              {label}
+                            </SelectItem>
+                          ),
+                        )}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
                 )}
-                id={`activation-${value}`}
-                onCheckedChange={(checked) =>
-                  handleContractActivationChange(value, !!checked)
-                }
               />
-              <Label
-                className="cursor-pointer font-medium text-sm"
-                htmlFor={`activation-${value}`}
-              >
-                {label}
-              </Label>
-            </div>
-          ))}
-        </div>
-        {errors.contractActivationTypes && (
-          <span className="text-destructive text-sm">
-            {errors.contractActivationTypes.message}
-          </span>
-        )}
-      </div>
+            )}
 
-      {/* Offer Name */}
-      <div className="space-y-2">
-        <Label className="font-medium text-primary text-sm" htmlFor="offerName">
-          Nome dell&apos;Offerta *
-        </Label>
-        <Input
-          id="offerName"
-          {...register('offerName')}
-          className="w-full"
-          placeholder="Inserisci il nome dell&apos;offerta"
-        />
-        {errors.offerName && (
-          <span className="text-destructive text-sm">
-            {errors.offerName.message}
-          </span>
-        )}
-      </div>
+            <FormField
+              control={form.control}
+              name="clientType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Tipo di Cliente <span className="text-destructive">*</span>
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value || ''}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleziona tipo di cliente" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Object.entries(CLIENT_TYPE_LABELS).map(
+                        ([value, label]) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ),
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-      {/* Offer Description */}
-      <div className="space-y-2">
-        <Label
-          className="font-medium text-primary text-sm"
-          htmlFor="offerDescription"
-        >
-          Descrizione dell&apos;Offerta *
-        </Label>
-        <Textarea
-          id="offerDescription"
-          {...register('offerDescription')}
-          className="min-h-[120px] w-full"
-          placeholder="Inserisci una descrizione dettagliata dell&apos;offerta"
-          rows={5}
-        />
-        {errors.offerDescription && (
-          <span className="text-destructive text-sm">
-            {errors.offerDescription.message}
-          </span>
-        )}
-      </div>
+            {/* Residential Status - only shown for Domestic clients */}
+            {clientType === '01' && (
+              <FormField
+                control={form.control}
+                name="residentialStatus"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Stato Residenziale</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value || ''}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleziona stato residenziale" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {Object.entries(RESIDENTIAL_STATUS_LABELS).map(
+                          ([value, label]) => (
+                            <SelectItem key={value} value={value}>
+                              {label}
+                            </SelectItem>
+                          ),
+                        )}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {/* Duration */}
-        <div className="space-y-2">
-          <Label
-            className="font-medium text-primary text-sm"
-            htmlFor="duration"
-          >
-            Durata (mesi) *
-          </Label>
-          <Input
-            id="duration"
-            type="number"
-            {...register('duration', { valueAsNumber: true })}
-            className="w-full"
-            max={99}
-            min={-1}
-            placeholder="Inserisci -1 per durata indeterminata o 1-99 per durata in mesi"
-          />
-          <div className="text-muted-foreground text-xs">
-            Inserisci -1 per durata indeterminata o un valore da 1 a 99 mesi
+            <FormField
+              control={form.control}
+              name="offerType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Tipo di Offerta <span className="text-destructive">*</span>
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value || ''}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleziona tipo di offerta" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Object.entries(OFFER_TYPE_LABELS).map(
+                        ([value, label]) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ),
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
-          {errors.duration && (
-            <span className="text-destructive text-sm">
-              {errors.duration.message}
-            </span>
-          )}
-        </div>
-      </div>
 
-      {/* Guarantees */}
-      <div className="space-y-2">
-        <Label
-          className="font-medium text-primary text-sm"
-          htmlFor="guarantees"
-        >
-          Garanzie *
-        </Label>
-        <Textarea
-          id="guarantees"
-          {...register('guarantees')}
-          className="min-h-[100px] w-full"
-          placeholder="Inserisci 'NO' se non sono richieste garanzie, altrimenti descrivi le garanzie richieste (es. cauzioni, domiciliazioni)"
-          rows={4}
-        />
-        <div className="text-muted-foreground text-xs">
-          Inserisci &quot;NO&quot; se non sono richieste garanzie, altrimenti
-          descrivi le garanzie richieste come cauzioni o domiciliazioni
-        </div>
-        {errors.guarantees && (
-          <span className="text-destructive text-sm">
-            {errors.guarantees.message}
-          </span>
-        )}
-      </div>
+          <FormField
+            control={form.control}
+            name="contractActivationTypes"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  Tipologie di Attivazione Contratto{' '}
+                  <span className="text-destructive">*</span>
+                </FormLabel>
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  {Object.entries(CONTRACT_ACTIVATION_LABELS).map(
+                    ([value, label]) => (
+                      <FormItem
+                        className="flex items-center space-x-2"
+                        key={value}
+                      >
+                        <FormControl>
+                          <Checkbox
+                            checked={(field.value || []).includes(
+                              value as '01' | '02' | '03' | '04' | '99',
+                            )}
+                            onCheckedChange={(checked) => {
+                              const currentValue = field.value || []
+                              const activationType = value as
+                                | '01'
+                                | '02'
+                                | '03'
+                                | '04'
+                                | '99'
+                              if (checked) {
+                                field.onChange([
+                                  ...currentValue,
+                                  activationType,
+                                ])
+                              } else {
+                                field.onChange(
+                                  currentValue.filter(
+                                    (type) => type !== activationType,
+                                  ),
+                                )
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormLabel className="cursor-pointer font-medium text-sm">
+                          {label}
+                        </FormLabel>
+                      </FormItem>
+                    ),
+                  )}
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Dettagli dell'Offerta</CardTitle>
+          <CardDescription>
+            Definisci nome, descrizione e caratteristiche principali
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <FormField
+            control={form.control}
+            name="offerName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  Nome dell&apos;Offerta{' '}
+                  <span className="text-destructive">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    onChange={field.onChange}
+                    placeholder="Inserisci il nome dell&apos;offerta"
+                    value={field.value || ''}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="offerDescription"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  Descrizione dell&apos;Offerta{' '}
+                  <span className="text-destructive">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    className="min-h-[120px]"
+                    onChange={field.onChange}
+                    placeholder="Inserisci una descrizione dettagliata dell&apos;offerta"
+                    rows={5}
+                    value={field.value || ''}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="duration"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Durata (mesi) <span className="text-destructive">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      max={99}
+                      min={-1}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value === '' ? '' : Number(e.target.value),
+                        )
+                      }
+                      placeholder="Inserisci -1 per durata indeterminata o 1-99 per durata in mesi"
+                      type="number"
+                      value={field.value || ''}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Inserisci -1 per durata indeterminata o un valore da 1 a 99
+                    mesi
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <FormField
+            control={form.control}
+            name="guarantees"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  Garanzie <span className="text-destructive">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    className="min-h-[100px]"
+                    onChange={field.onChange}
+                    placeholder="Inserisci 'NO' se non sono richieste garanzie, altrimenti descrivi le garanzie richieste (es. cauzioni, domiciliazioni)"
+                    rows={4}
+                    value={field.value || ''}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Inserisci &quot;NO&quot; se non sono richieste garanzie,
+                  altrimenti descrivi le garanzie richieste come cauzioni o
+                  domiciliazioni
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </CardContent>
+      </Card>
     </div>
   )
 }
