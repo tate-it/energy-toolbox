@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { StepperControls } from '@/components/stepper/stepper-controls'
 import { StepperNavigation } from '@/components/stepper/stepper-navigation'
+import { UrlStateDebugger } from '@/components/xml-generator/url-state-debugger'
 import { FormProvider } from '@/providers/form-provider'
 import { StepperProvider } from '@/providers/stepper-provider'
 
@@ -26,16 +27,17 @@ export default function XmlGeneratorLayout({
         </div>
       </header>
       <main className="container mx-auto px-4 py-8">
-        <FormProvider>
-          <StepperProvider className="flex flex-col gap-4" variant="vertical">
+        <StepperProvider className="flex flex-col gap-4" variant="vertical">
+          <FormProvider>
             <div className="flex gap-6">
               <StepperNavigation />
               {children}
             </div>
             <StepperControls />
-          </StepperProvider>
-        </FormProvider>
+          </FormProvider>
+        </StepperProvider>
       </main>
+      {process.env.NODE_ENV === 'development' && <UrlStateDebugger />}
     </div>
   )
 }
