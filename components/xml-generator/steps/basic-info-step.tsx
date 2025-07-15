@@ -57,10 +57,11 @@ export function BasicInfoStepComponent() {
                   <FormControl>
                     <Input
                       {...field}
-                      className="uppercase"
                       maxLength={16}
+                      onChange={(e) => {
+                        field.onChange(e.target.value.toUpperCase())
+                      }}
                       placeholder="IT12345678901"
-                      style={{ textTransform: 'uppercase' }}
                     />
                   </FormControl>
                   <FormDescription>
@@ -84,10 +85,11 @@ export function BasicInfoStepComponent() {
                   <FormControl>
                     <Input
                       {...field}
-                      className="uppercase"
                       maxLength={32}
+                      onChange={(e) => {
+                        field.onChange(e.target.value.toUpperCase())
+                      }}
                       placeholder="OFFER2024001"
-                      style={{ textTransform: 'uppercase' }}
                     />
                   </FormControl>
                   <FormDescription>
