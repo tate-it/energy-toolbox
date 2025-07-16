@@ -25,6 +25,7 @@ export const offerDetailsSchema = z
   .object({
     // Market type (TIPO_MERCATO) - mandatory
     marketType: z.enum(['01', '02', '03'], {
+      invalid_type_error: 'Seleziona un tipo di mercato',
       required_error: 'Seleziona un tipo di mercato',
     }),
 
@@ -33,6 +34,7 @@ export const offerDetailsSchema = z
 
     // Client type (TIPO_CLIENTE) - mandatory
     clientType: z.enum(['01', '02', '03'], {
+      invalid_type_error: 'Seleziona un tipo di cliente',
       required_error: 'Seleziona un tipo di cliente',
     }),
 
@@ -41,6 +43,7 @@ export const offerDetailsSchema = z
 
     // Offer type (TIPO_OFFERTA) - mandatory
     offerType: z.enum(['01', '02', '03'], {
+      invalid_type_error: 'Seleziona un tipo di offerta',
       required_error: 'Seleziona un tipo di offerta',
     }),
 
