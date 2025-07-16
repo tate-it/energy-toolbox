@@ -41,7 +41,8 @@ export function BasicInfoStepComponent() {
           <CardHeader>
             <CardTitle>Dati Identificativi</CardTitle>
             <CardDescription>
-              Campi obbligatori per l'identificazione dell'utente e dell'offerta
+              Campi obbligatori per l&apos;identificazione dell&apos;utente e
+              dell&apos;offerta
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -66,7 +67,7 @@ export function BasicInfoStepComponent() {
                   </FormControl>
                   <FormDescription>
                     Partita IVA italiana (11-16 caratteri alfanumerici).
-                    Rappresenta la partita IVA dell'utente accreditato.
+                    Rappresenta la partita IVA dell&apos;utente accreditato.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -117,7 +118,7 @@ export function BasicInfoStepComponent() {
                 <span className="text-primary">•</span>
                 <span>
                   <strong>PIVA_UTENTE:</strong> Rappresenta la partita IVA
-                  dell'utente accreditato (Alfanumerico, max 16 caratteri)
+                  dell&apos;utente accreditato (Alfanumerico, max 16 caratteri)
                 </span>
               </li>
               <li className="flex items-start gap-2">

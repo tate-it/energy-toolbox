@@ -48,9 +48,9 @@ export function OfferDetailsStepComponent() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="font-bold text-2xl">Dettagli dell'Offerta</h2>
+        <h2 className="font-bold text-2xl">Dettagli dell&apos;Offerta</h2>
         <p className="text-muted-foreground">
-          Configura i dettagli principali dell'offerta commerciale
+          Configura i dettagli principali dell&apos;offerta commerciale
         </p>
       </div>
 
@@ -58,7 +58,7 @@ export function OfferDetailsStepComponent() {
         <CardHeader>
           <CardTitle>Informazioni Base</CardTitle>
           <CardDescription>
-            Configura le informazioni principali dell'offerta
+            Configura le informazioni principali dell&apos;offerta
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -289,7 +289,7 @@ export function OfferDetailsStepComponent() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Dettagli dell'Offerta</CardTitle>
+          <CardTitle>Dettagli dell&apos;Offerta</CardTitle>
           <CardDescription>
             Definisci nome, descrizione e caratteristiche principali
           </CardDescription>

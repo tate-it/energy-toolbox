@@ -30,6 +30,7 @@ function StepperWithFormContent() {
       form.reset(currentStepData)
       previousStepRef.current = currentStepId
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [methods.current.id, formStates, form.reset])
 
   // Sync URL currentStep with stepper state
@@ -37,6 +38,7 @@ function StepperWithFormContent() {
     if (methods.current.id !== currentStep) {
       setCurrentStep(methods.current.id)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [methods.current.id, currentStep, setCurrentStep])
 
   return (
