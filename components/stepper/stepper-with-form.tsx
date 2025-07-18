@@ -14,7 +14,6 @@ function StepperWithFormContent() {
     parseAsString.withDefault('basicInfo'),
   )
 
-
   // Sync URL currentStep with stepper state
   useEffect(() => {
     if (methods.current.id !== currentStep) {

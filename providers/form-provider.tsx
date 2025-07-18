@@ -110,8 +110,11 @@ export function FormProviderComponent({
     setFormStates({
       [methods.current.id]: values,
     })
+    if (methods.isLast) {
+      methods.reset()
+    }
+    methods.next()
   }
-
   // Convert formStates to the expected format, handling null values
   const cleanFormStates = Object.fromEntries(
     Object.entries(formStates).map(([key, value]) => [
@@ -126,16 +129,9 @@ export function FormProviderComponent({
     // Initialize form with data from URL state for current step, merged with proper defaults
     defaultValues: {
       ...getDefaultValues(methods.current.id),
-      // ...(formStates[methods.current.id] || {}),
+      ...(formStates[methods.current.id] || {}),
     },
   })
-
-  console.log(
-    'form',
-    methods.current.id,
-    'marketType',
-    form.getFieldState('marketType'),
-  )
 
   return (
     <Form {...form}>

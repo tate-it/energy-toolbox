@@ -1,50 +1,18 @@
 'use client'
 
-import { parseAsString, useQueryState } from 'nuqs'
 import { Suspense } from 'react'
-import { useFormContext } from 'react-hook-form'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useFormStates } from '@/hooks/use-form-states'
 import { xmlFormStepper } from '@/lib/xml-generator/stepperize-config'
 
 const { Stepper, useStepper } = xmlFormStepper
 
 function StepperNavigationContent() {
-  const [, setFormStates] = useFormStates()
-  const [, setCurrentStep] = useQueryState(
-    'currentStep',
-    parseAsString.withDefault('basicInfo'),
-  )
-  const form = useFormContext()
-  const { current, all, goTo } = useStepper()
-
-  const handleStepChange = async (stepId: typeof current.id) => {
-    const valid = await form.trigger()
-    console.log('stepper-navigation', 'valid', valid, 'step', current.id)
-    if (!valid) {
-      return
-    }
-
-    // Save current step data before navigating
-    const currentValues = form.getValues()
-    setFormStates({
-      [current.id]: currentValues,
-    })
-
-    // Update current step in URL
-    setCurrentStep(stepId)
-    goTo(stepId)
-  }
+  const { all } = useStepper()
 
   return (
     <Stepper.Navigation>
       {all.map((step) => (
-        <Stepper.Step
-          key={step.id}
-          of={step.id}
-          onClick={() => handleStepChange(step.id)}
-          type={step.id === current.id ? 'submit' : 'button'}
-        >
+        <Stepper.Step key={step.id} of={step.id}>
           <Stepper.Title>{step.title}</Stepper.Title>
         </Stepper.Step>
       ))}

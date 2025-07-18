@@ -16,25 +16,22 @@ export function createContextualResolver<TFieldValues extends FieldValues>(
   formStates: Partial<CompleteFormValues>,
 ): Resolver<TFieldValues> {
   return (values, context, options) => {
-    console.log('resolver called', { values, context, options })
-    // Create a complete form data object with current step values and all other step states
-    // const currentStep = getCurrentStepFromValues(values)
-    // const completeFormData: Partial<CompleteFormValues> = {
-    //   ...formStates,
-    //   // Override with current step values
-    //   [currentStep]: values,
-    // }
+    const currentStep = getCurrentStepFromValues(values)
+    const completeFormData: Partial<CompleteFormValues> = {
+      ...formStates,
+      // Override with current step values
+      [currentStep]: values,
+    }
 
-    // // Create a new context object that includes form states
-    // const enhancedContext = {
-    //   ...context,
-    //   formStates: completeFormData,
-    // }
+    // Create a new context object that includes form states
+    const enhancedContext = {
+      ...context,
+      formStates: completeFormData,
+    }
 
-    // // Use the standard zodResolver with enhanced context
-    // const resolver = zodResolver(schema)
-    // return resolver(values, enhancedContext, options)
-    return zodResolver(schema)(values, context, options)
+    // Use the standard zodResolver with enhanced context
+    const resolver = zodResolver(schema)
+    return resolver(values, enhancedContext, options)
   }
 }
 
