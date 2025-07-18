@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { getFormContext } from './resolver'
 
 // Basic Information Schema - matching SII specification
 export const basicInfoSchema = z.object({
@@ -562,6 +563,45 @@ export const companyComponentsSchema = z
     },
   )
 
+// Helper function to validate early withdrawal charges date
+function validateEarlyWithdrawalDate(
+  startDateStr: string | undefined,
+  conditionIndex: number,
+  ctx: z.RefinementCtx,
+) {
+  if (!startDateStr) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message:
+        'Per utilizzare gli Oneri di Recesso Anticipato (condizione 05), è necessario prima impostare una data di validità dal 1 gennaio 2024 in poi nel passo "Validità e Revisione"',
+      path: ['contractualConditions', conditionIndex, 'conditionType'],
+    })
+    return
+  }
+
+  const dateParts = startDateStr.split('/')
+  if (dateParts.length !== 3) {
+    return
+  }
+
+  const startDate = new Date(
+    Number.parseInt(dateParts[2], 10), // year
+    Number.parseInt(dateParts[1], 10) - 1, // month (0-indexed)
+    Number.parseInt(dateParts[0], 10), // day
+  )
+
+  const minimumDate = new Date(2024, 0, 1) // January 1, 2024
+
+  if (startDate < minimumDate) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message:
+        'Gli Oneri di Recesso Anticipato (condizione 05) possono essere utilizzati solo per offerte con validità dal 1 gennaio 2024 in poi',
+      path: ['contractualConditions', conditionIndex, 'conditionType'],
+    })
+  }
+}
+
 // Payment & Conditions Schema - matching SII specification
 export const paymentConditionsSchema = z
   .object({
@@ -657,6 +697,25 @@ export const paymentConditionsSchema = z
       path: ['contractualConditions'],
     },
   )
+  .superRefine((data, ctx) => {
+    // TIPOLOGIA_CONDIZIONE = 05 (Early Withdrawal Charges) can only be used starting from January 1, 2024
+    if (!data.contractualConditions) {
+      return
+    }
+
+    const formContext = getFormContext(ctx)
+    const validityReview = formContext.validityReview
+
+    for (const [index, condition] of data.contractualConditions.entries()) {
+      if (condition.conditionType === '05') {
+        validateEarlyWithdrawalDate(
+          validityReview?.validityPeriod?.startDate,
+          index,
+          ctx,
+        )
+      }
+    }
+  })
 
 // Additional Features Schema - matching SII specification
 export const additionalFeaturesSchema = z

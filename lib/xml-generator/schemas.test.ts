@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { z } from 'zod'
-import { companyComponentsSchema } from './schemas'
+import { companyComponentsSchema, paymentConditionsSchema } from './schemas'
 
 // Mock context type for testing superRefine validation
 interface MockRefinementContext {
@@ -229,5 +229,169 @@ describe('companyComponentsSchema cross-step validation', () => {
         path: ['companyComponents', 1, 'priceIntervals'],
       })
     })
+  })
+})
+
+describe('paymentConditionsSchema', () => {
+  it('validates correct payment conditions data', () => {
+    const validData = {
+      paymentMethods: [
+        {
+          paymentMethodType: '01',
+        },
+      ],
+      contractualConditions: [
+        {
+          conditionType: '01',
+          description: 'Test condition',
+          isLimiting: '01',
+        },
+      ],
+    }
+
+    const result = paymentConditionsSchema.safeParse(validData)
+    expect(result.success).toBe(true)
+  })
+
+  it('requires at least one payment method', () => {
+    const invalidData = {
+      paymentMethods: [],
+    }
+
+    const result = paymentConditionsSchema.safeParse(invalidData)
+    expect(result.success).toBe(false)
+    expect(result.error?.issues[0].message).toBe(
+      'È richiesto almeno un metodo di pagamento',
+    )
+  })
+
+  it('validates conditionType 05 date restriction with valid date', () => {
+    // Mock the form context with a valid date
+    const mockContext = {
+      context: {
+        formStates: {
+          validityReview: {
+            validityPeriod: {
+              startDate: '01/02/2024', // February 1, 2024
+            },
+          },
+        },
+      },
+    }
+
+    const validData = {
+      paymentMethods: [
+        {
+          paymentMethodType: '01',
+        },
+      ],
+      contractualConditions: [
+        {
+          conditionType: '05', // Early Withdrawal Charges
+          description: 'Oneri di recesso anticipato',
+          isLimiting: '01',
+        },
+      ],
+    }
+
+    // Parse with context
+    const parseResult = paymentConditionsSchema._parse({
+      data: validData,
+      path: [],
+      parent: null,
+      config: { context: mockContext.context },
+    })
+
+    expect(parseResult.status).toBe('valid')
+  })
+
+  it('rejects conditionType 05 with date before 2024', () => {
+    // Mock the form context with an invalid date
+    const mockContext = {
+      context: {
+        formStates: {
+          validityReview: {
+            validityPeriod: {
+              startDate: '15/12/2023', // December 15, 2023
+            },
+          },
+        },
+      },
+    }
+
+    const invalidData = {
+      paymentMethods: [
+        {
+          paymentMethodType: '01',
+        },
+      ],
+      contractualConditions: [
+        {
+          conditionType: '05', // Early Withdrawal Charges
+          description: 'Oneri di recesso anticipato',
+          isLimiting: '01',
+        },
+      ],
+    }
+
+    // Parse with context
+    const result = paymentConditionsSchema._parse({
+      data: invalidData,
+      path: [],
+      parent: null,
+      config: { context: mockContext.context },
+    })
+
+    expect(result.status).toBe('invalid')
+    if (result.status === 'invalid') {
+      const issue = result.error.issues.find(
+        (err) => err.path[0] === 'contractualConditions',
+      )
+      expect(issue?.message).toBe(
+        'Gli Oneri di Recesso Anticipato (condizione 05) possono essere utilizzati solo per offerte con validità dal 1 gennaio 2024 in poi',
+      )
+    }
+  })
+
+  it('shows warning for conditionType 05 when validity date is not set', () => {
+    // Mock the form context without validity date
+    const mockContext = {
+      context: {
+        formStates: {},
+      },
+    }
+
+    const data = {
+      paymentMethods: [
+        {
+          paymentMethodType: '01',
+        },
+      ],
+      contractualConditions: [
+        {
+          conditionType: '05', // Early Withdrawal Charges
+          description: 'Oneri di recesso anticipato',
+          isLimiting: '01',
+        },
+      ],
+    }
+
+    // Parse with context
+    const result = paymentConditionsSchema._parse({
+      data,
+      path: [],
+      parent: null,
+      config: { context: mockContext.context },
+    })
+
+    expect(result.status).toBe('invalid')
+    if (result.status === 'invalid') {
+      const issue = result.error.issues.find(
+        (err) => err.path[0] === 'contractualConditions',
+      )
+      expect(issue?.message).toBe(
+        'Per utilizzare gli Oneri di Recesso Anticipato (condizione 05), è necessario prima impostare una data di validità dal 1 gennaio 2024 in poi nel passo "Validità e Revisione"',
+      )
+    }
   })
 })

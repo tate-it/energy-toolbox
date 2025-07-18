@@ -76,10 +76,8 @@ export function PaymentConditionsStepComponent() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="font-semibold text-lg">
-          Metodi di Pagamento e Condizioni
-        </h2>
-        <p className="text-muted-foreground text-sm">
+        <h2 className="font-bold text-2xl">Metodi di Pagamento e Condizioni</h2>
+        <p className="text-muted-foreground">
           Definisci i metodi di pagamento accettati e le condizioni contrattuali
         </p>
       </div>

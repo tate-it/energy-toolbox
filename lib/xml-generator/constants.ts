@@ -190,11 +190,11 @@ export const PAYMENT_METHODS = {
 } as const
 
 export const PAYMENT_METHOD_LABELS: Record<string, string> = {
-  '01': 'Bank direct debit',
-  '02': 'Postal direct debit',
-  '03': 'Credit card direct debit',
-  '04': 'Pre-filled bulletin',
-  '99': 'Other',
+  '01': 'Addebito bancario diretto',
+  '02': 'Addebito postale diretto',
+  '03': 'Addebito su carta di credito',
+  '04': 'Bollettino precompilato',
+  '99': 'Altro',
 } as const
 
 export type PaymentMethod =
@@ -374,12 +374,12 @@ export const UNITS_OF_MEASURE = {
 } as const
 
 export const UNIT_OF_MEASURE_LABELS: Record<string, string> = {
-  '01': '€/Year',
+  '01': '€/Anno',
   '02': '€/kW',
   '03': '€/kWh',
   '04': '€/Sm³',
   '05': '€',
-  '06': 'Percentage (%)',
+  '06': 'Percentuale (%)',
 } as const
 
 export type UnitOfMeasure =
@@ -396,12 +396,12 @@ export const CONTRACTUAL_CONDITION_TYPES = {
 } as const
 
 export const CONTRACTUAL_CONDITION_LABELS: Record<string, string> = {
-  '01': 'Activation',
-  '02': 'Deactivation',
-  '03': 'Withdrawal',
-  '04': 'Multi-year Offer',
-  '05': 'Early Withdrawal Charges',
-  '99': 'Other',
+  '01': 'Attivazione',
+  '02': 'Disattivazione',
+  '03': 'Recesso',
+  '04': 'Offerta Pluriennale',
+  '05': 'Oneri di Recesso Anticipato',
+  '99': 'Altro',
 } as const
 
 export type ContractualConditionType =
@@ -414,8 +414,8 @@ export const LIMITING_CONDITIONS = {
 } as const
 
 export const LIMITING_CONDITION_LABELS: Record<string, string> = {
-  '01': 'Yes, it is limiting',
-  '02': 'No, it is not limiting',
+  '01': 'Sì, è limitante',
+  '02': 'No, non è limitante',
 } as const
 
 export type LimitingCondition =
@@ -429,9 +429,9 @@ export const DISCOUNT_VALIDITY_PERIODS = {
 } as const
 
 export const DISCOUNT_VALIDITY_LABELS: Record<string, string> = {
-  '01': 'Entry',
-  '02': 'Within 12 months',
-  '03': 'Beyond 12 months',
+  '01': 'Ingresso',
+  '02': 'Entro 12 mesi',
+  '03': 'Oltre 12 mesi',
 } as const
 
 export type DiscountValidityPeriod =
@@ -444,7 +444,7 @@ export const VAT_APPLICABILITY = {
 } as const
 
 export const VAT_APPLICABILITY_LABELS: Record<string, string> = {
-  '01': 'Yes',
+  '01': 'Sì',
   '02': 'No',
 } as const
 
@@ -461,11 +461,11 @@ export const DISCOUNT_CONDITIONS = {
 } as const
 
 export const DISCOUNT_CONDITION_LABELS: Record<string, string> = {
-  '00': 'Not conditioned',
-  '01': 'Electronic billing',
-  '02': 'Online management',
-  '03': 'Electronic billing + bank direct debit',
-  '99': 'Other',
+  '00': 'Non condizionato',
+  '01': 'Fatturazione elettronica',
+  '02': 'Gestione online',
+  '03': 'Fatturazione elettronica + domiciliazione bancaria',
+  '99': 'Altro',
 } as const
 
 export type DiscountCondition =
@@ -529,18 +529,18 @@ export const MONTHS = {
 } as const
 
 export const MONTH_LABELS: Record<string, string> = {
-  '01': 'January',
-  '02': 'February',
-  '03': 'March',
-  '04': 'April',
-  '05': 'May',
-  '06': 'June',
-  '07': 'July',
-  '08': 'August',
-  '09': 'September',
-  '10': 'October',
-  '11': 'November',
-  '12': 'December',
+  '01': 'Gennaio',
+  '02': 'Febbraio',
+  '03': 'Marzo',
+  '04': 'Aprile',
+  '05': 'Maggio',
+  '06': 'Giugno',
+  '07': 'Luglio',
+  '08': 'Agosto',
+  '09': 'Settembre',
+  '10': 'Ottobre',
+  '11': 'Novembre',
+  '12': 'Dicembre',
 } as const
 
 export type Month = (typeof MONTHS)[keyof typeof MONTHS]
