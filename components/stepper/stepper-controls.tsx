@@ -21,6 +21,7 @@ function StepperControlsContent() {
 
   const handleNext = async () => {
     const valid = await form.trigger()
+    console.log('stepper-controls', 'valid', valid, 'step', current.id)
     if (!valid) {
       return false
     }

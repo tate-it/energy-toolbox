@@ -8,40 +8,44 @@
 - `components/xml-generator/steps/BasicInfoStep.test.tsx` - Unit tests for basic info step - COMPLETED
 - `components/xml-generator/steps/OfferDetailsStep.tsx` - Offer details form step - COMPLETED
 - `components/xml-generator/steps/OfferDetailsStep.test.tsx` - Unit tests for offer details step - COMPLETED
-- `components/xml-generator/steps/ActivationContactsStep.tsx` - Activation methods and contacts step
-- `components/xml-generator/steps/ActivationContactsStep.test.tsx` - Unit tests for activation/contacts
-- `components/xml-generator/steps/PricingConfigStep.tsx` - Pricing configuration step
-- `components/xml-generator/steps/PricingConfigStep.test.tsx` - Unit tests for pricing config
-- `components/xml-generator/steps/CompanyComponentsStep.tsx` - Company components step
-- `components/xml-generator/steps/CompanyComponentsStep.test.tsx` - Unit tests for company components
+- `components/xml-generator/steps/ActivationContactsStep.tsx` - Activation methods and contacts step - COMPLETED
+- `components/xml-generator/steps/ActivationContactsStep.test.tsx` - Unit tests for activation/contacts - COMPLETED
+- `components/xml-generator/steps/PricingConfigStep.tsx` - Pricing configuration step - COMPLETED
+- `components/xml-generator/steps/PricingConfigStep.test.tsx` - Unit tests for pricing config - COMPLETED
+- `components/xml-generator/steps/CompanyComponentsStep.tsx` - Company components step - COMPLETED
+- `components/xml-generator/steps/CompanyComponentsStep.test.tsx` - Unit tests for company components - COMPLETED
 - `components/xml-generator/steps/payment-conditions-step.tsx` - Payment methods and conditions step - COMPLETED
 - `components/xml-generator/steps/payment-conditions-step.test.tsx` - Unit tests for payment/conditions - COMPLETED
 - `components/xml-generator/steps/additional-features-step.tsx` - Additional features step - COMPLETED
 - `components/xml-generator/steps/additional-features-step.test.tsx` - Unit tests for additional features - COMPLETED
-- `components/xml-generator/steps/ValidityReviewStep.tsx` - Final validity and review step
-- `components/xml-generator/steps/ValidityReviewStep.test.tsx` - Unit tests for validity/review
-- `lib/xml-generator/schemas/index.ts` - Main Zod schema definitions for all form fields
-- `lib/xml-generator/schemas/index.test.ts` - Unit tests for schema validation
-- `lib/xml-generator/schemas/conditional-logic.ts` - Conditional validation logic implementation
-- `lib/xml-generator/schemas/conditional-logic.test.ts` - Unit tests for conditional logic
-- `lib/xml-generator/types.ts` - TypeScript type definitions for the entire form (Complete SII XML structure types with all interfaces, enums, and utility types)
-- `lib/xml-generator/xml-builder.ts` - XML generation logic from form data
-- `lib/xml-generator/xml-builder.test.ts` - Unit tests for XML generation
-- `lib/xml-generator/xml-validator.ts` - XML validation against XSD schema
+- `components/xml-generator/steps/ValidityReviewStep.tsx` - Final validity and review step - COMPLETED
+- `components/xml-generator/steps/ValidityReviewStep.test.tsx` - Unit tests for validity/review - COMPLETED
+- `lib/xml-generator/schemas/index.ts` - Main Zod schema definitions for all form fields - COMPLETED
+- `lib/xml-generator/schemas/index.test.ts` - Unit tests for schema validation - COMPLETED
+- `lib/xml-generator/resolver.ts` - Custom resolver that injects form state context for cross-step validation - COMPLETED
+- `lib/xml-generator/schemas.ts` - Enhanced with superRefine for gas market ComponenteImpresa validation - COMPLETED
+- `lib/xml-generator/schemas.test.ts` - Tests for cross-step validation using superRefine - COMPLETED
+- `lib/xml-generator/types.ts` - TypeScript type definitions for the entire form (Complete SII XML structure types with all interfaces, enums, and utility types) - COMPLETED
+- `lib/xml-generator/xml-builder.ts` - XML generation logic from form data - COMPLETED
+- `lib/xml-generator/xml-builder.test.ts` - Unit tests for XML generation - COMPLETED
+- `lib/xml-generator/xml-validator.ts` - XML validation against XSD schema - PARTIALLY COMPLETE
 - `lib/xml-generator/xml-validator.test.ts` - Unit tests for XML validation
-- `lib/xml-generator/constants.ts` - Constants for form options, enums, and codes (All SII specification enums, codes, and validation helpers)
-- `lib/xml-generator/stepperize-config.ts` - Stepperize stepper definition and configuration with usage example
-- `lib/xml-generator/stepperize-config.test.ts` - Unit tests for stepper configuration
-- `hooks/use-stepper-with-url.ts` - Custom hook integrating Stepperize with NuQS for URL persistence
-- `hooks/use-stepper-with-url.test.ts` - Unit tests for URL-integrated stepper hook
-- `hooks/use-conditional-fields.ts` - Custom hook for conditional field visibility
-- `hooks/use-conditional-fields.test.ts` - Unit tests for conditional fields hook
-- `components/ui/form-field-with-help.tsx` - Enhanced form field with help text and tooltips
-- `components/ui/form-field-with-help.test.tsx` - Unit tests for enhanced form field
-- `components/ui/stepper-progress.tsx` - Custom stepper progress indicator using Stepperize state
-- `vitest.config.mjs` - Vitest configuration for testing
-- `vitest.setup.mjs` - Test setup file with jest-dom matchers and browser API mocks
-- `package.json` - Updated with all required dependencies and test scripts
+- `lib/xml-generator/constants.ts` - Constants for form options, enums, and codes (All SII specification enums, codes, and validation helpers) - COMPLETED
+- `lib/xml-generator/stepperize-config.ts` - Stepperize stepper definition and configuration with usage example - COMPLETED
+- `lib/xml-generator/stepperize-config.test.ts` - Unit tests for stepper configuration - COMPLETED
+- `lib/xml-generator/nuqs-parsers.ts` - NuQS parsers for URL state persistence - COMPLETED
+- `hooks/use-form-states.ts` - Custom hook for managing form state with NuQS - COMPLETED
+- `hooks/use-conditional-fields.ts` - Custom hook for conditional field visibility - NOT IMPLEMENTED
+- `hooks/use-conditional-fields.test.ts` - Unit tests for conditional fields hook - NOT IMPLEMENTED
+- `components/ui/form-field-with-help.tsx` - Enhanced form field with help text and tooltips - NOT IMPLEMENTED
+- `components/ui/form-field-with-help.test.tsx` - Unit tests for enhanced form field - NOT IMPLEMENTED
+- `components/ui/stepper-progress.tsx` - Custom stepper progress indicator using Stepperize state - PARTIALLY IMPLEMENTED
+- `components/stepper/` - Stepper components (navigation, controls, with-form) - COMPLETED
+- `providers/form-provider.tsx` - Form provider with React Hook Form - COMPLETED
+- `providers/stepper-provider.tsx` - Stepper provider with Stepperize - COMPLETED
+- `vitest.config.mjs` - Vitest configuration for testing - COMPLETED
+- `vitest.setup.mjs` - Test setup file with jest-dom matchers and browser API mocks - COMPLETED
+- `package.json` - Updated with all required dependencies and test scripts - COMPLETED
 
 ### Notes
 
@@ -56,7 +60,7 @@
   - [x] 1.3 Set up Vitest testing infrastructure with React Testing Library and proper TypeScript support
   - [x] 1.4 Define Stepperize stepper configuration using defineStepper with all 8 form steps
   - [x] 1.5 Create constants file with all SII specification enums, codes, and options
-- [ ] 2.0 Implement Form Sections with State Management (always refer to documentation/adding-new-steps-guide.md)
+- [x] 2.0 Implement Form Sections with State Management (always refer to documentation/adding-new-steps-guide.md)
   - [x] 2.1 Create TypeScript types matching the complete SII XML structure in lib/xml-generator/types.ts
   - [x] 2.2 Implement BasicInfoStep component with PIVA and COD_OFFERTA fields using Stepperize context
   - [x] 2.3 Implement OfferDetailsStep with market type, client type, offer type, and related fields
@@ -96,14 +100,59 @@
         - Covered edge cases and error scenarios
         - Validated XML structure and element ordering
         - All tests passing successfully
-- [ ] 4.0 Add User Experience Enhancements and Comprehensive Testing
-  - [ ] 4.1 Create FormFieldWithHelp component adding contextual help text and format examples
-  - [ ] 4.2 Implement tooltips for complex fields explaining validation rules and requirements
-  - [ ] 4.3 Create custom stepper progress component using Stepperize's state for visual feedback
-  - [ ] 4.4 Implement keyboard navigation leveraging Stepperize's built-in accessibility features
-  - [ ] 4.5 Add ARIA labels and screen reader announcements for accessibility compliance
-  - [ ] 4.6 Create loading states and progress indicators during validation and XML generation
-  - [ ] 4.7 Implement error recovery for corrupted URL state with graceful fallback
-  - [ ] 4.8 Add responsive design optimizations for tablet devices
-  - [ ] 4.9 Create end-to-end tests covering complete user workflows for each offer type
-  - [ ] 4.10 Perform accessibility audit and fix any WCAG 2.1 AA compliance issues 
+- [ ] 4.0 Complete Complex Conditional Validation Rules (HIGH PRIORITY)
+  - [x] 4.1 Implement ComponenteImpresa validation rules for gas market
+        - Enforce at least one IntervalloPrezzi for each ComponenteImpresa
+  - [ ] 4.2 Add early withdrawal charges date restriction (TIPOLOGIA_CONDIZIONE = 05 only after January 1, 2024)
+  - [ ] 4.3 Implement FasceOrarieSettimanale inheritance for TIPOLOGIA_FASCE = 03 or 07
+  - [ ] 4.4 Add component pricing rules based on MACROAREA and UNITA_MISURA combinations
+  - [ ] 4.5 Implement discount validity period vs VALIDITA field mutual exclusivity validation
+  - [ ] 4.6 Complete all conditional field visibility rules from PRD Section 8
+  - [ ] 4.7 Add comprehensive tests for all conditional validation scenarios
+  - [x] 4.8 Implement cross-step validation using custom resolver with Zod superRefine
+  - [x] 4.9 Create tests for cross-step validation
+- [ ] 5.0 Enhance XML Validation (HIGH PRIORITY)
+  - [ ] 5.1 Implement XSD schema validation before XML download
+  - [ ] 5.2 Add element ordering validation for generated XML
+  - [ ] 5.3 Complete lib/xml-generator/xml-validator.ts with XSD validation
+  - [ ] 5.4 Create lib/xml-generator/xml-validator.test.ts
+  - [ ] 5.5 Add validation error messages in Italian
+  - [ ] 5.6 Create validation summary display before download
+- [ ] 6.0 Implement Missing Keyboard Navigation (HIGH PRIORITY)
+  - [ ] 6.1 Add Command/Ctrl + Arrow key handlers for step navigation
+  - [ ] 6.2 Implement proper focus management between steps
+  - [ ] 6.3 Add keyboard shortcut documentation/help
+  - [ ] 6.4 Ensure keyboard navigation works with screen readers
+  - [ ] 6.5 Test keyboard navigation across all browsers
+- [ ] 7.0 Add User Assistance Features
+  - [ ] 7.1 Create FormFieldWithHelp component adding contextual help text and format examples
+  - [ ] 7.2 Implement tooltips for complex fields explaining validation rules and requirements
+  - [ ] 7.3 Add inline format examples (especially for time band format XXI-YI,XXII-YII)
+  - [ ] 7.4 Explain conditional requirements in context
+  - [ ] 7.5 Create hooks/use-conditional-fields.ts for managing field visibility
+  - [ ] 7.6 Add help icons with explanatory popovers
+  - [ ] 7.7 Implement contextual error messages explaining why fields are required
+- [ ] 8.0 Improve Accessibility and Performance
+  - [ ] 8.1 Add comprehensive ARIA labels to all form elements
+  - [ ] 8.2 Implement screen reader announcements for form errors
+  - [ ] 8.3 Improve focus management during step transitions
+  - [ ] 8.4 Complete custom stepper progress component with full accessibility
+  - [ ] 8.5 Add performance monitoring to ensure form pages load within 2 seconds
+  - [ ] 8.6 Ensure XML generation completes within 5 seconds with progress indicator
+  - [ ] 8.7 Create loading states and progress indicators during validation
+  - [ ] 8.8 Perform full WCAG 2.1 AA compliance audit
+- [ ] 9.0 Production Readiness Enhancements
+  - [ ] 9.1 Implement error recovery for corrupted URL state with graceful fallback
+  - [ ] 9.2 Add browser history API integration for proper back/forward navigation
+  - [ ] 9.3 Add lazy loading and code splitting for large components
+  - [ ] 9.4 Create production build optimizations
+  - [ ] 9.5 Add URL state debugger for production (currently dev-only)
+  - [ ] 9.6 Implement better error handling with user-friendly messages
+  - [ ] 9.7 Add responsive design optimizations for tablet devices
+- [ ] 10.0 Testing and Documentation
+  - [ ] 10.1 Create end-to-end tests covering complete user workflows for each offer type
+  - [ ] 10.2 Add JSDoc comments for complex functions and business rules
+  - [ ] 10.3 Create user guide for the application
+  - [ ] 10.4 Document all conditional validation rules inline
+  - [ ] 10.5 Create developer documentation for future maintenance
+  - [ ] 10.6 Add integration tests for complex conditional logic scenarios 

@@ -1,37 +1,19 @@
 'use client'
 
 import { parseAsString, useQueryState } from 'nuqs'
-import { Suspense, useEffect, useRef } from 'react'
-import { useFormContext } from 'react-hook-form'
+import { Suspense, useEffect } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useFormStates } from '@/hooks/use-form-states'
 import { xmlFormStepper } from '@/lib/xml-generator/stepperize-config'
 
 const { useStepper } = xmlFormStepper
 
 function StepperWithFormContent() {
   const methods = useStepper()
-  const [formStates] = useFormStates()
   const [currentStep, setCurrentStep] = useQueryState(
     'currentStep',
     parseAsString.withDefault('basicInfo'),
   )
 
-  const form = useFormContext()
-  const previousStepRef = useRef(methods.current.id)
-
-  // Update form values when step changes
-  useEffect(() => {
-    const currentStepId = methods.current.id
-
-    // Only reset if the step has actually changed
-    if (previousStepRef.current !== currentStepId) {
-      const currentStepData = formStates[currentStepId] ?? {}
-      form.reset(currentStepData)
-      previousStepRef.current = currentStepId
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [methods.current.id, formStates, form.reset])
 
   // Sync URL currentStep with stepper state
   useEffect(() => {

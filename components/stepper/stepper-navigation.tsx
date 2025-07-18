@@ -20,13 +20,14 @@ function StepperNavigationContent() {
 
   const handleStepChange = async (stepId: typeof current.id) => {
     const valid = await form.trigger()
+    console.log('stepper-navigation', 'valid', valid, 'step', current.id)
     if (!valid) {
       return
     }
 
     // Save current step data before navigating
     const currentValues = form.getValues()
-    await setFormStates({
+    setFormStates({
       [current.id]: currentValues,
     })
 

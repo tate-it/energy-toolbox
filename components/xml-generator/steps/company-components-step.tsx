@@ -78,6 +78,9 @@ export function CompanyComponentsStepComponent() {
     })
   }
 
+  // Cross-step validation is now handled by the custom resolver in FormProvider
+  // No need for useEffect here anymore
+
   return (
     <div className="space-y-6">
       <div>

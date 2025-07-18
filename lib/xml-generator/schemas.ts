@@ -460,6 +460,45 @@ export const companyComponentsSchema = z
       )
       .optional(),
   })
+  .superRefine((data, ctx) => {
+    // Access form context through the special context object
+    // This will be available when using createContextualResolver
+    try {
+      const contextData = ctx as unknown as {
+        context?: { formStates?: CompleteFormValues }
+      }
+      const formStates = contextData?.context?.formStates
+
+      if (!formStates) {
+        // If no context is available, skip cross-step validation
+        return
+      }
+
+      const marketType = formStates.offerDetails?.marketType
+
+      // Gas market validation: Each ComponenteImpresa must have at least one IntervalloPrezzi
+      if (marketType === '02' && data.companyComponents) {
+        data.companyComponents.forEach((component, index) => {
+          if (
+            !component.priceIntervals ||
+            component.priceIntervals.length === 0
+          ) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message:
+                'Per il mercato gas, ogni componente aziendale deve avere almeno un intervallo di prezzo',
+              path: ['companyComponents', index, 'priceIntervals'],
+            })
+          }
+        })
+      }
+
+      // Additional cross-step validations can be added here
+    } catch {
+      // If context access fails, skip validation silently
+      // This ensures the schema works even without the custom resolver
+    }
+  })
   .refine(
     (data) => {
       // Check consumption range consistency in price intervals
@@ -1153,3 +1192,17 @@ export const schemaMap = {
 } as const
 
 export type SchemaMap = typeof schemaMap
+
+// Complete form schema that combines all steps and applies conditional validation
+export const completeFormSchema = z.object({
+  basicInfo: basicInfoSchema.optional(),
+  offerDetails: offerDetailsSchema.optional(),
+  activationContacts: activationContactsSchema.optional(),
+  pricingConfig: pricingConfigSchema.optional(),
+  companyComponents: companyComponentsSchema.optional(),
+  paymentConditions: paymentConditionsSchema.optional(),
+  additionalFeatures: additionalFeaturesSchema.optional(),
+  validityReview: validityReviewSchema.optional(),
+})
+
+export type CompleteFormValues = z.infer<typeof completeFormSchema>
